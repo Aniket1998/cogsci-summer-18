@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8">
 	<title>Experiment 1</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
     <script type="text/paperscript" src="exp1.js" canvas="experiment"></script>
 </head>
 <body>
-	<canvas id="experiment" width="1100" height="700" style="background:yellow"></canvas>
+	<div class="jumbotron text-center">
+		<h1>Cognitive Science Experiment</h1>
+		<p>This is where the description goes, look alright?</p>
+	</div>
+	<div class="container">
+		<canvas id="experiment" width="1200" height="500"></canvas>
+	</div>
+	<div class="container">
+		<form class="form-horizontal" action="/action_page.php">
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="name">Description:</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="name" placeholder="Describe the situation you see">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="submit" class="btn btn-default">Submit</button>
+				</div>
+			</div>
+		</form>
+	</div>
 </body>
 </html>

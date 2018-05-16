@@ -1,7 +1,7 @@
 var rad = 14;
-var scale = 75;
-var followscale = 100;
-var threshold = 10;
+var scale = 50;
+var followscale = 60;
+var threshold = 1;
 
 var path = new Path.Circle({
 	center: view.size * Math.random(),
@@ -48,18 +48,6 @@ function onFrame(event) {
     if (path.bounds.top > view.size.height) {
         path.position.y = -path.bounds.height;
     }
-/*	if (path.bounds.left > view.size.width || path.bounds.right < 0) {
-		path.position.x -= vec.x/scale;
-	}
-	if (follow.bounds.left > view.size.width follow.bounds.right < 0) {
-		follow.position.x -= separation.x/scale;
-	}
-	if (path.bounds.top > view.size.height || path.bounds.bottom < 0) {
-		path.position.y -= vec.y/scale;
-	}
-	if (follow.bounds.top > view.size.height || follow.bounds.bottom < 0) {
-		follow.position.y -= separation.y/scale;
-	}*/
 
 	if (vec.length < threshold) {
 		dest = Point.random() * view.size;
