@@ -1,5 +1,4 @@
-from django.shortcuts import render,get_object_or_404
-from django.http import HttpResponse
+from django.shortcuts import render,get_object_or_404,redirect
 from .models import Experiment,Response
 
 # Create your views here.
@@ -28,7 +27,7 @@ def submit_view(request):
 	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
 	exp.response_set.create(name = request.POST['Name'],roll = request.POST['RollNo'],gender = request.POST['Gender'],
 		age = request.POST['Age'],resp = request.POST['Response'])
-	return HttpResponse("Your response has been recorded! Thank you")
+	return redirect('/exp/' + str(exp.pk) + '/data/')
 
 def data_view(request,exp_id):
 	exp = get_object_or_404(Experiment,pk=exp_id)
