@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>If It Weren't For You</title>
+	<script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
+	<script type="text/paperscript" canvas = "canvas">
+		var width = view.size.width;
+		var height = view.size.height;
+		var boundary = new Path({
+			segments : [[width * 0.4,height * 0.75],[0,height * 0.75],[0,height],[width,height],[width,height * 0.75],[width * 0.6,height * 0.75]]
+		});
+		var male = new Path.Circle({
+			center : new Point(width * 0.9,height * 0.2),
+			fillColor : 'red',
+			radius : 10
+		});
+		var female = new Path.Circle({
+			center : male.position,
+			fillColor : 'pink',
+			radius : 10
+		});
+		female.position.y += 23;
+		boundary.strokeColor = 'brown';
+		boundary.strokeWidth = 10;
+
+		var coupleScene;
+		var flockScene;
+		var scene1vars = {
+			velocity : new Point(-1,0),
+			framecount : 0
+		}
+		var scene2vars = {
+			femalevelocity :  new Point(0,1),
+			circularpath : 0,
+			currentsegment : 0,
+			malespeed : 2,
+			framecount : 0
+		}
+		var scene3vars = {
+			framecount : 0,
+			eventcount : 0,
+			destination : 0,
+			attract : true,
+			freshpos : true
+		}
+		var scene4vars = {
+			framecount : 0,
+			femalemove : new Point(1,-1).normalize(),
+			initialpos : 0
+		}
+		function couplescene5(event) {
+			console.log("Couple Scene 5");
+
+		}
+		function couplescene4(event) {
+			console.log("Couple scene 4");
+			if ((scene4vars.initialpos - female.position).length < 300) {
+				female.position += scene4vars.femalemove;
+			} else {
+				var dist = female.position - male.position;
+				if (dist.length < 22) {
+					scene4vars.framecount++;
+					if (scene4vars.framecount < 30) {
+						coupleScene = couplescene5;
+					}
+				} else {
+					male.position += dist.normalize();
+				}
+			}
+		}
+		function couplescene3(event) {
+			console.log("Couple scene 3");
+			scene3vars.framecount++;
+			if (scene3vars.eventcount === 3) {
+				scene4vars.initialpos = male.position;
+				coupleScene = couplescene4;
+			} else {
+				if (scene3vars.attract) {
+					if (scene3vars.freshpos) {
+						var posx = width * (0.45 + 0.1 * Math.random());
+						scene3vars.destination = new Point(posx,0.75 * height);
+						scene3vars.freshpos = false;
+					}
+					male.position += (scene3vars.destination - male.position).normalize() * 3;
+					female.position += (scene3vars.destination - female.position).normalize() * 2;
+					if ((male.position - female.position).length < 22) {
+						scene3vars.attract = false;
+					}
+				} else {
+					if ((male.position - female.position).length < 60) {
+						var vec = scene3vars.destination.normalize() * 2;
+						vec.angle += 10 * (2 * Math.random() - 1);
+						female.position -= vec;
+					} else {
+						scene3vars.attract = true;
+						scene3vars.freshpos = true;
+						scene3vars.eventcount++;
+					}
+				}
+			}
+		}
+		function couplescene2(event) {
+			console.log("Couple scene 2");
+			scene2vars.framecount++;
+			if (female.position.y < height * 0.65) {
+				if (true) {
+					female.position += scene2vars.femalevelocity * 1.5;
+				}
+			} else {
+				coupleScene = couplescene3;
+			}
+			if (male.position.y < height * 0.75) {
+				male.position += scene2vars.femalevelocity * scene2vars.malespeed;
+				male.position.x += 1 * Math.cos(scene2vars.framecount/50);
+			} else {
+				if(male.position.x > female.position.x) {
+					male.position.x -= 1;
+				} else {
+					coupleScene = couplescene3;
+				}
+			}
+		}
+		function couplescene1(event) {
+			scene1vars.framecount++;
+			console.log("Couple Scene 1")
+			console.log(scene1vars.framecount);
+			if (male.position.x >= width/2) {
+				male.position += scene1vars.velocity;
+				female.position += scene1vars.velocity;
+				//male.position.y += 0.5 * Math.cos(scene1vars.framecount/100);
+				//female.position.y += 0.5 * Math.cos(scene1vars.framecount/100);
+			} else {
+				scene2vars.circularpath = new Path.Circle({
+					center : new Point(width/2,(height * 0.7 - male.position.y)/2),
+					radius : (height * 0.7 + male.position.y)/2,
+					//fillColor : 'black'
+				});
+				//scene2vars.circularpath.selected = true;
+				scene2vars.currentsegment = 2;
+				coupleScene = couplescene2;
+			}
+		}
+		coupleScene = couplescene1;
+		function onFrame(event) {
+			coupleScene(event);
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="500"></canvas>
+</body>
+</html>

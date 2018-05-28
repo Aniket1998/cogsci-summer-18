@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cop and Robber</title>
+	<script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
+	<script type="text/paperscript" canvas = "canvas">
+		var robber = new Path.Circle({
+			center : Point.random() * view.size,
+			radius : 10,
+			fillColor : 'red'
+		});
+		var cop = new Path.Circle({
+			center : view.center,
+			radius : 10,
+			fillColor : 'blue'
+		});
+		var gold = new Path.Circle({
+			center : view.center,
+			radius : 3,
+			fillColor : 'yellow'
+		});
+		gold.position = cop.position + new Point(0,-30);
+		var currentScene;
+		var scene2vars = {
+			framecount : 0,
+			robberspeed : Point.random(),
+			copspeed : 2
+		}
+		function scene2(event) {
+			gold.fillColor = 'white';
+			scene2vars.framecount++;
+			scene2vars.robberspeed = scene2vars.robberspeed.normalize();
+			scene2vars.robberspeed *= 5;
+			var x = robber.position.x + scene2vars.robberspeed.x;
+			var y = robber.position.y + scene2vars.robberspeed.y;
+			if (x < 12 || x > view.size.width - 12) {
+					scene2vars.robberspeed.x *= -1;
+			}
+			if (y < 12 || y > view.size.height - 12) {
+				scene2vars.robberspeed.y *= -1;
+			}
+			robber.position += scene2vars.robberspeed;
+			if ((cop.position - robber.position).length < 60) {
+				scene2vars.robberspeed = (robber.position - cop.position).normalize() * 5;
+				scene2vars.robberspeed.angle += 10 * Math.random();
+			}
+			else {
+				cop.position += (robber.position - cop.position).normalize() * 2;
+			}
+		}
+		function scene1(event) {
+			if (cop.position.x < (view.center.x + 100) || cop.position.x < (view.center.x - 100)) {
+				cop.position.x += 1;
+			}
+			if(cop.position.x >= view.center.x + 100) {
+				cop.position.x -= 1;
+			}
+			robber.position += (gold.position - robber.position).normalize();
+			if((robber.position - gold.position).length < 20) {
+				currentScene = scene2;
+			}
+		}
+		currentScene = scene1;
+		function onFrame(event) {
+			currentScene(event);
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="500"></canvas>
+</body>
+</html>
