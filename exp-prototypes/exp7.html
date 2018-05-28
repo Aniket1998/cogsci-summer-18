@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Happy to Help</title>
+	<script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
+	<script type="text/paperscript" canvas = "canvas">
+		var goodguy = new Path.Circle({
+			center : view.center,
+			radius : 10,
+			fillColor : 'red'
+		});
+		var begger1 = new Path.Circle({
+			center : view.center + [200,200],
+			radius : 10,
+			fillColor : 'blue'
+		});
+		new Path.Circle({
+			center : begger1.position - [30,0] ,
+			radius : 10,
+			fillColor : 'blue'
+		});
+		new Path.Circle({
+			center : begger1.position - [0,30] ,
+			radius : 10,
+			fillColor : 'blue'
+		});
+		var begger2 = new Path.Circle({
+			center : view.center + [300,0],
+			radius : 10,
+			fillColor : 'blue'
+		});
+		new Path.Circle({
+			center : begger2.position - [20,20] ,
+			radius : 10,
+			fillColor : 'blue'
+		});
+		new Path.Circle({
+			center : begger2.position + [-20,20] ,
+			radius : 10,
+			fillColor : 'blue'
+		});
+		var begger3 = new Path.Circle({
+			center : view.center + [200,-200],
+			radius : 10,
+			fillColor : 'blue'
+		});
+		new Path.Circle({
+			center : begger3.position - [30,0] ,
+			radius : 10,
+			fillColor : 'blue'
+		});
+		new Path.Circle({
+			center : begger3.position + [0,30] ,
+			radius : 10,
+			fillColor : 'blue'
+		});
+		var money1 = new Path.Circle({
+			center : view.center+[200,200]-[15,15],
+			radius : 4,
+			fillColor : 'white'
+		});
+		var money2 = new Path.Circle({
+			center : view.center+[280,0],
+			radius : 4,
+			fillColor : 'white'
+		});
+		var money3 = new Path.Circle({
+			center : view.center + [200,-200] +[-15,15],
+			radius : 4,
+			fillColor : 'white'
+		});
+		var stand1 = new Path.Rectangle(view.center + [-300,-50],50,30);
+		var stand2 = new Path.Rectangle(view.center + [-350,-40],50,20);
+		var stand3 = new Path.Rectangle(view.center + [-250,-40],50,20);
+		stand1.fillColor = 'yellow'
+		stand2.fillColor = 'yellow'
+		stand3.fillColor = 'yellow'
+		var scene1vars = {
+			begger:1
+		}
+		var scene3vars = {
+			framecount:0
+		}
+		function scene1(event) {
+			if (scene1vars.begger==1){
+				goodguy.position += (money1.position-goodguy.position).normalize()*2;
+			}
+			var dist1 = goodguy.position - money1.position;
+			if(dist1.length < 10) {
+			money1.fillColor = 'yellow'
+			scene1vars.begger++
+			}
+			if (scene1vars.begger==2){
+				goodguy.position += (money2.position-goodguy.position).normalize()*2;
+			}
+			var dist2 = goodguy.position - money2.position;
+			if(dist2.length < 10) {
+			money2.fillColor = 'yellow'
+			scene1vars.begger++
+			}
+			if (scene1vars.begger>=3){
+				goodguy.position += (money3.position-goodguy.position).normalize()*2;
+			}
+			var dist3 = goodguy.position - money3.position;
+			if(dist3.length < 10) {
+			money3.fillColor = 'yellow'
+			currentScene = scene2
+			}
+
+		}
+
+		function scene2(event) {
+
+			goodguy.position += (view.center + [-275,-82]-goodguy.position).normalize()*2
+			dist = (view.center + [-275,-82]-goodguy.position)
+			if(dist.length < 1){
+				currentScene = scene3
+			}
+		}
+		function scene3(event){
+			scene3vars.framecount++;
+			goodguy.position += [0,4 * Math.cos(0.1*scene3vars.framecount)]
+		}
+		currentScene = scene1;
+		function onFrame(event) {
+			currentScene(event);
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="500"></canvas>
+</body>
+</html>
