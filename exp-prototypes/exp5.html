@@ -38,6 +38,26 @@
 			reachpoint : new Point(view.size.width * 0.75,view.size.height * 0.85),
 			framecount : 0
 		}
+		var scene3vars = {
+			framecount : 0,
+			target : 0
+		}
+		function scene4(event) {
+			console.log("Scene 4");
+			if(man.position.x > scene3vars.target) {
+				man.position.x -= 1;
+				triangle1.rotate(5);
+				triangle2.rotate(5);
+				triangle3.rotate(5);
+				triangle4.rotate(5);
+			} else {
+				man.position.x -= 2;
+				triangle1.position.x -= 2;
+				triangle2.position.x -= 2;
+				triangle3.position.x -= 2;
+				triangle4.position.x -= 2;
+			}
+		}
 		function scene3(event) {
 			scene2vars.framecount++;
 			man.position += [5 * Math.cos(scene2vars.framecount),5 * Math.cos(scene2vars.framecount)];
@@ -53,6 +73,11 @@
 				triangle2.rotate(Math.sin(scene2vars.framecount/12));
 				triangle3.rotate(Math.cos(scene2vars.framecount/12));
 				triangle4.rotate(Math.cos(scene2vars.framecount/12));
+				scene3vars.framecount++;
+				if (scene3vars.framecount > 180) {
+					scene3vars.target = man.position.x - 60;
+					currentScene = scene4;
+				}
 			}
 		}
 		function scene2(event) {
