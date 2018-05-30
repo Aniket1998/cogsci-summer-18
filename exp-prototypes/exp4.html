@@ -4,6 +4,8 @@
 	<title>Cop and Robber</title>
 	<script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
 	<script type="text/paperscript" canvas = "canvas">
+		var width = view.size.width;
+		var height = view.size.height;
 		var robber = new Path.Circle({
 			center : Point.random() * view.size,
 			radius : 10,
@@ -24,7 +26,10 @@
 		var scene2vars = {
 			framecount : 0,
 			robberspeed : Point.random(),
-			copspeed : 2
+			copspeed : 2,
+			clip : true,
+			agitationtime : 0,
+			widthbased : true
 		}
 		function scene2(event) {
 			gold.fillColor = 'white';
@@ -34,10 +39,14 @@
 			var x = robber.position.x + scene2vars.robberspeed.x;
 			var y = robber.position.y + scene2vars.robberspeed.y;
 			if (x < 12 || x > view.size.width - 12) {
-					scene2vars.robberspeed.x *= -1;
+					if (scene2vars.clip) {
+						scene2vars.robberspeed.x *= -1;
+					}
 			}
 			if (y < 12 || y > view.size.height - 12) {
-				scene2vars.robberspeed.y *= -1;
+				if (scene2vars.clip) {
+					scene2vars.robberspeed.y *= -1
+				}
 			}
 			robber.position += scene2vars.robberspeed;
 			if ((cop.position - robber.position).length < 60) {
@@ -45,7 +54,38 @@
 				scene2vars.robberspeed.angle += 10 * Math.random();
 			}
 			else {
-				cop.position += (robber.position - cop.position).normalize() * 2;
+				if(robber.position.x < width && robber.position.x > 0 && robber.position.y < height && robber.position.y > 0) {
+					cop.position += (robber.position - cop.position).normalize() * 2;
+				}
+				else {
+					scene2vars.agitationtime++;
+					if(scene2vars.agitationtime > 240) {
+						if (scene2vars.widthbased) {
+							robber.position.y = cop.position.y;
+							if (cop.position.x > width/2) {
+								robber.position.x = 25;
+							} else {
+								robber.position.x = width - 25;
+							}
+							scene2vars.widthbased = false;
+						}
+						else {
+							robber.position.x = cop.position.x;
+							if (cop.position.y > height/2) {
+								robber.position.y = 25;
+							} else {
+								robber.position.y = height - 25;
+							}
+							scene2vars.widthbased = true;
+						}
+						scene2vars.robberspeed = cop.position - robber.position;
+					} else {
+						cop.position += new Point(3 * Math.cos(scene2vars.agitationtime),3 * Math.sin(scene2vars.agitationtime));
+					}
+				}
+			}
+			if (scene2vars.framecount > 300) {
+				scene2vars.clip = false;
 			}
 		}
 		function scene1(event) {
