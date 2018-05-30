@@ -48,23 +48,68 @@
 			femalemove : new Point(1,-1).normalize(),
 			initialpos : 0
 		}
+		var scene5vars = {
+			framecount : 0,
+			malevelocity : new Point(-2,0),
+			doorentry : new Point(width * 0.5,height * 0.75),
+			movedown : false
+		}
+		var scene6vars = {
+			framecount : 0,
+			dest : new Point(width/2,height * 0.9)
+		}
+		function couplescene7(event) {
+			console.log("Couple Scene 7");
+			if((female.position.y - male.position.y) > 25) {
+				female.position.y -= 3;
+			} else {
+				if((female.position.x - male.position.x) > 25) {
+					female.position.x -= 3;
+				}
+			}
+		}
+		function couplescene6(event) {
+			console.log("Couple Scene 6");
+			var dist = scene6vars.dest - female.position;
+			if (dist.length > 4) {
+				female.position += dist.normalize();
+			} else {
+				console.log("In framecount");
+				scene6vars.framecount++;
+				female.position += new Point(10 * Math.cos(scene6vars.framecount),10 * Math.sin(scene6vars.framecount));
+				console.log(scene6vars.framecount);
+				if (scene6vars.framecount > 30) {
+					coupleScene = couplescene7;
+				}
+			}
+		}
 		function couplescene5(event) {
 			console.log("Couple Scene 5");
-
+			if (male.position.x > 25) {
+				male.position += scene5vars.malevelocity;
+			}
+			var dist = scene5vars.doorentry - female.position;
+			if (dist.length > 5) {
+				if (male.position.x < 120) {
+					female.position += dist.normalize() * 2;
+				}
+			} else {
+				coupleScene = couplescene6;
+			}
 		}
 		function couplescene4(event) {
 			console.log("Couple scene 4");
 			if ((scene4vars.initialpos - female.position).length < 300) {
-				female.position += scene4vars.femalemove;
+				female.position += scene4vars.femalemove * 3;
 			} else {
 				var dist = female.position - male.position;
 				if (dist.length < 22) {
 					scene4vars.framecount++;
-					if (scene4vars.framecount < 30) {
+					if (scene4vars.framecount > 30) {
 						coupleScene = couplescene5;
 					}
 				} else {
-					male.position += dist.normalize();
+					male.position += dist.normalize() * 3;
 				}
 			}
 		}
