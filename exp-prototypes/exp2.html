@@ -45,16 +45,16 @@
 		}
 		var scene5vars = {
 			approachspeed : 2,
-			repelspeed : 10
+			repelspeed : 4
 		}
 		function scene5(event) {
 			console.log("In scene 5");
 			var dist = male.position - secondmale.position;
-			if(dist.length < 20) {
+			if(dist.length < 22) {
 				male.position += dist.normalize() * scene5vars.repelspeed;
 				secondmale.position -= dist.normalize() * scene5vars.repelspeed;
-				male.position.angle += (Math.random() * 2 - 1);
-				secondmale.position.angle += (Math.random() * 2 - 1);
+				male.position.angle += ((Math.random() * 2 - 1))/2;
+				secondmale.position.angle += ((Math.random() * 2 - 1))/2;
 			} else {
 				male.position -= dist.normalize() * scene5vars.approachspeed;
 				secondmale.position += dist.normalize() * scene5vars.approachspeed;
