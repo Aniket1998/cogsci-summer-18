@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8">
 	<title>Happy to Help</title>
 	<script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
 	<script type="text/paperscript" canvas = "canvas">
@@ -14,43 +15,13 @@
 			radius : 10,
 			fillColor : 'blue'
 		});
-		new Path.Circle({
-			center : begger1.position - [30,0] ,
-			radius : 10,
-			fillColor : 'blue'
-		});
-		new Path.Circle({
-			center : begger1.position - [0,30] ,
-			radius : 10,
-			fillColor : 'blue'
-		});
 		var begger2 = new Path.Circle({
 			center : view.center + [300,0],
 			radius : 10,
 			fillColor : 'blue'
 		});
-		new Path.Circle({
-			center : begger2.position - [20,20] ,
-			radius : 10,
-			fillColor : 'blue'
-		});
-		new Path.Circle({
-			center : begger2.position + [-20,20] ,
-			radius : 10,
-			fillColor : 'blue'
-		});
 		var begger3 = new Path.Circle({
 			center : view.center + [200,-200],
-			radius : 10,
-			fillColor : 'blue'
-		});
-		new Path.Circle({
-			center : begger3.position - [30,0] ,
-			radius : 10,
-			fillColor : 'blue'
-		});
-		new Path.Circle({
-			center : begger3.position + [0,30] ,
 			radius : 10,
 			fillColor : 'blue'
 		});
@@ -76,18 +47,62 @@
 		stand2.fillColor = 'yellow'
 		stand3.fillColor = 'yellow'
 		var scene1vars = {
-			begger:1
+			begger:1,
+			shiver1:1,
+			shiver2:1,
+			shiver3:1,
+			framecount:0
 		}
 		var scene3vars = {
 			framecount:0
 		}
 		function scene1(event) {
+			scene1vars.framecount++
+			if (scene1vars.shiver1==1){
+			begger1.position += [1 * Math.cos(scene1vars.framecount),-1 * Math.cos(scene1vars.framecount)];
+			}
+			if (scene1vars.shiver2==1){
+			begger2.position += [1 * Math.cos(scene1vars.framecount),0];
+			}
+			if (scene1vars.shiver3==1){
+			begger3.position += [1 * Math.cos(scene1vars.framecount),1 * Math.cos(scene1vars.framecount)];
+			}
 			if (scene1vars.begger==1){
 				goodguy.position += (money1.position-goodguy.position).normalize()*2;
+			}
+			if (scene1vars.shiver1==0){
+				if ((begger1.position-money1.position).length < 5){
+					money1.fillColor = 'blue'
+				}
+				else{
+					begger1.position += (money1.position-begger1.position).normalize()*0.4;
+				}
+
+			}
+			if (scene1vars.shiver2==0){
+				if ((begger2.position-money2.position).length < 5){
+					money2.fillColor = 'blue'
+				}
+				else{
+					begger2.position += (money2.position-begger2.position).normalize()*0.4;
+				}
+
+			}
+			if (scene1vars.shiver3==0){
+				if ((begger3.position-money3.position).length < 2){
+					money3.fillColor = 'blue'
+					currentScene = scene2
+				}
+				else{
+					begger3.position += (money3.position-begger3.position).normalize()*0.4;
+					goodguy.position += (view.center + [-275,-82]-goodguy.position).normalize()*2
+				}
+
 			}
 			var dist1 = goodguy.position - money1.position;
 			if(dist1.length < 10) {
 			money1.fillColor = 'yellow'
+			scene1vars.shiver1=0
 			scene1vars.begger++
 			}
 			if (scene1vars.begger==2){
@@ -96,6 +111,7 @@
 			var dist2 = goodguy.position - money2.position;
 			if(dist2.length < 10) {
 			money2.fillColor = 'yellow'
+			scene1vars.shiver2=0
 			scene1vars.begger++
 			}
 			if (scene1vars.begger>=3){
@@ -104,13 +120,14 @@
 			var dist3 = goodguy.position - money3.position;
 			if(dist3.length < 10) {
 			money3.fillColor = 'yellow'
-			currentScene = scene2
+			goodguy.position += (view.center + [-275,-82]-goodguy.position).normalize()*10
+			scene1vars.shiver3=0
 			}
 
 		}
 
 		function scene2(event) {
-
+			money3.fillColor = 'blue'
 			goodguy.position += (view.center + [-275,-82]-goodguy.position).normalize()*2
 			dist = (view.center + [-275,-82]-goodguy.position)
 			if(dist.length < 1){
