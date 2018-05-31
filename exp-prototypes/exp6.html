@@ -25,8 +25,16 @@
 	 center : new Point(215, 396),
 	 radius : 3,
 	 fillColor : 'blue'
- })
+ });
+
+ var wife = new Path.Circle({
+	center : new Point(900, 20),
+	radius : 10,
+	fillColor : 'pink'
+});
  alcohol.visible = false;
+ wife.visible = false;
+
 	var currentscene;
 
 	var scene1vars = {
@@ -43,12 +51,25 @@
 
 	var scene3vars = {
 		approachspeed : new Point(0, -1),
-		timeout : 0
+		timeout : 0,
+		wifespeed : new Point(-0.6, 0.1)
 	}
 
 	function scene3(event) {
 		console.log("In scene 3");
-		drunk.position += new Point(3,-3)*Point.random();
+		scene3vars.timeout++;
+		//console.log(dist.length);
+		if(scene3vars.timeout>36 && (drunk.position.y - wife.position.y)>1){
+			wife.visible = true;
+			wife.position += scene3vars.wifespeed;
+		}
+		if((drunk.position.y - wife.position.y)>1){
+			drunk.position += (new Point(7,-7)*Point.random());
+			drunk.position += (new Point(-4,4)*Point.random());
+		} else {
+			currentscene = scene4;
+		}
+
 	}
 
 	function scene2(event) {
