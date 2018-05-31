@@ -48,6 +48,127 @@
 		drunkspeed : new Point(1, 0),
 		timeout : 0
 	}
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Alcoholic</title>
+		<script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
+		<script type="text/paperscript" canvas = "canvas">
+			var drunk = new Path.Circle({
+				center : view.center + new Point(-450, 50),
+				radius : 10,
+				fillColor : 'red'
+			});
+
+		var rectangle = new Rectangle(new Point(150, 400), new Point(250, 450));
+		var path = new Path.Rectangle(rectangle);
+		path.fillColor = 'blue';
+
+	  var tender = new Path.Circle({
+			center : new Point(200, 480),
+			radius : 10,
+			fillColor : 'yellow'
+		});
+
+	 var alcohol = new Path.Circle({
+		 center : new Point(215, 396),
+		 radius : 3,
+		 fillColor : 'blue'
+	 });
+
+	 var wife = new Path.Circle({
+		center : new Point(900, 20),
+		radius : 10,
+		fillColor : 'pink'
+	});
+	 alcohol.visible = false;
+	 wife.visible = false;
+
+		var currentscene;
+
+		var scene1vars = {
+			normalspeed : new Point(1.5,0),
+			approachspeed : new Point(0, 1.5),
+			timeout : 0
+		}
+
+		var scene2vars = {
+			approachspeed : new Point(0, -1),
+			drunkspeed : new Point(1, 0),
+			timeout : 0
+		}
+
+		var scene3vars = {
+			approachspeed : new Point(0, -1),
+			timeout : 0,
+			wifespeed : new Point(-0.6, 0.1)
+		}
+
+
+		function scene3(event) {
+			console.log("In scene 3");
+			scene3vars.timeout++;
+	    var dist = wife.position - drunk.position;
+			console.log(dist.length);
+			if(scene3vars.timeout>36 && (drunk.position.y - wife.position.y)>1){
+				wife.visible = true;
+				wife.position += scene3vars.wifespeed;
+			}
+			if((drunk.position.y - wife.position.y)>1){
+				drunk.position += (new Point(7,-7)*Point.random());
+				drunk.position += (new Point(-4,4)*Point.random());
+			} else if(dist.length>22){
+				drunk.position += dist.normalize()*8;
+				wife.position += dist.normalize();
+			} else {
+				wife.position += dist.normalize()*3;
+			}
+
+		}
+
+		function scene2(event) {
+	 		console.log("In scene 2");
+			scene2vars.timeout++;
+
+			//console.log(drunk.position);
+			if(scene2vars.timeout > 60 && alcohol.position.y > drunk.position.y){
+				alcohol.visible = true;
+				alcohol.position += scene2vars.approachspeed;
+			} else if(scene2vars.timeout > 60 && (alcohol.position.x - drunk.position.x)>11){
+				drunk.position += scene2vars.drunkspeed;
+			} else if(scene2vars.timeout > 60){
+				alcohol.visible = false;
+				currentscene = scene3;
+			}
+	  }
+
+		function scene1(event) {
+	 		console.log("In scene 1");
+			scene1vars.timeout++;
+	    if(drunk.position.x < 200){
+				drunk.position += scene1vars.normalspeed;
+				scene1vars.timeout = 0;
+			} else if(drunk.position.y < 350){
+				drunk.position += scene1vars.approachspeed;
+			} else if(drunk.position.y < 380) {
+				drunk.position += scene1vars.approachspeed;
+				tender.position -= scene1vars.approachspeed.normalize()*0.8;
+			} else{
+				currentscene = scene2;
+			}
+	  }
+	  currentscene = scene1;
+	  function onFrame(event) {
+	 	 currentscene(event);
+	  }
+
+		</script>
+	</head>
+	<body>
+		<canvas id="canvas" width="960" height="500"></canvas>
+	</body>
+	</html>
 
 	var scene3vars = {
 		approachspeed : new Point(0, -1),
