@@ -56,7 +56,11 @@
 		}
 		var scene6vars = {
 			framecount : 0,
-			dest : new Point(width/2,height * 0.9)
+			dest : new Point(width/2,height * 0.9),
+			left : true,
+			right : true,
+			leftback : true,
+			flag : true,
 		}
 		function couplescene7(event) {
 			console.log("Couple Scene 7");
@@ -71,15 +75,40 @@
 		function couplescene6(event) {
 			console.log("Couple Scene 6");
 			var dist = scene6vars.dest - female.position;
-			if (dist.length > 4) {
+			if (dist.length > 4 && scene6vars.flag) {
 				female.position += dist.normalize();
 			} else {
-				console.log("In framecount");
-				scene6vars.framecount++;
-				female.position += new Point(10 * Math.cos(scene6vars.framecount),10 * Math.sin(scene6vars.framecount));
-				console.log(scene6vars.framecount);
-				if (scene6vars.framecount > 30) {
-					coupleScene = couplescene7;
+				scene6vars.flag = false;
+				if (scene6vars.left) {
+					if (female.position.x < width * 0.9) {
+						console.log("in left");
+						console.log(female.position.x);
+						female.position.x += 3;
+					} else {
+						scene6vars.left = false;
+					}
+				} else if(scene6vars.right) {
+					if (female.position.x > width * 0.1) {
+						console.log("in RIGHT");
+						female.position.x -= 3;
+					} else {
+						scene6vars.right = false;
+					}
+				} else if(scene6vars.leftback) {
+					if (female.position.x < width * 0.5) {
+						console.log("in LEFTBACK");
+						female.position.x += 3;
+					} else {
+						scene6vars.leftback = false;
+					}
+				} else {
+					console.log("In framecount");
+					scene6vars.framecount++;
+					female.position += new Point(4 * Math.cos(scene6vars.framecount),5 * Math.sin(scene6vars.framecount));
+					console.log(scene6vars.framecount);
+					if (scene6vars.framecount > 30) {
+						coupleScene = couplescene7;
+					}
 				}
 			}
 		}
