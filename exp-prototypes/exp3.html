@@ -65,10 +65,10 @@
 		function couplescene7(event) {
 			console.log("Couple Scene 7");
 			if((female.position.y - male.position.y) > 25) {
-				female.position.y -= 3;
+				female.position.y -= 6;
 			} else {
 				if((female.position.x - male.position.x) > 25) {
-					female.position.x -= 3;
+					female.position.x -= 6;
 				}
 			}
 		}
@@ -104,9 +104,9 @@
 				} else {
 					console.log("In framecount");
 					scene6vars.framecount++;
-					female.position += new Point(4 * Math.cos(scene6vars.framecount),5 * Math.sin(scene6vars.framecount));
+					//female.position += new Point(4 * Math.cos(scene6vars.framecount),5 * Math.sin(scene6vars.framecount));
 					console.log(scene6vars.framecount);
-					if (scene6vars.framecount > 30) {
+					if (scene6vars.framecount > 20) {
 						coupleScene = couplescene7;
 					}
 				}
