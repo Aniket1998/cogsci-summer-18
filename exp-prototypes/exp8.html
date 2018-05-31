@@ -133,16 +133,20 @@
 
     function scene1(event) {
 		    console.log("In scene 1");
+				var hittime = 0;
 			var dist = hero.position.x - bully.position.x;
 			var sep = hero.position.y - bully.position.y;
 			var separation = hero.position - bully.position;
 			if(dist > scene1vars.minapproach){
 				hero.position -= scene1vars.approachVelocity;
-			} else if (sep > scene1vars.scared) {
+			} else if (sep > scene1vars.scared && hittime<60) {
 				//bully.position += scene1vars.scareVelocity;
 				bully.position += separation.normalize()*7;
-				hero.position -= scene1vars.approachVelocity;
-			} else {
+				hero.position += separation.normalize()*4;
+				hittime++;
+			} else if(sep <= scene1vars.scared && hittime<60){
+				hero.position += separation.normalize()*4
+			}	else {
 				scene2vars.pushimpulse = separation.normalize();
 				currentscene = scene2;
 			}

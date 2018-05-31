@@ -55,11 +55,23 @@
 		wifespeed : new Point(-0.6, 0.1)
 	}
 
+	function scene4(event) {
+		console.log("In scene 4");
+		var dist = tender.position - drunk.position;
+		scene3vars.timeout++;
+		if(scene3vars.timeout<240){
+			wife.position += new Point(1.5, 0);
+		}
+		else if(drunk.position.y<380){
+			drunk.position += dist.normalize();
+			wife.position += new Point(1.5, 0);
+		}
+	}
 
 	function scene3(event) {
 		console.log("In scene 3");
 		scene3vars.timeout++;
-    var dist = wife.position - drunk.position;
+    var dist = drunk.position - wife.position;
 		console.log(dist.length);
 		if(scene3vars.timeout>36 && (drunk.position.y - wife.position.y)>1){
 			wife.visible = true;
@@ -68,11 +80,16 @@
 		if((drunk.position.y - wife.position.y)>1){
 			drunk.position += (new Point(7,-7)*Point.random());
 			drunk.position += (new Point(-4,4)*Point.random());
-		} else if(dist.length>22){
-			drunk.position += dist.normalize()*8;
-			wife.position += dist.normalize();
+		} else if(dist.length > 30){
+				wife.position += dist.normalize()*4;
+		}	else if(dist.length>22 && drunk.position.x>300){
+				wife.position += dist.normalize()*8;
+				drunk.position += dist.normalize();
+		} else if(drunk.position.x>310){
+			console.log(drunk.position.x);
+				drunk.position += dist.normalize()*3;
 		} else {
-			wife.position += dist.normalize()*3;
+				currentscene = scene4;
 		}
 
 	}
