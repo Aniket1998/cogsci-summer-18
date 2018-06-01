@@ -10,7 +10,7 @@
 			radius : 10,
 			fillColor : 'red'
 		});
-
+console.log(view.size);
 	var rectangle = new Rectangle(new Point(150, 400), new Point(250, 450));
 	var path = new Path.Rectangle(rectangle);
 	path.fillColor = 'blue';
@@ -28,7 +28,7 @@
  });
 
  var wife = new Path.Circle({
-	center : new Point(900, 20),
+	center : new Point(900, 40),
 	radius : 10,
 	fillColor : 'pink'
 });
@@ -52,7 +52,9 @@
 	var scene3vars = {
 		approachspeed : new Point(0, -1),
 		timeout : 0,
-		speed : new Point (0.5, -1),
+		threshold : 350,
+		scale : 150,
+		flag : 0,
 		wifespeed : new Point(-0.6, 0.1)
 	}
 
@@ -68,22 +70,46 @@
 			wife.position += new Point(1.5, 0);
 		}
 	}
+  var dest = Point.random() * view.size;
+	dest *= new Point(0.5,-0.05);
 
+	//var fin = dest.normalize();
+	console.log(dest);
 	function scene3(event) {
 		console.log("In scene 3");
 		scene3vars.timeout++;
     var dist = drunk.position - wife.position;
-		console.log(dist.length);
 		if(scene3vars.timeout>36 && (drunk.position.y - wife.position.y)>1){
 			wife.visible = true;
-			wife.position += scene3vars.wifespeed;
+			//wife.position += scene3vars.wifespeed;
 		}
-		if((drunk.position.y - wife.position.y)>1 && drunk.position.y>350){
-			drunk.position += scene3vars.speed;
-		} else if((drunk.position.y - wife.position.y)>1){
-			drunk.position += (new Point(7,-7)*Point.random());
-			drunk.position += (new Point(-4,4)*Point.random());
-		} else if(dist.length > 30){
+		// if((drunk.position.y - wife.position.y)>1 && drunk.position.y>350){
+		// 	drunk.position += scene3vars.speed;
+		// } else if((drunk.position.y - wife.position.y)>1){
+		// 	drunk.position += (new Point(7,-7)*Point.random());
+		// 	drunk.position += (new Point(-4,4)*Point.random());
+		// } else if(dist.length > 30){
+		// 		wife.position += dist.normalize()*4;
+		// }	else if(dist.length>22 && drunk.position.x>450){
+		// 		wife.position += dist.normalize()*2;
+		// 		drunk.position += dist.normalize();
+		// } else if(drunk.position.x>450){
+		// 	console.log(drunk.position.x);
+		// 		drunk.position += dist.normalize()*8;
+		// } else {
+		// 		currentscene = scene4;
+		// }
+		var vec = dest - drunk.position;
+		if(scene3vars.flag<10){
+			console.log("Flag is "+scene3vars.flag);
+		drunk.position += vec/scene3vars.scale;
+	} else if(scene3vars.flag>=10 && drunk.position.y>wife.position.y+5){
+		  //scene3vars.flag = 0;
+			drunk.position.y += (wife.position.y-drunk.position.y)*0.08;
+			drunk.position.x = 550;
+			// console.log("diff in y is "+wife.position.y-drunk.position.y);
+			// console.log("dist is "dist);
+	  } else if(dist.length > 30){
 				wife.position += dist.normalize()*4;
 		}	else if(dist.length>22 && drunk.position.x>450){
 				wife.position += dist.normalize()*2;
@@ -94,6 +120,17 @@
 		} else {
 				currentscene = scene4;
 		}
+	  console.log("Dist is " + vec.length);
+
+		if (vec.length < scene3vars.threshold) {
+			dest = Point.random() * view.size;
+			dest *= new Point(1,-0.1);
+			//fin = dest.normalize();
+		//	dest *= new Point(0.1, -0.01);
+			scene3vars.flag++;
+			console.log("Flag is "+ scene3vars.flag);
+		}
+
 
 	}
 
@@ -115,6 +152,7 @@
 
 	function scene1(event) {
  		console.log("In scene 1");
+		console.log(Point.random()*view.size);
 		scene1vars.timeout++;
     if(drunk.position.x < 200){
 			drunk.position += scene1vars.normalspeed;

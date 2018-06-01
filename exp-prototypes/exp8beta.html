@@ -27,6 +27,7 @@
 		var scene1vars = {
 			minapproach : 25,
 			scared : 30,
+			count : 0,
 			approachVelocity : new Point(1.3,0),
 			scareVelocity : new Point(0, 7)
 		}
@@ -124,6 +125,38 @@
 				currentscene = scene3;
 			}
 		}
+		function scene12(event) {
+		    console.log("In scene 12");
+			var dist = hero.position.x - bully.position.x;
+			var sep = hero.position.y - bully.position.y;
+			var separation = hero.position - bully.position;
+			if(separation<27){
+				hero.position += separation.normalize()*3;
+			} else if (sep > scene1vars.scared) {
+				//bully.position += scene1vars.scareVelocity;
+				bully.position += separation.normalize()*10;
+				hero.position += separation.normalize();
+			}	else {
+				scene2vars.pushimpulse = separation.normalize();
+				currentscene = scene2;
+			}
+		}
+		function scene11(event) {
+		    console.log("In scene 11");
+			var dist = hero.position.x - bully.position.x;
+			var sep = hero.position.y - bully.position.y;
+			var separation = hero.position - bully.position;
+			if(separation<27){
+				hero.position += separation.normalize()*3;
+			} else if (sep > scene1vars.scared) {
+				//bully.position += scene1vars.scareVelocity;
+				bully.position += separation.normalize()*10;
+				hero.position += separation.normalize();
+			} else {
+				scene2vars.pushimpulse = separation.normalize();
+				currentscene = scene12;
+			}
+		}
     function scene1(event) {
 		    console.log("In scene 1");
 			var dist = hero.position.x - bully.position.x;
@@ -131,13 +164,16 @@
 			var separation = hero.position - bully.position;
 			if(dist > scene1vars.minapproach){
 				hero.position -= scene1vars.approachVelocity;
-			} else if (sep > scene1vars.scared) {
+			} else if (sep > scene1vars.scared && scene1vars.count<36000) {
 				//bully.position += scene1vars.scareVelocity;
-				bully.position += separation.normalize()*7;
-				hero.position -= scene1vars.approachVelocity;
-			} else {
+				bully.position += separation.normalize()*10;
+				hero.position += separation.normalize();
+			} else if(scene3vars.count<36000){
+				scene1vars.count++;
+				hero.position += separation.normalize()*3;
+			}	else {
 				scene2vars.pushimpulse = separation.normalize();
-				currentscene = scene2;
+				currentscene = scene11;
 			}
 		}
 		currentscene = scene1;
