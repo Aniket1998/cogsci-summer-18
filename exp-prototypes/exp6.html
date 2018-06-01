@@ -53,7 +53,7 @@ console.log(view.size);
 		approachspeed : new Point(0, -1),
 		timeout : 0,
 		threshold : 350,
-		scale : 250,
+		scale : 400,
 		flag : 0,
 		wifespeed : new Point(-0.6, 0.1)
 	}
@@ -100,10 +100,10 @@ console.log(view.size);
 		// 		currentscene = scene4;
 		// }
 		var vec = dest - drunk.position;
-		if(scene3vars.flag<8){
+		if(scene3vars.flag<20){
 			console.log("Flag is "+scene3vars.flag);
 		drunk.position += vec/scene3vars.scale;
-	} else if(scene3vars.flag>=8 && drunk.position.y>wife.position.y+5){
+	} else if(scene3vars.flag>=20 && drunk.position.y>wife.position.y+2){
 		  //scene3vars.flag = 0;
 			//drunk.position.y += (wife.position.y-drunk.position.y)*0.08;
 			var sep = new Point(550, wife.position.y);
@@ -125,7 +125,7 @@ console.log(view.size);
 
 		if (vec.length < scene3vars.threshold) {
 			dest = Point.random() * view.size;
-			dest *= new Point(1,-0.1);
+			//dest *= new Point(1,-0.1);
 			//fin = dest.normalize();
 		//	dest *= new Point(0.1, -0.01);
 			scene3vars.flag++;
