@@ -53,6 +53,7 @@
 		var scene6vars = {
 			approachspeed : new Point(5, 0)
 		}
+		var cnt = 0;
 		function scene6(event) {
 			console.log("In scene 6");
 			var sep = guru.position - hero.position;
@@ -124,6 +125,19 @@
 				currentscene = scene3;
 			}
 		}
+
+		function scene11(event){
+			console.log("Scene 11");
+			var separation = hero.position - bully.position;
+			if(bully.position.y > 80){
+				bully.position -= scene2vars.goback.normalize()*5;
+			} else{
+				console.log(cnt);
+				cnt++;
+				currentscene = scene1;
+			}
+		}
+
     function scene1(event) {
 		    console.log("In scene 1");
 			var dist = hero.position.x - bully.position.x;
@@ -133,11 +147,13 @@
 				hero.position -= scene1vars.approachVelocity;
 			} else if (sep > scene1vars.scared) {
 				//bully.position += scene1vars.scareVelocity;
-				bully.position += separation.normalize()*7;
+				bully.position += separation.normalize()*12;
 				hero.position -= scene1vars.approachVelocity;
-			} else {
-				scene2vars.pushimpulse = separation.normalize();
+			} else if(cnt>1){
 				currentscene = scene2;
+			}	else {
+				scene2vars.pushimpulse = separation.normalize();
+				currentscene = scene11;
 			}
 		}
 		currentscene = scene1;
