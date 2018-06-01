@@ -53,7 +53,7 @@ console.log(view.size);
 		approachspeed : new Point(0, -1),
 		timeout : 0,
 		threshold : 350,
-		scale : 150,
+		scale : 250,
 		flag : 0,
 		wifespeed : new Point(-0.6, 0.1)
 	}
@@ -100,13 +100,14 @@ console.log(view.size);
 		// 		currentscene = scene4;
 		// }
 		var vec = dest - drunk.position;
-		if(scene3vars.flag<10){
+		if(scene3vars.flag<8){
 			console.log("Flag is "+scene3vars.flag);
 		drunk.position += vec/scene3vars.scale;
-	} else if(scene3vars.flag>=10 && drunk.position.y>wife.position.y+5){
+	} else if(scene3vars.flag>=8 && drunk.position.y>wife.position.y+5){
 		  //scene3vars.flag = 0;
-			drunk.position.y += (wife.position.y-drunk.position.y)*0.08;
-			drunk.position.x = 550;
+			//drunk.position.y += (wife.position.y-drunk.position.y)*0.08;
+			var sep = new Point(550, wife.position.y);
+			drunk.position += (sep-drunk.position).normalize();
 			// console.log("diff in y is "+wife.position.y-drunk.position.y);
 			// console.log("dist is "dist);
 	  } else if(dist.length > 30){
