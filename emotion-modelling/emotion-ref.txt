@@ -1,6 +1,6 @@
 HAPPY
-	Valence :
-	Arousal :
+	Valence : 6-9
+	Arousal : 2-4
 
 	Human Level Actions:
 
@@ -13,8 +13,8 @@ HAPPY
 		Random perturbations along the perpendicular direction
 
 SADNESS
-	Valence :
-	Arousal :
+	Valence : -6 - -9
+	Arousal : -3 - -5
 
 	Human Level Actions:
 		Motionless, Passive
@@ -25,16 +25,20 @@ SADNESS
 		Maybe even sudden retardations to motion
 
 FEAR/TERROR:
-	Valence :
-	Arousal :
+	Valence : -4 - -6
+	Arousal : 5 - 7
 
 	Human Level Actions:
+		Shivering, Sharp retreat from entity casuing fear
 
 	Machine Level Actions:
+		Not-so-vigourous shivering
+		Sharp retreat from entity casuing fear
+
 
 ANGER/RAGE:
-	Valence :
-	Arousal :
+	Valence :	-4 - -6
+	Arousal :	7 - 9
 
 	Human Level Actions:
 		Trembling the body
@@ -42,11 +46,12 @@ ANGER/RAGE:
 
 	Machine Level Actions:
 		Heavy vibrations in the perpendicular direction
+		Hitting the adversary
 
 
 Joyful : 8, 2
 Sad : -8, -4
-Shameful :
+Shameful : -3 - -4, -4 - -6
 Fearful : -5, 6
 Angry : -6, 8
 Disgusted : -9, 2
