@@ -9,8 +9,10 @@ HAPPY
 
 	Machine Level Actions:
 
+		Up and down jumping
 		Rotations of the displacement vector
-		Random perturbations along the perpendicular direction
+		Random perturbations
+		Moving in a circle?
 
 SADNESS
 	Valence : -6 - -9
@@ -20,20 +22,20 @@ SADNESS
 		Motionless, Passive
 
 	Machine Level Actions:
-		Slow speed
-		Tendency to retard back
-		Maybe even sudden retardations to motion
+		Very slow speed
+		Suddenly stopping while moving to think
 
 FEAR/TERROR:
 	Valence : -4 - -6
 	Arousal : 5 - 7
 
 	Human Level Actions:
-		Shivering, Sharp retreat from entity casuing fear
+ 		Shivering of arms
+		Running away
 
 	Machine Level Actions:
-		Not-so-vigourous shivering
-		Sharp retreat from entity casuing fear
+		Not-so-vigorous shivering
+		Sharp retreat from entity causing fear in case it gets too near
 
 
 ANGER/RAGE:
@@ -42,11 +44,12 @@ ANGER/RAGE:
 
 	Human Level Actions:
 		Trembling the body
-		Tendency to push away things violently
+		Tendency to push away things violently.. hmmm, could be used.
 
 	Machine Level Actions:
-		Heavy vibrations in the perpendicular direction
+		Heavy vibrations in the perpendicular (or a fixed oblique) direction
 		Hitting the adversary
+		Violently hitting away of any random objects?
 
 
 Joyful : 8, 2
