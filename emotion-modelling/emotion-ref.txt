@@ -39,7 +39,7 @@ FEAR/TERROR:
 
 
 ANGER/RAGE:
-	Valence :	-4 - -6
+	Valence :	-6 - -8
 	Arousal :	7 - 9
 
 	Human Level Actions:
@@ -63,3 +63,9 @@ Excited : 7, 9
 Satisfied : 9, -2
 Alert : 1, 9
 Calm : 1, -8
+
+
+Fundamental Functions:
+	Motion along a vector
+	Approaching another
+	Running from another

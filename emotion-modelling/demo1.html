@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Emotion Test</title>
+	<script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
+	<script type="text/javascript" src="emotion.js"></script>
+	<script type="text/javascript">
+		paper.install(window);
+		window.onload = function() {
+			paper.setup('canvas');
+
+			var person1 = new Person(view.center,7,8,new Path.Circle({
+				center : view.center,
+				radius : 10,
+				fillColor : 'red'
+			}));
+			var person2 = new Person(new Point(view.size.width * 0.2,view.size.height * 0.8),8,3,new Path.Circle({
+				center : view.center,
+				radius : 10,
+				fillColor : 'green'
+			}));
+
+			view.onFrame = function(event) {
+				if ((person1.physique.position.subtract(person2.physique.position)).length > 27) {
+					person1.approach(person2,event.count);
+				}
+			}
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="500"></canvas>
+</body>
+</html>
