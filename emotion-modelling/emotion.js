@@ -15,6 +15,7 @@ function Person(pos,val,arouse,shape) {
 	}
 
 	this.perp_perturbations = function(sep,tick) {
+		// Anirudh Anil Ojha Phone Uthao
 		var perp = sep.rotate(90).multiply((13.5 - this.arousal) * Math.sin(tick * this.arousal/10));
 		return perp;
 	}
