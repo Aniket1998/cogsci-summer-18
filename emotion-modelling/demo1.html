@@ -9,32 +9,34 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
-			var person = new Person(new Path.Circle({
+			var person = new Person(true,view.center,new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'red'
-			}),view.center,1,1,1);
-			var cir2 = new Path.Circle({
+			}));
+			var endcircle = new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'green'
 			});
-			var dest = view.center.add(new Point(200,100));
-			cir2.position = dest;
-			var base1 = dest.subtract(person.shape.position).normalize();
-			var base2 = base1.rotate(90).normalize();
 			var path = new Path();
-			path.add(person.shape.position,Point.random().multiply(view.size),Point.random().multiply(view.size),cir2.position);
+			path.strokeColor = 'black';
+			var endpt = view.center.add(300,400);
+			endcircle.position = endpt;
+			var startpt = person.shape.position;
+			path.add(startpt,new Point(100,200),new Point(300,400),endpt);
+			path.strokeColor = 'black';
 			path.smooth();
+			var offset = 0;
 			view.onFrame = function(event) {
-				if (person.shape.position.subtract(dest).length > 20) {
-					person.move(dest,base1,base2,event.count);
+				if (offset != -1) {
+					offset = person.moveAlongPath(path,offset,event.delta);
 				}
 			}
 		}
 	</script>
 </head>
 <body>
-	<canvas id="canvas" width="960" height="500"></canvas>
+	<canvas id="canvas" width="960" height="960"></canvas>
 </body>
 </html>
