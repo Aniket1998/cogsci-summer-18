@@ -5,11 +5,30 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	this.phys = shape;
 	this.debug = debug;
 
-	this.moveAlongPath = function(path,offset,delta) {
+	this.movement = {
+		path : 0
+	}
+
+	this.moveToPoint = function(dest) {
+		var path = new Path();
+		path.add(this.phys.position);
+		for (var i = 0; i < 4; i++) {
+			path.add(Point.random());
+		}
+		path.add(dest);
+		if (this.debug) {
+			path.strokeColor = 'black';
+		}
+		path.smooth();
+		this.movement.path = path;
+	}
+
+	this.moveAlongPath = function(offset,delta) {
+		var path = this.movement.path;
 		if (offset < path.length) {
 			this.phys.position = path.getPointAt(offset);
 
-			var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + 150)).normalize();
+			var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + 150 * delta)).normalize();
 			vibrationvec = vibrationvec.multiply(4 * Math.random());
 			this.phys.position.x += vibrationvec.rotate(90).x;
 			this.phys.position.y += vibrationvec.rotate(90).y;

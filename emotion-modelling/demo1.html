@@ -27,10 +27,11 @@
 			path.add(startpt,new Point(100,200),new Point(300,400),endpt);
 			path.strokeColor = 'black';
 			path.smooth();
+			person.moveToPoint(endpt);
 			var offset = 0;
 			view.onFrame = function(event) {
 				if (offset != -1) {
-					offset = person.moveAlongPath(path,offset,event.delta);
+					offset = person.moveAlongPath(offset,event.delta);
 				}
 			}
 		}
