@@ -18,9 +18,9 @@ function Person(pos,val,arouse,shape) {
 		var perp;
 		if (this.arousal > 0) {
 			if (this.valence < 0) {
-				perp = sep.rotate(90).multiply((this.arousal * 2 + this.valence) * Math.sin(tick * this.arousal/9));
+				perp = sep.rotate(90).multiply((this.arousal * 2 + this.valence) * Math.sin(tick * this.arousal/3));
 			} else {
-				perp = sep.rotate(90).multiply((10 - this.valence) * Math.sin(tick * this.arousal/9));
+				perp = sep.rotate(90).multiply(this.valence/10 * (Math.random() * 2 - 1));
 			}
 		} else {
 			if (this.valence < 0) {
@@ -29,13 +29,14 @@ function Person(pos,val,arouse,shape) {
 				perp = sep.rotate(90).multiply(2 * (this.arousal - this.valence) * Math.sin(tick * this.arousal/60));
 			}
 		}
+		//perp = perp.add(Point.random().multiply(2).subtract(1).multiply(this.arousal/3));
 		return perp;
 	}
 
 	this.long_perturbations = function(sep,tick) {
 		var pert;
 		if (this.valence > -4 || this.valence < 4) {
-			pert = sep.rotate((2 * Math.random() - 1) * (this.arousal));
+			pert = sep.rotate(Math.random() * (45 + this.arousal)).multiply(this.arousal/4);
 		}
 		return pert;
 	}
@@ -43,7 +44,8 @@ function Person(pos,val,arouse,shape) {
 	this.approach = function(person2,tick) {
 		var separation = person2.physique.position.subtract(this.physique.position).normalize();
 		console.log(this.approachspeed());
-		var disp = separation.multiply(this.approachspeed()).add(this.perp_perturbations(separation,tick)).add(this.long_perturbations(separation,tick));
+		var disp;
+		disp = separation.multiply(this.approachspeed()).add(this.perp_perturbations(separation,tick));
 		this.physique.position.x += disp.x;
 		this.physique.position.y += disp.y;
 	}

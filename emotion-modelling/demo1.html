@@ -4,26 +4,31 @@
 	<meta charset="utf-8">
 	<title>Emotion Test</title>
 	<script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
-	<script type="text/javascript" src="emotion.js"></script>
+	<script type="text/javascript" src="emotion_threeparam.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
-
-			var person1 = new Person(view.center,-3,-7,new Path.Circle({
+			var person = new Person(new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'red'
-			}));
-			var person2 = new Person(new Point(view.size.width * 0.2,view.size.height * 0.8),8,3,new Path.Circle({
+			}),view.center,1,1,1);
+			var cir2 = new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'green'
-			}));
-
+			});
+			var dest = view.center.add(new Point(200,100));
+			cir2.position = dest;
+			var base1 = dest.subtract(person.shape.position).normalize();
+			var base2 = base1.rotate(90).normalize();
+			var path = new Path();
+			path.add(person.shape.position,Point.random().multiply(view.size),Point.random().multiply(view.size),cir2.position);
+			path.smooth();
 			view.onFrame = function(event) {
-				if ((person1.physique.position.subtract(person2.physique.position)).length > 27) {
-					person1.approach(person2,event.count);
+				if (person.shape.position.subtract(dest).length > 20) {
+					person.move(dest,base1,base2,event.count);
 				}
 			}
 		}
