@@ -2,18 +2,17 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	this.arousal = arousal;
 	this.eagerness = eagerness;
 	this.focus = focus;
-	this.shape = shape;
-	this.shape.position = pos;
+	this.phys = shape;
 	this.debug = debug;
 
 	this.moveAlongPath = function(path,offset,delta) {
 		if (offset < path.length) {
-			this.shape.position = path.getPointAt(offset);
+			this.phys.position = path.getPointAt(offset);
 
 			var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + 150)).normalize();
 			vibrationvec = vibrationvec.multiply(4 * Math.random());
-			this.shape.position.x += vibrationvec.rotate(90).x;
-			this.shape.position.y += vibrationvec.rotate(90).y;
+			this.phys.position.x += vibrationvec.rotate(90).x;
+			this.phys.position.y += vibrationvec.rotate(90).y;
 			if (this.debug) {
 				console.log(offset);
 			}
