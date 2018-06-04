@@ -1,4 +1,7 @@
-function Person(debug,pos,shape) {
+function Person(debug,pos,eagerness,arousal,focus,shape) {
+	this.arousal = arousal;
+	this.eagerness = eagerness;
+	this.focus = focus;
 	this.shape = shape;
 	this.shape.position = pos;
 	this.debug = debug;
@@ -6,10 +9,11 @@ function Person(debug,pos,shape) {
 	this.moveAlongPath = function(path,offset,delta) {
 		if (offset < path.length) {
 			this.shape.position = path.getPointAt(offset);
-			var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + 150)).rotate(90).normalize();
-			vibrationvec = vibrationvec.multiply(5 * Math.random());
-			this.shape.position.x += vibrationvec.x;
-			this.shape.position.y += vibrationvec.y;
+
+			var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + 150)).normalize();
+			vibrationvec = vibrationvec.multiply(4 * Math.random());
+			this.shape.position.x += vibrationvec.rotate(90).x;
+			this.shape.position.y += vibrationvec.rotate(90).y;
 			if (this.debug) {
 				console.log(offset);
 			}
@@ -18,6 +22,32 @@ function Person(debug,pos,shape) {
 			return -1;
 		}
 	}
+}
 
-
+var EmotionTable = {
+	happiness : {
+		eagerness : [5,8],
+		arousal : [2,4],
+		focus : [7,9]
+	},
+	sadness : {
+		eagerness : [-9,-6],
+		arousal : [-5,-3],
+		focus : [4,6]
+	},
+	boredom : {
+		eagerness : [-4,-2],
+		arousal : [-8,-6],
+		focus : [1,2]
+	},
+	fear : {
+		eagerness : [-8,-6],
+		arousal : [5,7],
+		focus : [7,8]
+	},
+	anger : {
+		eagerness : [6,8],
+		arousal : [7,9],
+		focus : [7,8]
+	}
 }
