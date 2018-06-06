@@ -14,19 +14,20 @@
 				radius : 10,
 				fillColor : 'red'
 			}));
-			var endcircle = new Path.Circle({
+			var person2 = new Person(true,view.center,6,3,8,new Path.Circle({
 				center : view.center,
 				radius : 10,
-				fillColor : 'green'
-			});
+				fillColor : 'red'
+			}));
 			var endpt = view.center.add(300,400);
-			endcircle.position = endpt;
-			var startpt = person.phys.position;
-			person.moveToPoint(endpt);
+			person2.phys.position = endpt;
+			person2.moveToPoint(endpt.add(100,-250));
+			person.emptyPath();
 			var offset = 0;
 			view.onFrame = function(event) {
 				if (offset != -1) {
-					offset = person.moveAlongPath(offset,event.delta);
+					person2.moveAlongPath(offset,event.delta);
+					person.followPerson(person2);
 				}
 			}
 		}
