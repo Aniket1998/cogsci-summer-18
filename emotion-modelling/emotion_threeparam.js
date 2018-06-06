@@ -12,7 +12,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	this.emptyPath = function() {
 		this.movement.path = new Path();
 		if (this.debug) {
-			this.movement.path.strokeColor = 'black';
+			//this.movement.path.strokeColor = 'black';
 		}
 	}
 
@@ -37,7 +37,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		path.add(dest);
 		path.smooth();
 		if (this.debug) {
-			path.strokeColor = 'black';
+			//path.strokeColor = 'black';
 		}
 		//path.strokeColor = 'black';
 		this.movement.path = path;
@@ -76,9 +76,20 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			console.log("Pathlength " + this.movement.path.length);
 			last = this.movement.path.getPointAt(this.movement.path.length);
 		}
+		var speed;
+		if (this.eagerness > 0) {
+			speed = 40 * this.eagerness;
+		} else {
+			speed = 20 * (10 + this.eagerness);
+		}
 		var vx = person2.phys.position.subtract(last);
+		var gap = vx.length;
 		vx = vx.normalize();
-		this.movement.path.add(last.add(vx.multiply(2)));
+		if (gap < speed/45.0) {
+			this.movement.path.add(person2.phys.position);
+		} else {
+			this.movement.path.add(last.add(vx.multiply(speed/45.0)));
+		}
 		this.movement.path.smooth();
 	}
 
