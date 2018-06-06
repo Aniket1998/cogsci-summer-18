@@ -9,12 +9,12 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
-			var person = new Person(true,view.center,6,3,8,new Path.Circle({
+			var person = new Person(true,view.center,6,-99,8,new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'red'
 			}));
-			var person2 = new Person(true,view.center,6,3,8,new Path.Circle({
+			var person2 = new Person(true,view.center,6,-99,8,new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'red'
@@ -23,18 +23,19 @@
 			person2.phys.position = endpt;
 			person2.moveToPoint(endpt.add(100,-500));
 			person.emptyPath();
+			person.initFollow();
 			var offset = 0;
 			var offset2 = 0;
 			view.onFrame = function(event) {
-				if (offset != -1) {
-					offset = person2.moveAlongPath(offset,event.delta);
+				if (event.count % 1 === 0) {
 					person.followPerson(person2);
-					console.log("Offset at frame " + event.count + " is " + offset);
-					console.log(event.count);
-				}
-				if (offset2 != -1) {
-					offset2 = person.moveAlongPath(offset2,event.delta);
-					console.log("Offset 2 at frame " + event.count + " is " + offset2);
+					if (offset != -1) {
+						offset = person2.moveAlongPath(offset,event.delta);
+					}
+					if (offset2 != -1) {
+						console.log("offset2 is " + offset2);
+						offset2 = person.moveAlongPath(offset2,event.delta);
+					}
 				}
 			}
 		}

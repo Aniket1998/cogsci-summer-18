@@ -36,11 +36,14 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		}
 		path.add(dest);
 		path.smooth();
-		path.strokeColor = 'black';
+		if (this.debug) {
+			path.strokeColor = 'black';
+		}
+		//path.strokeColor = 'black';
 		this.movement.path = path;
 	}
 
-	this.followPerson = function(person2) {
+	/*this.followPerson = function(person2) {
 		var start = this.phys.position;
 		var dest = person2.phys.position;
 		var vx = dest.subtract(start);
@@ -57,6 +60,26 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		}
 		this.movement.path.add(start.add(vx.multiply(dist * n)));
 		this.movement.path.smooth();
+	}*/
+	this.initFollow = function() {
+		this.movement.path = new Path();
+		this.movement.path.add(this.phys.position);
+		this.movement.path.strokeColor = 'black';
+		console.log(this.movement.path.length)
+	}
+
+	this.followPerson = function(person2) {
+		var last;
+		if (this.movement.path.length === 0) {
+			last = this.phys.position;
+		} else {
+			console.log("Pathlength " + this.movement.path.length);
+			last = this.movement.path.getPointAt(this.movement.path.length);
+		}
+		var vx = person2.phys.position.subtract(last);
+		vx = vx.normalize();
+		this.movement.path.add(last.add(vx.multiply(2)));
+		this.movement.path.smooth();
 	}
 
 	this.moveAlongPath = function(offset,delta) {
@@ -71,16 +94,19 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		if (this.arousal > 0) {
 			amplitude = this.arousal * 1.5;
 		}
+		if (offset + speed * delta > this.movement.path.length) {
+			return offset;
+		}
 		if (offset < path.length) {
 			this.phys.position = path.getPointAt(offset);
 			if (this.arousal > 0) {
-				var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + speed * delta)).rotate(90 * Math.random()).normalize();
+				var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + speed * delta)).rotate(30 + 60 * Math.random()).normalize();
 				vibrationvec = vibrationvec.multiply(amplitude * Math.random());
 				this.phys.position.x += vibrationvec.x;
 				this.phys.position.y += vibrationvec.y;
 			}
 			if (this.debug) {
-				console.log(offset);
+				//console.log(offset);
 			}
 			return (offset + delta * speed);
 		} else {
