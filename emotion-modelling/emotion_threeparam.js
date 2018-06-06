@@ -36,7 +36,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		}
 		path.add(dest);
 		path.smooth();
-		//path.strokeColor = 'black';
+		path.strokeColor = 'black';
 		this.movement.path = path;
 	}
 

@@ -21,13 +21,20 @@
 			}));
 			var endpt = view.center.add(300,400);
 			person2.phys.position = endpt;
-			person2.moveToPoint(endpt.add(100,-250));
+			person2.moveToPoint(endpt.add(100,-500));
 			person.emptyPath();
 			var offset = 0;
+			var offset2 = 0;
 			view.onFrame = function(event) {
 				if (offset != -1) {
-					person2.moveAlongPath(offset,event.delta);
+					offset = person2.moveAlongPath(offset,event.delta);
 					person.followPerson(person2);
+					console.log("Offset at frame " + event.count + " is " + offset);
+					console.log(event.count);
+				}
+				if (offset2 != -1) {
+					offset2 = person.moveAlongPath(offset2,event.delta);
+					console.log("Offset 2 at frame " + event.count + " is " + offset2);
 				}
 			}
 		}
