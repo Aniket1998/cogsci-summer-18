@@ -11,18 +11,25 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 
 	this.moveToPoint = function(dest) {
 		var path = new Path();
-		path.add(this.phys.position,dest.subtract(100,200),dest.subtract(200,300),dest);
-		//var numpts = 4;
-		//var prev = dest;
-		//for (var i = 0; i < numpts; i++) {
-		//	prev = prev.subtract(Point.random().multiply(10))
-		//	path.add(prev);
-		//}
-		path.add(dest);
-		if (this.debug) {
-			path.strokeColor = 'black';
+		var start = this.phys.position;
+		var vx = dest.subtract(start);
+		var dist = vx.length;
+		vx = vx.normalize();
+		var vy = vx.rotate(90);
+		var height = 150 * Math.exp(-this.focus/5.0);
+		var n = 4;
+		for (var i = 1; i < n; i++) {
+			var x = start.add(vx.multiply((dist/n) * i));
+			/*var f = -1;
+			if(i % 2) {
+				f = 1;
+			}*/
+			var y = vy.multiply(height * (2 * Math.random() - 1));
+			path.add(x.add(y));
 		}
+		path.add(dest);
 		path.smooth();
+		//path.strokeColor = 'black';
 		this.movement.path = path;
 	}
 
@@ -40,11 +47,12 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		}
 		if (offset < path.length) {
 			this.phys.position = path.getPointAt(offset);
-
-			var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + speed * delta)).rotate(90).normalize();
-			vibrationvec = vibrationvec.multiply(amplitude * Math.random());
-			this.phys.position.x += vibrationvec.x;
-			this.phys.position.y += vibrationvec.y;
+			if (this.arousal > 0) {
+				var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + speed * delta)).rotate(90).normalize();
+				vibrationvec = vibrationvec.multiply(amplitude * Math.random());
+				this.phys.position.x += vibrationvec.x;
+				this.phys.position.y += vibrationvec.y;
+			}
 			if (this.debug) {
 				console.log(offset);
 			}

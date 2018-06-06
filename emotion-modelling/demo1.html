@@ -9,7 +9,7 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
-			var person = new Person(true,view.center,-5,4,8,new Path.Circle({
+			var person = new Person(true,view.center,-3,-5,1.5,new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'red'
@@ -19,14 +19,9 @@
 				radius : 10,
 				fillColor : 'green'
 			});
-			var path = new Path();
-			path.strokeColor = 'black';
 			var endpt = view.center.add(300,400);
 			endcircle.position = endpt;
 			var startpt = person.phys.position;
-			path.add(startpt,new Point(100,200),new Point(300,400),endpt);
-			path.strokeColor = 'black';
-			path.smooth();
 			person.moveToPoint(endpt);
 			var offset = 0;
 			view.onFrame = function(event) {
