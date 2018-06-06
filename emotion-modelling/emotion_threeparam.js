@@ -44,19 +44,19 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		var start = this.phys.position;
 		var dest = person2.phys.position;
 		var vx = dest.subtract(start);
-		var separation = vx.length;
+		//var separation = vx.length;
 		vx = vx.normalize();
-		var vy = vx.rotate(90);
-		var n = 4;
-		var height = 150 * Math.exp(-this.focus/5.0);
-		var dist = separation/(20.0 * n);
+		//var vy = vx.rotate(90);
+		var n = 2;
+		//var height = 150 * Math.exp(-this.focus/5.0);
+		//var dist = separation/(20.0 * n);
 		for (var i = 0; i < n; i++) {
-			var x = start.add(vx.multiply(dist * i));
-			var y = vy.multiply(height * (2 * Math.random() - 1));
-			this.movement.path.add(x.add(y));
+			var x = start.add(vx.multiply(25));
+			//var y = vy.multiply(height * (2 * Math.random() - 1));
+			this.movement.path.add(x);
 		}
-		this.movement.path.add(start.add(vx.multiply(dist * n)));
-		this.movement.path.smooth();
+		//this.movement.path.add(start.add(vx.multiply(dist * n)));
+		//this.movement.path.smooth();
 	}
 
 	this.moveAlongPath = function(offset,delta) {

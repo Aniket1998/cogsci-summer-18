@@ -22,7 +22,7 @@
 			var endpt = view.center.add(300,400);
 			endcircle.position = endpt;
 			var startpt = person.phys.position;
-			person.moveToPoint(endpt);
+			person.followPerson(endpt);
 			var offset = 0;
 			view.onFrame = function(event) {
 				if (offset != -1) {
