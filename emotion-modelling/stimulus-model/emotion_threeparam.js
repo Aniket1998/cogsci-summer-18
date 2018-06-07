@@ -168,6 +168,15 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	}
 }
 
+/*function Stimulus(person,owner,entity,priority) {
+	this.activeStatus = false;
+	this.owner = owner;
+	this.entity = entity;
+	this.priority = priority;
+	this.checkActivity = function() {}
+	this.actStimulus = function() {}
+}*/
+
 var EmotionTable = {
 	happiness : {
 		eagerness : [5,8],

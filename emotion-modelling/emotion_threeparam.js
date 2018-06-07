@@ -38,9 +38,9 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		path.add(dest);
 		path.smooth();
 		if (this.debug) {
-			//path.strokeColor = 'black';
+			path.strokeColor = 'black';
 		}
-		path.strokeColor = 'black';
+		//path.strokeColor = 'black';
 		this.movement.path = path;
 	}
 
@@ -70,14 +70,18 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	this.initFollow = function() {
 		this.movement.path = new Path();
 		this.movement.path.add(this.phys.position);
-		this.movement.path.strokeColor = 'black';
-		console.log(this.movement.path.length)
+		if (this.debug) {
+			this.movement.path.strokeColor = 'black';
+		}
+		//console.log(this.movement.path.length)
 	}
 
 	this.initRetreat = function() {
 		this.movement.path = new Path();
 		this.movement.path.add(this.phys.position);
-		this.movement.path.strokeColor = 'black';
+		if (this.debug) {
+			this.movement.path.strokeColor = 'black';
+		}
 	}
 
 	this.retreatFromPerson = function(person2,bound) {
@@ -117,7 +121,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		if (this.movement.path.length === 0) {
 			last = this.phys.position;
 		} else {
-			console.log("Pathlength " + this.movement.path.length);
+			//console.log("Pathlength " + this.movement.path.length);
 			last = this.movement.path.getPointAt(this.movement.path.length);
 		}
 		var speed;
@@ -142,7 +146,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
 			y = y.add((ynext.subtract(y)).multiply(1/15))
-			console.log(cnt);
+			//console.log(cnt);
 			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
 			cnt++;
 		}
@@ -161,8 +165,8 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		if (this.arousal > 0) {
 			amplitude = this.arousal * 1.5;
 		}
-		if (offset + speed * delta > this.movement.path.length) {
-			return offset;
+		if (offset > this.movement.path.length) {
+			return -1;
 		}
 		if (offset < path.length) {
 			this.phys.position = path.getPointAt(offset);
