@@ -6,6 +6,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	this.debug = debug;
 
 	this.movement = {
+		temppath : 0,
 		path : 0
 	}
 
@@ -79,32 +80,36 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		this.movement.path.strokeColor = 'black';
 	}
 
-	this.retreatFromPerson = function(person2,stepsize,numdivs,bound) {
+	this.retreatFromPerson = function(person2,bound) {
+		//bound depends on situation - if he is aware of the pursuer or how fast he sees him and reacts
+		//numdivs is no. of steps pre-decided : -e,+a
+		//stepsize lessens height effect : -e, +a
+		//height, here, also represents arousal (like trembling) and not wandering. +a
+
 		var start;
 		if (this.movement.path.length === 0) {
 			start = this.phys.position;
 		} else {
 			start = this.movement.path.getPointAt(this.movement.path.length);
+			//start is end of path of escapist drawn
 		}
+		var numdivs = this.eagerness/1.5;
+		var stepsize = this.eagerness*3;
 		if (this.phys.position.subtract(person2.phys.position).length < bound) {
 			var vx = start.subtract(person2.phys.position);
 			var dist = vx.length;
 			vx = vx.normalize();
 			var vy = vx.rotate(90);
-			var height = 150 * Math.exp(-this.focus/5.0);
+			var height = 5 * (this.arousal);
 			for (var i = 1; i <= numdivs; i++) {
 				var x = start.add(vx.multiply((stepsize * i)));
-				/*var f = -1;
-				if(i % 2) {
-				f = 1;
-				}*/
 				var y = vy.multiply(height * (2 * Math.random() - 1));
 				this.movement.path.add(x.add(y));
 			}
 			this.movement.path.smooth();
 		}
-	}
-
+}
+	var cnt = 0;
 	this.followPerson = function(person2) {
 		var last;
 		if (this.movement.path.length === 0) {
@@ -122,10 +127,20 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		var vx = person2.phys.position.subtract(last);
 		var gap = vx.length;
 		vx = vx.normalize();
+		var vy = vx.rotate(90);
+		var height = Math.exp(-this.focus/5.0) * 20;
 		if (gap < speed/45.0) {
 			this.movement.path.add(person2.phys.position);
 		} else {
-			this.movement.path.add(last.add(vx.multiply(speed/45.0)));
+			cnt++;
+			var j = Math.floor(cnt/10);
+			var f = -1;
+			if(j%2){
+				f = 1;
+			}
+			console.log(j);
+			var y = vy.multiply(height * Math.random() * f);
+			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
 		}
 		this.movement.path.smooth();
 	}

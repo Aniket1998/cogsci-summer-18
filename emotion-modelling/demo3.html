@@ -25,7 +25,7 @@
 			var offsete = 0;
 			view.onFrame = function(event) {
 				pursuer.followPerson(escapist);
-				escapist.retreatFromPerson(pursuer,20,4,100);
+				escapist.retreatFromPerson(pursuer,100);
 				if (offsetp != -1) {
 					offsetp = pursuer.moveAlongPath(offsetp,event.delta);
 				}
