@@ -133,7 +133,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			this.movement.path.add(person2.phys.position);
 		} else {
 			cnt++;
-			var j = Math.floor(cnt/10);
+			var j = Math.floor(cnt/15);
 			var f = -1;
 			if(j%2){
 				f = 1;
