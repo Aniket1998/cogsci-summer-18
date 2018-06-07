@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Alcoholic</title>
+	<script type="text/javascript" src="paper.js"></script>
+	<script type="text/javascript" src="emotion_threeparam.js"></script>
+	<script type="text/javascript">
+		paper.install(window);
+		window.onload = function() {
+		paper.setup('canvas');
+		console.log("WHAT");
+		var RAD = 15;
+		var WIDTH = view.size.width;
+		var HEIGHT = view.size.height;
+		var alcoholic = new Person(true,new Point(0.1 * WIDTH,0.5 * HEIGHT),2,-8,8,new Path.Circle({
+			center : view.center,
+			radius : RAD,
+			fillColor : 'red'
+		}));
+		var wife = new Person(true,new Point(0.95 * WIDTH,0.1 * HEIGHT),0,0,0,new Path.Circle({
+			center : view.center,
+			radius : RAD,
+			fillColor : 'pink'
+		}));
+		view.onFrame = function(event) {
+		}
+	}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="960"></canvas>
+</body>
+</html>
