@@ -8,17 +8,29 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
-			var person = new Person(true,view.center,6,3,8,new Path.Circle({
+			var escapist = new Person(true,view.center,6,3,8,new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'red'
 			}));
-			var endpt = person.phys.position.add(new Point(100,200));
-			person.fixedPointRetreat(endpt,100,200);
-			var offset = 0;
+			var pursuer = new Person(true,view.center,6,8,8,new Path.Circle({
+				center : view.center,
+				radius : 10,
+				fillColor : 'blue'
+			}));
+			pursuer.phys.position = new Point(view.size.width - 40,view.size.height - 40);
+			pursuer.initFollow();
+			escapist.initRetreat();
+			var offsetp = 0;
+			var offsete = 0;
 			view.onFrame = function(event) {
-				if (offset != -1) {
-					offset = person.moveAlongPath(offset,event.delta);
+				pursuer.followPerson(escapist);
+				escapist.retreatFromPerson(pursuer,20,4,100);
+				if (offsetp != -1) {
+					offsetp = pursuer.moveAlongPath(offsetp,event.delta);
+				}
+				if (offsete != -1 && escapist.movement.path.length > 0) {
+					offsete = escapist.moveAlongPath(offsete,event.delta);
 				}
 			}
 		}
