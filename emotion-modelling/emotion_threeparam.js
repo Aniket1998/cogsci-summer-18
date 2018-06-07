@@ -109,6 +109,8 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			this.movement.path.smooth();
 		}
 }
+	var y = Point.random()
+	var ynext = Point.random()
 	var cnt = 0;
 	this.followPerson = function(person2) {
 		var last;
@@ -132,15 +134,17 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		if (gap < speed/45.0) {
 			this.movement.path.add(person2.phys.position);
 		} else {
-			cnt++;
-			var j = Math.floor(cnt/15);
-			var f = -1;
-			if(j%2){
-				f = 1;
+			if(cnt==0){
+				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
-			console.log(j);
-			var y = vy.multiply(height * Math.random() * f);
+			if(cnt%15==0){
+				y = ynext;
+				ynext = vy.multiply(height * (2*Math.random()-1));
+			}
+			y = y.add((ynext.subtract(y)).multiply(1/15))
+			console.log(cnt);
 			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
+			cnt++;
 		}
 		this.movement.path.smooth();
 	}
