@@ -9,15 +9,15 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
-			var person = new Person(true,view.center,12,-99,8,new Path.Circle({
+			var person = new Person(true,view.center,4,-99,8,new Path.Circle({
 				center : view.center,
 				radius : 10,
 				fillColor : 'red'
 			}));
-			var person2 = new Person(true,view.center,6,-99,8,new Path.Circle({
+			var person2 = new Person(true,view.center,4,-99,8,new Path.Circle({
 				center : view.center,
 				radius : 10,
-				fillColor : 'red'
+				fillColor : 'blue'
 			}));
 			var endpt = view.center.add(300,400);
 			person2.phys.position = endpt;

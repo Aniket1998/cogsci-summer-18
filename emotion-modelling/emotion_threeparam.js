@@ -39,8 +39,13 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		if (this.debug) {
 			//path.strokeColor = 'black';
 		}
-		//path.strokeColor = 'black';
+		path.strokeColor = 'black';
 		this.movement.path = path;
+	}
+
+	this.fixedPointRetreat = function(point,mindist,maxdist) {
+		var retreat = this.phys.position.subtract(point).normalize().multiply(mindist + (maxdist - mindist) * Math.random());
+		this.moveToPoint(this.phys.position.add(retreat));
 	}
 
 	/*this.followPerson = function(person2) {
@@ -66,6 +71,15 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		this.movement.path.add(this.phys.position);
 		this.movement.path.strokeColor = 'black';
 		console.log(this.movement.path.length)
+	}
+
+	this.initRetreat = function() {
+		this.movement.path = new Path();
+		this.movement.path.add(this.phys.position);
+		this.movement.path.strokeColor = 'black';
+	}
+
+	this.retreatFromPerson = function(person2) {
 	}
 
 	this.followPerson = function(person2) {
