@@ -13,17 +13,26 @@
 		var RAD = 15;
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
-		var alcoholic = new Person(true,new Point(0.1 * WIDTH,0.5 * HEIGHT),2,-8,8,new Path.Circle({
+		var alcoholic = new Person(true,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,8,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'red'
 		}));
-		var wife = new Person(true,new Point(0.95 * WIDTH,0.1 * HEIGHT),0,0,0,new Path.Circle({
+		var wife = new Person(true,new Point(WIDTH - 2.05 * RAD,0.1 * HEIGHT),0,0,0,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'pink'
 		}));
+		var bar = new Path.Rectangle(new Point(0.2 * WIDTH,HEIGHT * 0.6),new Size(200,100));
+		bar.fillColor = 'yellow';
+		var bartender = new Path.Circle({
+			center : view.center,
+			radius : RAD,
+			fillColor : 'blue'
+		});
+		bartender.position = new Point(0.2 * WIDTH + 100,0.5 * HEIGHT + 200 + 2.5 * RAD);
 		view.onFrame = function(event) {
+			//currentScene(event);
 		}
 	}
 	</script>
