@@ -13,7 +13,7 @@
 		var RAD = 15;
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
-		var alcoholic = new Person(true,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,8,new Path.Circle({
+		var alcoholic = new Person(false,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'red'
@@ -30,9 +30,91 @@
 			radius : RAD,
 			fillColor : 'blue'
 		});
+
+		var alcohol = new Path.Circle({
+			center : view.center,
+			radius : 5,
+			fillColor : 'green'
+		})
 		bartender.position = new Point(0.2 * WIDTH + 100,0.5 * HEIGHT + 200 + 2.5 * RAD);
+		alcohol.position = bartender.position.add(new Point(30,-100));
+		alcohol.visible = false;
+		var scene1vars = {
+			offset : 0,
+			framecount : 0
+		}
+
+		var scene2vars = {
+			offset : 0,
+			offset2 : 0,
+			framecount : 0
+		}
+
+		var scene3vars = {
+			offset : 0,
+			framecount : 0
+		}
+
+		function scene3(event) {
+			alcoholic.followPerson(wife);
+			scene3vars.framecount++;
+			if (scene3vars.offset != -1) {
+				scene3vars.offset = alcoholic.moveAlongPath(scene3vars.offset,event.delta);
+			}
+		}
+
+		function scene2(event) {
+			//console.log("Offset " + scene2vars.offset + " Pathlength " + alcoholic.movement.path.length);
+			if (scene2vars.offset != -1) {
+				scene2vars.offset = alcoholic.moveAlongPath(scene2vars.offset,event.delta);
+			} else {
+				//console.log("I have entered");
+				alcohol.visible = true;
+				alcoholic.moveToPoint(alcohol.position);
+				var diff = alcohol.position.y - alcoholic.phys.position.y;
+				console.log(diff);
+				if (diff > 0) {
+					alcohol.position.y -= 60 * event.delta;
+				} else {
+					if (scene2vars.offset2 != -1) {
+						scene2vars.offset2 = alcoholic.moveAlongPath(scene2vars.offset2,event.delta);
+					} else {
+						alcohol.visible = false;
+						alcoholic.eagerness = 4;
+						alcoholic.arousal = 3;
+						alcoholic.focus = 4;
+						//alcoholic.debug = true;
+						alcoholic.initFollow();
+						currentScene = scene3;
+					}
+				}
+			}
+		}
+
+		function scene1(event) {
+			if (scene1vars.framecount === 0) {
+				alcoholic.initFollow();
+			}
+			scene1vars.framecount++;
+			alcoholic.followPerson(wife);
+			if (scene1vars.offset != -1) {
+				scene1vars.offset = alcoholic.moveAlongPath(scene1vars.offset,event.delta);
+			}
+			var dif = (alcoholic.phys.position.subtract(bartender.position)).x;
+			console.log("Diff " + (alcoholic.phys.position.subtract(bartender.position)).x);
+			if (dif >= 0) {
+				console.log("Switching to Scene 2");
+				alcoholic.arousal = 2;
+				alcoholic.eagerness = 5;
+				alcoholic.focus = 16;
+				//alcoholic.debug = true;
+				alcoholic.moveToPoint(new Point(bartender.position.x,bartender.position.y - 160));
+				currentScene = scene2;
+			}
+		}
+		var currentScene = scene1;
 		view.onFrame = function(event) {
-			//currentScene(event);
+			currentScene(event);
 		}
 	}
 	</script>
