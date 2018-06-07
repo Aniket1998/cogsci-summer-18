@@ -8,12 +8,13 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
-			var escapist = new Person(true,view.center,6,3,8,new Path.Circle({
+			var escapist = new Person(true,view.center,3,3,7,new Path.Circle({ 	//happy
 				center : view.center,
 				radius : 10,
 				fillColor : 'red'
 			}));
-			var pursuer = new Person(true,view.center,6,8,8,new Path.Circle({
+
+			var pursuer = new Person(true,view.center,5,3,9,new Path.Circle({ 		//happy
 				center : view.center,
 				radius : 10,
 				fillColor : 'blue'
