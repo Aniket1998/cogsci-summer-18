@@ -26,7 +26,7 @@
       fillColor : 'pink'
     }));
 
-    var secondmale = new Person(false,new Point(WIDTH * 0.39,0.6 * HEIGHT),20,3,20,new Path.Circle({  //initially determined
+    var secondmale = new Person(false,new Point(WIDTH * 0.45,0.6 * HEIGHT),20,5,20,new Path.Circle({  //initially determined
       center : view.center,
       radius : RAD,
       fillColor : 'blue'
@@ -74,7 +74,7 @@
       console.log("Hit is " + scene5vars.hit);
 			scene5vars.framecount++;
 			var dist = (male.phys.position.subtract(secondmale.phys.position)).length;
-console.log("Dist is " + dist);
+			console.log("Dist is " + dist);
 			if(dist>2.1* RAD){
 				male.followPerson(secondmale);
 				secondmale.followPerson(male);
@@ -146,13 +146,12 @@ console.log("Dist is " + dist);
       console.log(dif);
       //console.log(scene2vars.offset1);
       secondmale.retreatFromPerson(male, 10 * RAD);
-      var endpt = new Point(0.15 * WIDTH,female.phys.position.y);
-			//female.retreatFromPerson(secondmale, 10 * RAD);
-			female.moveToPoint(endpt);
+      //var endpt = new Point(0.15 * WIDTH,0.5 * HEIGHT);
+      female.retreatFromPerson(secondmale, 10 * RAD);
 
       if (scene4vars.offset3 != -1) {
       	scene4vars.offset3 = secondmale.moveAlongPath(scene4vars.offset3,event.delta);
-      } else if(scene4vars.offset2 == -1){
+      } else {
         console.log("Switching to Scene 5");
 				male.arousal = 3;
 				male.eagerness = 8;
@@ -213,8 +212,8 @@ console.log("Dist is " + dist);
         secondmale.focus = 25;
         //he is now being flung away
 
-        female.arousal = 4;
-        female.eagerness = 3;
+        female.arousal = 1;
+        female.eagerness = 7;
         female.focus = 20;
         //she is now scared
 
@@ -236,7 +235,7 @@ console.log("Dist is " + dist);
 
       if (scene2vars.offset1 != -1) {
       	scene2vars.offset1 = male.moveAlongPath(scene2vars.offset1,event.delta);
-      } else if (scene2vars.offset2 == -1){
+      } else {
         console.log("Switching to Scene 3");
 				male.arousal = 2;
 				male.eagerness = 8.5;
@@ -288,7 +287,7 @@ console.log("Dist is " + dist);
 			if (dif < 2.01 * RAD) {
 				console.log("Switching to Scene 2");
 				male.arousal = 1;
-				male.eagerness = 7;
+				male.eagerness = 5;
 				male.focus = 25;
         //he is now being flung away
         secondmale.arousal = 0;

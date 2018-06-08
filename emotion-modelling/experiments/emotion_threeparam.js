@@ -159,7 +159,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		var speed;
 		var amplitude;
 		if (this.eagerness > 0) {
-			speed = 40 * this.eagerness;
+			speed = 30 * this.eagerness;
 		} else {
 			speed = 20 * (10 + this.eagerness);
 		}
