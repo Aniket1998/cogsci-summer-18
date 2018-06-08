@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>hero</title>
+	<title>Consulting</title>
 	<script type="text/javascript" src="paper.js"></script>
 	<script type="text/javascript" src="emotion_threeparam.js"></script>
 	<script type="text/javascript">
@@ -26,7 +26,7 @@
 			fillColor : 'black'
 		}));
 
-    var hero = new Person(false,new Point(WIDTH - 1.0 * RAD,0.25 * HEIGHT),2,2,20,new Path.Circle({
+    var hero = new Person(false,new Point(WIDTH - 1.0 * RAD,0.25 * HEIGHT),0.1,2,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'blue'
@@ -51,88 +51,117 @@
 			offset2 : 0,
 			framecount : 0
 		}
-    //
-		// var scene4vars = {
-		// 	offset1 : 0,
-		// 	offset2 : 0,
-		// 	approachmode : true,
-		// 	count : 0,
-		// 	framecount : 0
-		// }
-    //
-		// var scene5vars = {
-		// 	offset1 : 0,
-		// 	offset2 : 0,
-		// 	framecount : 0
-		// }
-    //
-		// function scene5(event) {
-		// 	console.log("Scene 5");
-		// 	if (scene5vars.offsetw != -1) {
-		// 		scene5vars.offsetw = wife.moveAlongPath(scene5vars.offsetw,event.delta);
-		// 	}
-    //
-		// 	if (scene5vars.offseta != -1) {
-		// 		scene5vars.offseta = hero.moveAlongPath(scene5vars.offseta,event.delta);
-		// 	}
-		// }
-    //
-		 function scene4(event) {
-		 	console.log("In scene 4");
-		// 	if (scene4vars.count < 3) {
-		// 		if (scene4vars.approachmode) {
-		// 			wife.followPerson(hero);
-		// 			if (scene4vars.offsetw != -1) {
-		// 				scene4vars.offsetw = wife.moveAlongPath(scene4vars.offsetw,event.delta);
-		// 			}
-		// 			var dist = wife.phys.position.subtract(hero.phys.position);
-		// 			if (dist.length < 2.1 * RAD) {
-		// 				wife.clearPath();
-		// 				hero.clearPath();
-		// 				scene4vars.approachmode = false;
-		// 				scene4vars.offsetw = 0;
-		// 				scene4vars.offseta = 0;
-		// 			}
-		// 		} else {
-		// 			hero.retreatFromPerson(wife,5 * RAD);
-		// 			if (scene4vars.offseta != -1) {
-		// 				scene4vars.offseta = hero.moveAlongPath(scene4vars.offseta,event.delta);
-		// 				var dist = wife.phys.position.subtract(hero.phys.position);
-		// 				if (dist.length > 6 * RAD) {
-		// 					wife.clearPath();
-		// 					hero.clearPath();
-		// 					scene4vars.count++;
-		// 					scene4vars.approachmode = true;
-		// 					scene4vars.offsetw = 0;
-		// 					scene4vars.offseta = 0;
-		// 				}
-		// 			}
-		// 		}
-		// 	} else {
-		// 		wife.eagerness = 3;
-		// 		wife.arousal = 3;
-		// 		//wife.debug = true;
-		// 		hero.moveToPoint(new Point(bartender.position.x,bartender.position.y - 160));
-		// 		wife.moveToPoint(new Point(WIDTH - 2.05 * RAD,0.1 * HEIGHT));
-		// 		currentScene = scene5;
-		// 	}
 
+		var scene4vars = {
+			offset1 : 0,
+			offset2 : 0,
+			framecount : 0
+		}
+
+		var scene5vars = {
+			offset1 : 0,
+			offset2 : 0,
+			framecount : 0
+		}
+
+		var scene6vars = {
+			offset1 : 0,
+			offset2 : 0,
+			offset3 : 0,
+			count : 0,
+			framecount : 0
+		}
+
+		function scene6(event) {
+			console.log("Scene 6");
+			var dist = hero.phys.position.subtract(guru.phys.position);
+			if(scene6vars.framecount==0){
+				hero.clearPath();
+				guru.clearPath();
+				hero.moveToPoint(new Point(view.center.x,guru.phys.position.y));
+			}
+			scene6vars.framecount++;
+			if (scene6vars.offset2 != -1) {
+				scene6vars.offset2 = hero.moveAlongPath(scene6vars.offset2,event.delta);
+			} else {
+				if(scene6vars.count++ == 0) hero.clearPath();
+				hero.followPerson(guru);
+				if (scene6vars.offset1 != -1) {
+					scene6vars.offset1 = hero.moveAlongPath(scene6vars.offset1,event.delta);
+				}
+				//guru.retreatFromPerson(hero);
+				if(dist.length < 3 * RAD) {
+					guru.retreatFromPerson(hero);
+					if (scene6vars.offset3 != -1) {
+						scene6vars.offset3 = guru.moveAlongPath(scene6vars.offset3,event.delta);
+					}
+				}
+			}
+		}
+
+		function scene5(event) {
+			console.log("Scene 5");
+			if(scene5vars.framecount==0){
+				hero.clearPath();
+				bully.clearPath();
+			}
+			scene5vars.framecount++;
+			hero.followPerson(bully);
+			var dist = hero.phys.position.subtract(bully.phys.position);
+			if (scene5vars.offset1 != -1 && dist.length > 4 * RAD) {
+				scene5vars.offset1 = hero.moveAlongPath(scene5vars.offset1,event.delta);
+			} else if(dist.length > 2.45 * RAD){
+				bully.followPerson(hero);
+				if (scene5vars.offset2 != -1) {
+					scene5vars.offset2 = bully.moveAlongPath(scene5vars.offset2,event.delta);
+				}
+			} else {
+				currentScene = scene6;
+			}
 
 		}
-    //
+
+		 function scene4(event) {
+		 	console.log("In scene 4");
+			if(scene4vars.framecount==0){
+				guru.clearPath();
+			}
+			scene4vars.framecount++;
+			guru.followPerson(hero);
+			var dist = hero.phys.position.subtract(guru.phys.position);
+			if (scene4vars.offset2 != -1) {
+				scene4vars.offset2 = guru.moveAlongPath(scene4vars.offset2,event.delta);
+			}
+			if(dist.length < 2.1 * RAD){
+				currentScene = scene5;
+			}
+		}
+
 		function scene3(event) {
 			console.log("Scene 3");
-
-			bully.moveToPoint(new Point(WIDTH - 7.5 * RAD,0.1 * HEIGHT));
+			console.log(scene3vars.offset1);
+			console.log(scene3vars.offset2);
+			if(scene3vars.framecount==0){
+				// bully.clearPath();
+				// hero.clearPath();
+				bully.moveToPoint(new Point(WIDTH - 7.5 * RAD,0.1 * HEIGHT));
+				//hero.followPerson(guru);
+			}
 			hero.followPerson(guru);
-
+			var dist = hero.phys.position.subtract(guru.phys.position);
+			scene3vars.framecount++;
 			if (scene3vars.offset1 != -1) {
 				scene3vars.offset1 = hero.moveAlongPath(scene3vars.offset1,event.delta);
 			}
 			if (scene3vars.offset2 != -1) {
 				scene3vars.offset2 = bully.moveAlongPath(scene3vars.offset2,event.delta);
-			} else if(scene3vars.offset2 == -1 && scene3vars.offset1 == -1) {
-				  currentscene = scene4;
+			}
+			if(dist.length <= 4.1 * RAD){
+				scene3vars.offset1 = -1;
+			}
+			if(scene3vars.offset2 == -1 && scene3vars.offset1 == -1) {
+					guru.clearPath();
+				  currentScene = scene4;
 			}
 
 
@@ -195,9 +224,9 @@
 			bully.clearPath();
 			hero.clearPath();
 
-			bully.eagerness = 1;
+			bully.eagerness = 4;
 			bully.arousal = 0;
-			bully.focus = 2;
+			bully.focus = 10;
 
 			hero.eagerness = 4;
 			hero.arousal = 1;
@@ -216,18 +245,18 @@
 			}
 			scene1vars.framecount++;
 			//var dif = (bully.phys.position.subtract(hero.phys.position)).length;
-			var endpt = new Point(bully.phys.position.x, 0.25 * HEIGHT);
+			var endpt = new Point(bully.phys.position.x, hero.phys.position.y);
 			hero.moveToPoint(endpt);
 			if (scene1vars.offset1 != -1) {
 				scene1vars.offset1 = hero.moveAlongPath(scene1vars.offset1,event.delta);
 			} else {
 				console.log("Switching to Scene 2");
 			 hero.arousal = 4;
-			 hero.eagerness = 4;
+			 hero.eagerness = 7;
 			 hero.focus = 15;
 
 			 bully.arousal = 5;
-			 bully.eagerness = 10;
+			 bully.eagerness = 20;
 			 bully.focus = 20;
 
 			 guru.arousal = 2;
