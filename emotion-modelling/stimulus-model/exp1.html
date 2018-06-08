@@ -9,7 +9,6 @@
 		paper.install(window);
 		window.onload = function() {
 		paper.setup('canvas');
-		console.log("WHAT");
 		var RAD = 15;
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
@@ -115,9 +114,12 @@
 				wife.eagerness = 3;
 				wife.arousal = 3;
 				//wife.debug = true;
-				alcoholic.moveToPoint(new Point(bartender.position.x,bartender.position.y - 160));
+				alcoholic.moveToPoint(new Point(bartender.position.x,bartender.position.y - 12 * RAD));
 				wife.moveToPoint(new Point(WIDTH - 2.05 * RAD,0.1 * HEIGHT));
-				currentScene = scene5;
+				scene4vars.framecount++;
+				if (scene4vars.framecount > 20) {
+					currentScene = scene5;
+				}
 			}
 		}
 
@@ -190,7 +192,7 @@
 				alcoholic.eagerness = 5;
 				alcoholic.focus = 16;
 				//alcoholic.debug = true;
-				alcoholic.moveToPoint(new Point(bartender.position.x,bartender.position.y - 160));
+				alcoholic.moveToPoint(new Point(bartender.position.x,bartender.position.y - 12 * RAD));
 				currentScene = scene2;
 			}
 		}

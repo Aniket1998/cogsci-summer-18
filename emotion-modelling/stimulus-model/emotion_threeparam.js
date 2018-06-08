@@ -5,16 +5,35 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	this.phys = shape;
 	this.debug = debug;
 	this.phys.position = pos;
-
+	this.stimuli = [];
 	this.movement = {
 		temppath : 0,
 		path : 0
+	}
+
+	this.addStimulus = function(stimulus) {
+		this.stimuli.push(stimulus);
+		this.stimuli.sort(function(stimulus1,stimulus2) {
+			return (stimulus2.priority - stimulus1.priority);
+		});
+	}
+
+	this.actStimuli = function(event) {
+		for (var i = 0; i < this.stimuli.length; i++) {
+			this.stimuli[i].checkActivity(event);
+			if (this.stimuli[i].activeStatus) {
+				console.log("Executing stimulus : " + this.stimuli[i].name);
+				this.stimuli[i].actStimulus(event);
+				return;
+			}
+		}
 	}
 
 	this.moveToPoint = function(dest) {
 		var path = new Path();
 		var start = this.phys.position;
 		var vx = dest.subtract(start);
+		path.add(start);
 		var dist = vx.length;
 		vx = vx.normalize();
 		var vy = vx.rotate(90);
@@ -168,14 +187,14 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	}
 }
 
-/*function Stimulus(person,owner,entity,priority) {
+function Stimulus(owner,entity,priority) {
 	this.activeStatus = false;
 	this.owner = owner;
 	this.entity = entity;
 	this.priority = priority;
-	this.checkActivity = function() {}
-	this.actStimulus = function() {}
-}*/
+	this.checkActivity = function(event) {}
+	this.actStimulus = function(event) {}
+}
 
 var EmotionTable = {
 	happiness : {
