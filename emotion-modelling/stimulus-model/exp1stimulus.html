@@ -12,12 +12,12 @@
 			var RAD = 15;
 			var WIDTH = view.size.width;
 			var HEIGHT = view.size.height;
-			var alcoholic = new Person(true,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,20,new Path.Circle({
+			var alcoholic = new Person(false,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,20,new Path.Circle({
 				center : view.center,
 				radius : RAD,
 				fillColor : 'red'
 			}));
-			var wife = new Person(true,new Point(WIDTH - 2.05 * RAD,0.1 * HEIGHT),0,0,0,new Path.Circle({
+			var wife = new Person(false,new Point(WIDTH - 2.05 * RAD,0.1 * HEIGHT),0,0,0,new Path.Circle({
 				center : view.center,
 				radius : RAD,
 				fillColor : 'pink'
@@ -57,7 +57,7 @@
 							this.activeStatus = false;
 						} else {
 							var dif = (owner.phys.position.subtract(entity.phys.position)).x;
-							console.log("Difference is " + dif);
+							//console.log("Difference is " + dif);
 							if (dif >= 0) {
 								this.activeStatus = true;
 								this.owner.arousal = 2;
@@ -136,7 +136,7 @@
 						this.complete = true;
 						//wife.debug = false;
 						//alcoholic.debug = true;
-						this.entity.clearPath();
+						//this.entity.clearPath();
 						this.owner.clearPath();
 					}
 				}
@@ -151,10 +151,10 @@
 				this.name = name;
 
 				this.checkActivity = function(event) {
-					if (this.complete) {
+					if (this.complete || this.entity.hitCount > 2) {
 						this.activeStatus = false;
 					} else {
-						if ((this.owner.phys.position.subtract(this.entity.phys.position)).length <= 6 * RAD) {
+						if ((this.owner.phys.position.subtract(this.entity.phys.position)).length <= 10 * RAD) {
 							if (!this.activeStatus && !this.entity.beenHit) {
 								this.activeStatus = true;
 								this.offset = 0;
@@ -172,7 +172,7 @@
 					var dist = (this.owner.phys.position.subtract(this.entity.phys.position)).length;
 					if (dist > 2.1 * RAD) {
 						this.owner.followPerson(this.entity);
-						console.log("Wife offset : " + this.offset);
+						//console.log("Wife offset : " + this.offset);
 						if (this.offset != -1) {
 							this.offset = this.owner.moveAlongPath(this.offset,event.delta);
 						}
@@ -187,45 +187,71 @@
 				}
 			}
 
-			function RunFromDangerStimulus(name,owner,entity,priority) {
+			function RunFromDangerStimulus(name,owner,entity,safepoint,priority) {
 				Stimulus.call(this,owner,entity,priority);
 				this.complete = false;
 				this.activeStatus = false;
 				this.offset = 0;
 				this.count = 0;
 				this.name = name;
+				this.safepoint = safepoint;
 
 				this.checkActivity = function(event) {
 					if (this.complete) {
 						this.activeStatus = false;
 					} else {
 						if (this.owner.beenHit) {
-							this.activeStatus = this.owner.beenHit;
-							this.offset = 0;
-							this.owner.clearPath();
+							this.activeStatus = true;
+							//this.offset = 0;
+							//this.owner.clearPath();
 						}
 					}
 				}
 
 				this.actStimulus = function(event) {
-					var dist = (this.owner.phys.position.subtract(this.entity.phys.position)).length;
-					if (dist <= 2.1 * RAD) {
-						console.log("Please act");
-						this.owner.retreatFromPerson(this.entity,RAD * 5);
+					if (this.owner.hitCount > 2) {
+						console.log("IN THE END PART" + this.offset);
 						if (this.offset != -1) {
 							this.offset = this.owner.moveAlongPath(this.offset,event.delta);
 						} else {
-							this.owner.beenHit = false;
-							this.offset = 0;
-							this.owner.clearPath();
+							this.complete = true;
 						}
+					} else {
+					var dist = (this.owner.phys.position.subtract(this.entity.phys.position)).length;
+					if (dist <= 2.1 * RAD) {
+						//console.log("Please act");
+						//console.log(this.offset);
+						this.owner.retreatFromPerson(this.entity,RAD * 5);
+						//console.log(this.owner.movement.path.length);
+						if (this.offset != -1) {
+							this.offset = this.owner.moveAlongPath(this.offset,event.delta);
+						}
+					} else {
+						this.owner.retreatFromPerson(this.entity,RAD * 5);
+						//console.log(this.owner.movement.path.length);
+						if (this.offset != -1) {
+							this.offset = this.owner.moveAlongPath(this.offset,event.delta);
+						}
+						if (dist > 5 * RAD) {
+							console.log("here");
+							this.owner.beenHit = false;
+							this.activeStatus = false;
+							if (this.owner.hitCount >= 2) {
+								console.log("I belong to the bar");
+								this.owner.moveToPoint(this.safepoint)
+							} else {
+								this.owner.clearPath();
+							}
+							this.offset = 0;
+						}
+					}
 					}
 				}
 			}
 
 			alcoholic.addStimulus(new DrinkStimulus("Need me a Haywards 5000",alcoholic,bartender,1000,alcohol));
 			alcoholic.addStimulus(new GoHomeStimulus("Gotta go home to the wife",alcoholic,wife,100));
-			alcoholic.addStimulus(new RunFromDangerStimulus("Need to save myself",alcoholic,wife,20000));
+			alcoholic.addStimulus(new RunFromDangerStimulus("Need to save myself",alcoholic,wife,new Point(bartender.phys.position.x,bartender.phys.position.y - 12 * RAD),20000));
 			wife.addStimulus(new AttackHusbandStimulus("Beating my husband",wife,alcoholic,100));
 			view.onFrame = function(event) {
 				alcoholic.actStimuli(event);
