@@ -85,6 +85,23 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		//console.log(this.movement.path.length)
 	}
 
+		this.stand =function() {
+		if (this.arousal > 0) {
+			amplitude = this.arousal * 1.5;
+		}
+		if (this.arousal > 0) {
+				var vibrationvec = new Point(2*Math.random()-1,2*Math.random()-1);
+				vibrationvec = vibrationvec.multiply(amplitude * Math.random());
+				this.phys.position.x += vibrationvec.x;
+				this.phys.position.y += vibrationvec.y;
+			}
+
+		if (this.debug) {
+			this.movement.path.strokeColor = 'black';
+		}
+		//console.log(this.movement.path.length)
+	}
+
 	this.retreatFromPerson = function(person2,bound) {
 		//bound depends on situation - if he is aware of the pursuer or how fast he sees him and reacts
 		//numdivs is no. of steps pre-decided : -e,+a

@@ -8,131 +8,230 @@
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
-		paper.setup('canvas');
-		var RAD = 15;
-		var WIDTH = view.size.width;
-		var HEIGHT = view.size.height;
-		var alcoholic = new Person(true,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,20,new Path.Circle({
-			center : view.center,
-			radius : RAD,
-			fillColor : 'red'
-		}));
-		var wife = new Person(true,new Point(WIDTH - 2.05 * RAD,0.1 * HEIGHT),0,0,0,new Path.Circle({
-			center : view.center,
-			radius : RAD,
-			fillColor : 'pink'
-		}));
-		var bartender = new Person(true,new Point(0.2 * WIDTH + 100,0.5 * HEIGHT + 200 + 2.5 * RAD),0,0,0,new Path.Circle({
-			center : view.center,
-			radius : RAD,
-			fillColor : 'blue'
-		}));
-		var bar = new Path.Rectangle(new Point(0.2 * WIDTH,HEIGHT * 0.6),new Size(200,100));
-		bar.fillColor = 'yellow';
-		var alcohol = new Path.Circle({
-			center : view.center,
-			radius : 5,
-			fillColor : 'green'
-		})
-		alcohol.position = bartender.phys.position.add(new Point(30,-100));
-		alcohol.visible = false;
+			paper.setup('canvas');
+			var RAD = 15;
+			var WIDTH = view.size.width;
+			var HEIGHT = view.size.height;
+			var alcoholic = new Person(true,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,20,new Path.Circle({
+				center : view.center,
+				radius : RAD,
+				fillColor : 'red'
+			}));
+			var wife = new Person(true,new Point(WIDTH - 2.05 * RAD,0.1 * HEIGHT),0,0,0,new Path.Circle({
+				center : view.center,
+				radius : RAD,
+				fillColor : 'pink'
+			}));
+			var bartender = new Person(true,new Point(0.2 * WIDTH + 100,0.5 * HEIGHT + 200 + 2.5 * RAD),0,0,0,new Path.Circle({
+				center : view.center,
+				radius : RAD,
+				fillColor : 'blue'
+			}));
+			var bar = new Path.Rectangle(new Point(0.2 * WIDTH,HEIGHT * 0.6),new Size(200,100));
+			bar.fillColor = 'yellow';
+			var alcohol = new Path.Circle({
+				center : view.center,
+				radius : 5,
+				fillColor : 'green'
+			});
+			alcohol.position = bartender.phys.position.add(new Point(30,-100));
+			alcohol.visible = false;
 
-		function DrinkStimulus(name,owner,entity,priority,drink) {
-			Stimulus.call(this,owner,entity,priority);
-			this.complete = false;
-			this.offset = 0;
-			this.offset2 = 0;
-			this.drink = drink;
-			this.drink.visible = false;
-			this.name = name;
+			alcoholic.beenHit = false;
+			alcoholic.hitCount = 0;
+
+			function DrinkStimulus(name,owner,entity,priority,drink) {
+				Stimulus.call(this,owner,entity,priority);
+				this.complete = false;
+				this.offset = 0;
+				this.offset2 = 0;
+				this.drink = drink;
+				this.drink.visible = false;
+				this.name = name;
 
 
-			this.checkActivity = function(event) {
-				//console.log("You're checking the activity of drunkstimulus");
-				if (!this.activeStatus) {
+				this.checkActivity = function(event) {
+					//console.log("You're checking the activity of drunkstimulus");
+					if (this.activeStatus === false) {
+						if (this.complete) {
+							this.activeStatus = false;
+						} else {
+							var dif = (owner.phys.position.subtract(entity.phys.position)).x;
+							console.log("Difference is " + dif);
+							if (dif >= 0) {
+								this.activeStatus = true;
+								this.owner.arousal = 2;
+								this.owner.eagerness = 4;
+								this.owner.focus = 16;
+								this.owner.moveToPoint(new Point(this.entity.phys.position.x,this.entity.phys.position.y - 12 * RAD));
+								this.offset = 0;
+								this.offset2 = 0;
+							}
+						}
+					}
+				}
+
+				this.actStimulus = function(event) {
+					if (this.offset != -1) {
+						this.offset = this.owner.moveAlongPath(this.offset,event.delta);
+					} else {
+						this.drink.visible = true;
+						this.owner.moveToPoint(this.drink.position);
+						var diff = this.drink.position.y - this.owner.phys.position.y;
+						if (diff > 0) {
+							this.drink.position.y -= 60 * event.delta;
+						} else {
+							if (this.offset2 != -1) {
+								this.offset2 = this.owner.moveAlongPath(this.offset2,event.delta);
+							} else {
+								this.owner.clearPath();
+								this.drink.visible = false;
+								this.owner.eagerness = 4;
+								this.owner.arousal = 3;
+								this.owner.focus = 5;
+								this.activeStatus = false;
+								this.complete = true;
+							}
+						}
+					}
+				}
+
+			}
+
+			function GoHomeStimulus(name,owner,entity,priority) {
+				Stimulus.call(this,owner,entity,priority);
+				this.complete = false;
+				this.activeStatus = false;
+				this.offset = 0;
+				this.name = name;
+
+				this.checkActivity = function(event) {
 					if (this.complete) {
 						this.activeStatus = false;
 					} else {
-						var dif = (owner.phys.position.subtract(entity.phys.position)).x;
-						console.log("Difference is " + dif);
-						if (dif >= 0) {
+						if (!this.activeStatus) {
 							this.activeStatus = true;
-							this.owner.arousal = 2;
-							this.owner.eagerness = 4;
-							this.owner.focus = 16;
-							this.owner.moveToPoint(new Point(this.entity.phys.position.x,this.entity.phys.position.y - 12 * RAD));
+							//this.complete = true;
+							this.owner.clearPath();
 							this.offset = 0;
-							this.offset2 = 0;
 						}
 					}
 				}
-			}
 
-			this.actStimulus = function(event) {
-				if (this.offset != -1) {
-					this.offset = this.owner.moveAlongPath(this.offset,event.delta);
-				} else {
-					this.drink.visible = true;
-					this.owner.moveToPoint(this.drink.position);
-					var diff = this.drink.position.y - this.owner.phys.position.y;
-					if (diff > 0) {
-						this.drink.position.y -= 60 * event.delta;
-					} else {
-						if (this.offset2 != -1) {
-
-						}
-					}
-				}
-			}
-
-		}
-
-		function GoHomeStimulus(name,owner,entity,priority) {
-			Stimulus.call(this,owner,entity,priority);
-			this.complete = false;
-			this.activeStatus = false;
-			this.offset = 0;
-			this.name = name;
-
-			this.checkActivity = function(event) {
-				if (this.complete) {
-					this.activeStatus = false;
-				} else {
-					if (!this.activeStatus) {
-						this.activeStatus = true;
+				this.actStimulus = function(event) {
+					if (this.offset == 0) {
 						this.owner.clearPath();
+					}
+					this.owner.followPerson(this.entity);
+					if (this.offset == -1) {
 						this.offset = 0;
 					}
+					if (this.offset != -1) {
+						this.offset = this.owner.moveAlongPath(this.offset,event.delta);
+					}
+					if ((this.owner.phys.position.subtract(this.entity.phys.position)).length < 6 * RAD) {
+						//this.entity.arousal = 7;
+						//this.entity.eagerness = 10;
+						//this.entity.focus = 20;
+						this.complete = true;
+						//wife.debug = false;
+						//alcoholic.debug = true;
+						this.entity.clearPath();
+						this.owner.clearPath();
+					}
 				}
 			}
 
-			this.actStimulus = function(event) {
-				if (this.offset == 0) {
-					this.owner.clearPath();
+			function AttackHusbandStimulus(name,owner,entity,priority) {
+				Stimulus.call(this,owner,entity,priority);
+				this.complete = false;
+				this.activeStatus = false;
+				this.offset = 0;
+				this.count = 0;
+				this.name = name;
+
+				this.checkActivity = function(event) {
+					if (this.complete) {
+						this.activeStatus = false;
+					} else {
+						if ((this.owner.phys.position.subtract(this.entity.phys.position)).length <= 6 * RAD) {
+							if (!this.activeStatus && !this.entity.beenHit) {
+								this.activeStatus = true;
+								this.offset = 0;
+								this.owner.clearPath();
+								this.owner.arousal = 7;
+								this.owner.eagerness = 10;
+								this.owner.focus = 20;
+
+							}
+						}
+					}
 				}
-				this.owner.followPerson(this.entity);
-				if (this.offset != -1) {
-					this.offset = this.owner.moveAlongPath(this.offset,event.delta);
-				}
-				if ((this.owner.phys.position.subtract(this.entity.phys.position)).length < 6 * RAD) {
-					this.entity.arousal = 7;
-					this.entity.eagerness = 10;
-					this.entity.focus = 20;
-					//wife.debug = false;
-					//alcoholic.debug = true;
-					this.entity.clearPath();
-					this.owner.clearPath();
+
+				this.actStimulus = function(event) {
+					var dist = (this.owner.phys.position.subtract(this.entity.phys.position)).length;
+					if (dist > 2.1 * RAD) {
+						this.owner.followPerson(this.entity);
+						console.log("Wife offset : " + this.offset);
+						if (this.offset != -1) {
+							this.offset = this.owner.moveAlongPath(this.offset,event.delta);
+						}
+					} else {
+						this.activeStatus = false;
+						this.entity.beenHit = true;
+						this.entity.hitCount++;
+						console.log("HitCount " + this.entity.hitCount);
+						this.offset = 0;
+						this.owner.clearPath();
+					}
 				}
 			}
-		}
 
-		alcoholic.addStimulus(new DrinkStimulus("Need me a Haywards 5000",alcoholic,bartender,1000,alcohol));
-		alcoholic.addStimulus(new GoHomeStimulus("Gotta go home to the wife",alcoholic,wife,100));
+			function RunFromDangerStimulus(name,owner,entity,priority) {
+				Stimulus.call(this,owner,entity,priority);
+				this.complete = false;
+				this.activeStatus = false;
+				this.offset = 0;
+				this.count = 0;
+				this.name = name;
 
-		view.onFrame = function(event) {
-			alcoholic.actStimuli(event);
+				this.checkActivity = function(event) {
+					if (this.complete) {
+						this.activeStatus = false;
+					} else {
+						if (this.owner.beenHit) {
+							this.activeStatus = this.owner.beenHit;
+							this.offset = 0;
+							this.owner.clearPath();
+						}
+					}
+				}
+
+				this.actStimulus = function(event) {
+					var dist = (this.owner.phys.position.subtract(this.entity.phys.position)).length;
+					if (dist <= 2.1 * RAD) {
+						console.log("Please act");
+						this.owner.retreatFromPerson(this.entity,RAD * 5);
+						if (this.offset != -1) {
+							this.offset = this.owner.moveAlongPath(this.offset,event.delta);
+						} else {
+							this.owner.beenHit = false;
+							this.offset = 0;
+							this.owner.clearPath();
+						}
+					}
+				}
+			}
+
+			alcoholic.addStimulus(new DrinkStimulus("Need me a Haywards 5000",alcoholic,bartender,1000,alcohol));
+			alcoholic.addStimulus(new GoHomeStimulus("Gotta go home to the wife",alcoholic,wife,100));
+			alcoholic.addStimulus(new RunFromDangerStimulus("Need to save myself",alcoholic,wife,20000));
+			wife.addStimulus(new AttackHusbandStimulus("Beating my husband",wife,alcoholic,100));
+			view.onFrame = function(event) {
+				alcoholic.actStimuli(event);
+				wife.actStimuli(event);
+			}
 		}
-	}
 	</script>
 </head>
 <body>
