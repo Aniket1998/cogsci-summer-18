@@ -73,7 +73,7 @@
 				scene2vars.offsetc = cop.moveAlongPath(scene2vars.offsetc,event.delta);
 				console.log(scene2vars.offsetc)
 			}
-			
+
 			if (scene2vars.offsetr != -1) {
 				scene2vars.offsetr = robber.moveAlongPath(scene2vars.offsetr,event.delta);
 			}
@@ -138,7 +138,7 @@
 			    	else{
 			    		robber.phys.position.x = WIDTH-RAD;
 			    	}
-			    	robber.phys.position.y=HEIGHT*Math.random(); 
+			    	robber.phys.position.y=HEIGHT*Math.random();
 			    	robber.clearPath();
 			    	robber.followPerson(cop);
 			    	scene2vars.disappear=false;
@@ -169,7 +169,8 @@
 			//console.log("Diff " + (alcoholic.phys.position.subtract(bartender.position)).x);
 			if (dist < RAD) {
 				console.log("Switching to Scene 2");
-				gold.fillColor = 'white'
+				gold.visible = false;
+				//gold.fillColor = 'white'
 				cop.arousal = 4;
 				cop.eagerness = 8;
 				cop.focus = 16;
@@ -187,7 +188,7 @@
 		view.onFrame = function(event) {
 			currentScene(event);
 		}
-	}	
+	}
 
 	</script>
 </head>
