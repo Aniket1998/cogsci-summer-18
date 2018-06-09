@@ -79,6 +79,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	this.clearPath = function() {
 		this.movement.path = new Path();
 		this.movement.path.add(this.phys.position);
+		cnt=0;
 		if (this.debug) {
 			this.movement.path.strokeColor = 'black';
 		}

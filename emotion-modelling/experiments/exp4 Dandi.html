@@ -14,13 +14,13 @@
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
 
-		var robber = new Person(true,Point.random().multiply(view.size),0,-8,20,new Path.Circle({
+		var robber = new Person(false,Point.random().multiply(view.size),0,-8,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'red'
 		}));
 
-		var cop = new Person(true,view.center,0,0,20,new Path.Circle({
+		var cop = new Person(false,view.center,0,0,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'blue'
@@ -64,65 +64,91 @@
 			}
 			else{
 				robber.followPerson(cop);
+				console.log("follow")
 			}
-			}//console.log("Offset " + scene2vars.offset + " Pathlength " + alcoholic.movement.path.length);
+		    }
+			//console.log("Offset " + scene2vars.offset + " Pathlength " + alcoholic.movement.path.length);
 			scene2vars.framecount++
 			if (scene2vars.offsetc != -1) {
 				scene2vars.offsetc = cop.moveAlongPath(scene2vars.offsetc,event.delta);
 				console.log(scene2vars.offsetc)
 			}
-			if (robber.movement.path.length>0){
+			
 			if (scene2vars.offsetr != -1) {
 				scene2vars.offsetr = robber.moveAlongPath(scene2vars.offsetr,event.delta);
 			}
-		}
-		    if(robber.phys.position.x<-2*RAD|| robber.phys.position.x > WIDTH+2*RAD){
+
+			var dist = (robber.phys.position.subtract(cop.phys.position)).length;
+			if(dist < 40*RAD){
+				scene2vars.approach = false;
+			}
+		    if((robber.phys.position.x<-3*RAD|| robber.phys.position.x > WIDTH+3*RAD)&&scene2vars.approach===false){
+		    	if(scene2vars.disappear===false){
+		    		scene2vars.count=0;
+		    		scene2vars.disappear=true;
+		    	}
 		    	scene2vars.count++
 		    	if(scene2vars.count===1){
 		    	robber.clearPath();
-		    	cop.clearPath();
-		    	scene2vars.disappear=true
 		    	}
+		    	if(scene2vars.count===80){
+		    	cop.clearPath();
+		   		}
+		    	if(scene2vars.count>=80){
 		    	cop.stand();
-		    	if(scene2vars.count===300){
-			    	var num = 2*Math.random()-1;
-			    	if (num>0){
-			    		robber.phys.position.y = HEIGHT+RAD;
-			    		robber.phys.position.x = WIDTH*Math.random();
+		        }
+		    	if(scene2vars.count===200){
+			    	var y = cop.phys.position.y
+			    	if (y>HEIGHT/2){
+			    		robber.phys.position.y = RAD;
 			    	}
 			    	else{
-			    		robber.phys.position.y = -RAD;
-			    		robber.phys.position.x = WIDTH*Math.random();
+			    		robber.phys.position.y = HEIGHT-RAD;
 			    	}
-			    	robber.followPerson(cop)
-			    	scene2vars.disappear===false;
-			    	scene2vars.approach===true;
+			    	robber.phys.position.x=WIDTH*Math.random();
+			    	robber.clearPath();
+			    	robber.followPerson(cop);
+			    	scene2vars.disappear=false;
+			    	scene2vars.approach=true;
+			    	scene2vars.offsetr = 0;
+			    	scene2vars.offsetc = 0;
 			    }
-		    }
-		    if(robber.phys.position.y<-2*RAD|| robber.phys.position.y > HEIGHT+2*RAD){
+			   	}
+
+			   	if((robber.phys.position.y<-3*RAD|| robber.phys.position.y > HEIGHT+3*RAD)&&scene2vars.approach===false){
+		    	if(scene2vars.disappear===false){
+		    		scene2vars.count=0;
+		    		scene2vars.disappear=true;
+		    	}
 		    	scene2vars.count++
 		    	if(scene2vars.count===1){
 		    	robber.clearPath();
-		    	cop.clearPath();
-		    	scene2vars.disappear=true
 		    	}
+		    	if(scene2vars.count===80){
+		    	cop.clearPath();
+		   		}
+		    	if(scene2vars.count>=80){
 		    	cop.stand();
-		    	if(scene2vars.count===300){
-			    	var num = 2*Math.random()-1;
-			    	if (num>0){
-			    		robber.phys.position.y = HEIGHT+RAD;
-			    		robber.phys.position.x = WIDTH*Math.random();
+		        }
+		    	if(scene2vars.count===200){
+			    	var x = cop.phys.position.x
+			    	if (x>WIDTH/2){
+			    		robber.phys.position.x = RAD;
 			    	}
 			    	else{
-			    		robber.phys.position.y = -RAD;
-			    		robber.phys.position.x = WIDTH*Math.random();
+			    		robber.phys.position.x = WIDTH-RAD;
 			    	}
-			    	robber.followPerson(cop)
-			    	scene2vars.disappear===false;
-			    	scene2vars.approach===true;
+			    	robber.phys.position.y=HEIGHT*Math.random(); 
+			    	robber.clearPath();
+			    	robber.followPerson(cop);
+			    	scene2vars.disappear=false;
+			    	scene2vars.approach=true;
+			    	scene2vars.offsetr = 0;
+			    	scene2vars.offsetc = 0;
 			    }
-		    }
-		}
+			   	}
+
+			}
 
 		function scene1(event) {
 			if (scene1vars.framecount === 0) {
@@ -145,10 +171,10 @@
 				console.log("Switching to Scene 2");
 				gold.fillColor = 'white'
 				cop.arousal = 4;
-				cop.eagerness = 5;
+				cop.eagerness = 8;
 				cop.focus = 16;
 				robber.focus = 12;
-				robber.eagerness = 10;
+				robber.eagerness = 12;
 				robber.arousal = 1;
 				//alcoholic.debug = true;
 				robber.clearPath();
@@ -161,7 +187,8 @@
 		view.onFrame = function(event) {
 			currentScene(event);
 		}
-	}
+	}	
+
 	</script>
 </head>
 <body>
