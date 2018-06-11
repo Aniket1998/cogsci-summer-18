@@ -135,8 +135,9 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	var y = Point.random()
 	var ynext = Point.random()
 	var cnt = 0;
-	this.followPerson = function(person2) {
+	this.followPerson = function(person2, obstacle1, obstacle2) {
 		var last;
+		
 		if (this.movement.path.length === 0) {
 			last = this.phys.position;
 		} else {
@@ -149,24 +150,57 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		} else {
 			speed = 20 * (10 + this.eagerness);
 		}
+		//vector from end of path (last) to goal
 		var vx = person2.phys.position.subtract(last);
+
 		var gap = vx.length;
 		vx = vx.normalize();
+
+		//perpendicular to vx
 		var vy = vx.rotate(90);
+
 		var height = Math.exp(-this.focus/5.0) * 20;
 		if (gap < speed/45.0) {
 			this.movement.path.add(person2.phys.position);
 		} else {
-			if(cnt==0){
+			if (cnt==0) {
 				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
-			if(cnt%15==0){
+			if(cnt%15 == 0){
 				y = ynext;
 				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
 			y = y.add((ynext.subtract(y)).multiply(1/15))
-			//console.log(cnt);
+
+			var jump;
+			var vision = last.add(vx.multiply(10));
+			var prox1 = obstacle1.phys.position.subtract(vision);
+			var prox2 = obstacle2.phys.position.subtract(vision);
+			var pspace = 4 * 15;
+
+			if(prox1.length <  pspace){
+				console.log("Too close to 1");
+				//console.log(dist.length - pspace);
+				jump = vy.multiply(2000/(prox1.length*prox1.length));
+				if(prox1.dot(vy)<0){
+					this.movement.path.add(last.add(vx.multiply(speed/45.0).add(jump)));
+				} else {
+					jump = jump.multiply(-1);
+					this.movement.path.add(last.add(vx.multiply(speed/45.0).add(jump)));
+				}
+			} else if(prox2.length <  pspace) {
+				console.log("Too close to 2");
+				//console.log(dist.length - pspace);
+				jump = vy.multiply(2000/(prox2.length*prox2.length));
+				if(prox2.dot(vy)<0){
+					this.movement.path.add(last.add(vx.multiply(speed/45.0).add(jump)));
+				} else {
+					jump = jump.multiply(-1);
+					this.movement.path.add(last.add(vx.multiply(speed/45.0).add(jump)));
+				}
+			}	else {
 			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
+			}
 			cnt++;
 		}
 		this.movement.path.smooth();

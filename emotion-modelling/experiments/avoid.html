@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Alcoholic</title>
+	<script type="text/javascript" src="paper.js"></script>
+	<script type="text/javascript" src="emotion_threeparam.js"></script>
+	<script type="text/javascript">
+		paper.install(window);
+		window.onload = function() {
+		paper.setup('canvas');
+
+
+
+    var RAD = 15;
+		var WIDTH = view.size.width;
+		var HEIGHT = view.size.height;
+
+		var hero = new Person(true,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,20,new Path.Circle({
+			center : view.center,
+			radius : RAD,
+			fillColor : 'red'
+		}));
+
+		var obstacle1 = new Person(true,new Point(WIDTH - 15 * RAD,0.3 * HEIGHT),7,6,20,new Path.Circle({
+			center : view.center,
+			radius : RAD,
+			fillColor : 'black'
+		}));
+
+		var obstacle2 = new Person(true,new Point(WIDTH - 25 * RAD,0.275 * HEIGHT),7,6,20,new Path.Circle({
+			center : view.center,
+			radius : RAD,
+			fillColor : 'black'
+		}));
+
+    var target = new Person(true,new Point(WIDTH - 1.0 * RAD,0.235 * HEIGHT),0.1,2,20,new Path.Circle({
+			center : view.center,
+			radius : RAD,
+			fillColor : 'blue'
+		}));
+
+		var vars = {
+			offset : 0,
+			framecount : 0
+		}
+
+		function scene1(event) {
+      console.log("In scene 1");
+			if (vars.framecount === 0) {
+				hero.clearPath();
+			}
+			vars.framecount++;
+      hero.followPerson(target, obstacle1, obstacle2);
+      if (vars.offset != -1) {
+				vars.offset = hero.moveAlongPath(vars.offset,event.delta);
+			}
+		}
+		var currentScene = scene1;
+		view.onFrame = function(event) {
+			currentScene(event);
+		}
+	}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="960"></canvas>
+</body>
+</html>
