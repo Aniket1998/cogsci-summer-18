@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Alcoholic</title>
 	<script type="text/javascript" src="paper.js"></script>
-	<script type="text/javascript" src="emotion_threeparam.js"></script>
+	<script type="text/javascript" src="emonew.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
@@ -25,33 +25,33 @@
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
 
-		var hero = new Person(true,new Point(0.1 * WIDTH,0.4 * HEIGHT),2,-8,20,new Path.Circle({
+		var hero = new Person(true,new Point(view.center.x - 150,view.center.y),2,-8,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'red'
 		}));
 
-		var obstacle1 = new Person(true,new Point(WIDTH - 15 * RAD,0.3 * HEIGHT),7,6,20,new Path.Circle({
+		var obstacle1 = new Person(true,new Point(WIDTH,0.3 * HEIGHT),7,6,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'black'
 		}));
 
-		var obstacle2 = new Person(true,new Point(WIDTH - 25 * RAD,0.275 * HEIGHT),7,6,20,new Path.Circle({
+		var obstacle2 = new Person(true,new Point(view.center.x,view.center.y + 150),7,6,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'black'
 		}));
 
-    var target = new Person(true,new Point(WIDTH - 1.0 * RAD,0.235 * HEIGHT),0.1,2,20,new Path.Circle({
+    var target = new Person(true,new Point(WIDTH - 1.0 * RAD - 50,view.center.y),0.1,2,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'blue'
 		}));
-		var raster = target.phys.rasterize();
-		console.log("Width iz " + raster.width);
+
 		var vars = {
 			offset : 0,
+      offset2 : 0,
 			framecount : 0
 		}
 
@@ -59,9 +59,14 @@
       console.log("In scene 1");
 			if (vars.framecount === 0) {
 				hero.clearPath();
+        var endpt = new Point(view.center.x, view.center.y + 100);
+        obstacle2.moveToPoint(endpt);
 			}
 			vars.framecount++;
-      hero.followPerson(target, obstacle1, obstacle2);
+      if (vars.offset2 != -1) {
+				vars.offset2 = hero.moveAlongPath(vars.offset2,event.delta);
+			}
+      hero.followPerson(target, obstacle2, vars.offset, event.delta);
       if (vars.offset != -1) {
 				vars.offset = hero.moveAlongPath(vars.offset,event.delta);
 			}
