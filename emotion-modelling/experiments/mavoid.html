@@ -9,7 +9,6 @@
 		paper.install(window);
 		window.onload = function() {
 		paper.setup('canvas');
-
     var RAD = 15;
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
@@ -46,6 +45,8 @@
 
 		function scene1(event) {
       console.log("In scene 1");
+			console.log(event.delta);
+
 			if (vars.framecount === 0) {
 				hero.clearPath();
         var endpt = new Point(view.center.x, view.center.y - 200);
@@ -55,10 +56,10 @@
       if (vars.offset2 != -1) {
 				vars.offset2 = obstacle2.moveAlongPath(vars.offset2,event.delta);
 			}
-      // hero.followPerson(target, obstacle2, vars.offset, event.delta);
-      // if (vars.offset != -1) {
-			// 	vars.offset = hero.moveAlongPath(vars.offset,event.delta);
-			// }
+      hero.followPerson(target, obstacle2, vars.offset, event.delta);
+      if (vars.offset != -1) {
+				vars.offset = hero.moveAlongPath(vars.offset,event.delta);
+			}
 		}
 		var currentScene = scene1;
 		view.onFrame = function(event) {
