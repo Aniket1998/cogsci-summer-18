@@ -10,17 +10,6 @@
 		window.onload = function() {
 		paper.setup('canvas');
 
-		var grid = new Array(view.size.width);
-		for (var i = 0; i < view.size.width; i++) {
-  		grid[i] = new Array(view.size.height);
-		}
-		for (var i = 0; i < view.size.width; i++) {
-			for (var j = 0; j < view.size.height; j++) {
-				grid[i][j] = null;
-			}
-		}
-
-
     var RAD = 15;
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
@@ -59,17 +48,17 @@
       console.log("In scene 1");
 			if (vars.framecount === 0) {
 				hero.clearPath();
-        var endpt = new Point(view.center.x, view.center.y + 100);
+        var endpt = new Point(view.center.x, view.center.y - 200);
         obstacle2.moveToPoint(endpt);
 			}
 			vars.framecount++;
       if (vars.offset2 != -1) {
-				vars.offset2 = hero.moveAlongPath(vars.offset2,event.delta);
+				vars.offset2 = obstacle2.moveAlongPath(vars.offset2,event.delta);
 			}
-      hero.followPerson(target, obstacle2, vars.offset, event.delta);
-      if (vars.offset != -1) {
-				vars.offset = hero.moveAlongPath(vars.offset,event.delta);
-			}
+      // hero.followPerson(target, obstacle2, vars.offset, event.delta);
+      // if (vars.offset != -1) {
+			// 	vars.offset = hero.moveAlongPath(vars.offset,event.delta);
+			// }
 		}
 		var currentScene = scene1;
 		view.onFrame = function(event) {

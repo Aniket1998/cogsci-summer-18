@@ -180,6 +180,8 @@ function Stimulus(owner,entity,priority) {
 
 this.followPerson = function(person2, obstacle1, ds, delta) {
   var last;
+	//ds is distance moved by this per frames
+	//delta is event.delta, a global parameter
 
   if (this.movement.path.length === 0) {
     last = this.phys.position;
@@ -216,24 +218,28 @@ this.followPerson = function(person2, obstacle1, ds, delta) {
     }
     y = y.add((ynext.subtract(y)).multiply(1/15))
 
-    var vision = last.add(vx.multiply(10));
+    var vision = last.add(vx.multiply(10));		//vision of this
 
     var obs_last = obstacle1.movement.path.getPointAt(obstacle1.movement.path.length);
     var slast = obstacle1.movement.path.getPointAt(obstacle1.movement.path.length-1);
     var obs_vel = obs_last.subtract(slast);
-    obs_vel = obs_vel.normalize();    //unit vector along obs vel
-    var obs_dpf;      //distance per frame by obstacle
+    obs_vel = obs_vel.normalize();    //unit vector along obstacle velocity
+    var obs_dpf;      //distance per frame moved by obstacle
+
+		//obs_dpf = speed * delta in moveAlongPath
+		//speed being recreated, based on eagerness of obstacle
     if (obstacle1.eagerness > 0) {
 			obs_dpf = 30 * obstacle1.eagerness * delta;
 		} else {
 			obs_dpf = 20 * (10 + obstacle1.eagerness) * delta;
 		}
 
-    var nframes = 10/(this.speed*delta);      //number of frames this will take to reach vision
-// we will consider the object which reaches vision with 'this'
+    var nframes = 10/(this.speed*delta);      //number of frames 'this' will take to reach vision
+
+// we will consider the object which reaches vision simultaneously with 'this'
     var obs_ahead = obs_last.add(obs_vel.multiply(nframes * obs_dpf));
     var prox1 = obs_ahead.subtract(vision);
-
+		var pspace = 4 * 15;
     if(prox1.length <  pspace){
       console.log("Too close to 1");
       //console.log(dist.length - pspace);
