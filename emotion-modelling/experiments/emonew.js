@@ -136,84 +136,208 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	var ynext = Point.random()
 	var cnt = 0;
 
-	this.followPerson = function(person2, obstacle1, ds, delta) {
-	  var last;
-		//ds is distance moved by this per frames
-		//delta is event.delta, a global parameter
+	this.followPerson = function(person2) {
+		var last;
 
-	  if (this.movement.path.length === 0) {
-	    last = this.phys.position;
-	  } else {
-	    //console.log("Pathlength " + this.movement.path.length);
-	    last = this.movement.path.getPointAt(this.movement.path.length);
-	  }
-	  var speed;
-	  if (this.eagerness > 0) {
-	    speed = 40 * this.eagerness;
+		if (this.movement.path.length === 0) {
+			last = this.phys.position;
+		} else {
+			//console.log("Pathlength " + this.movement.path.length);
+			last = this.movement.path.getPointAt(this.movement.path.length);
+		}
+		var speed;
+		if (this.eagerness > 0) {
+			speed = 40 * this.eagerness;
+		} else {
+			speed = 20 * (10 + this.eagerness);
+		}
+		//vector from end of path (last) to goal
+		var vx = person2.phys.position.subtract(last);
 
-	  } else {
-	    speed = 20 * (10 + this.eagerness);
-	  }
-	  //vector from end of path (last) to goal
-	  var vx = person2.phys.position.subtract(last);
+		var gap = vx.length;
+		vx = vx.normalize();
 
-	  var gap = vx.length;
-	  vx = vx.normalize();
+		//perpendicular to vx
+		var vy = vx.rotate(90);
 
-	  //perpendicular to vx
-	  var vy = vx.rotate(90);
-
-	  var height = Math.exp(-this.focus/5.0) * 20;
-	  if (gap < speed/45.0) {
-	    this.movement.path.add(person2.phys.position);
-	  } else {
-	    if (cnt==0) {
-	      ynext = vy.multiply(height * (2*Math.random()-1));
-	    }
-	    if(cnt%15 == 0){
-	      y = ynext;
-	      ynext = vy.multiply(height * (2*Math.random()-1));
-	    }
-	    y = y.add((ynext.subtract(y)).multiply(1/15))
-
-	    var vision = last.add(vx.multiply(10));		//vision of this
-
-	    var obs_last = obstacle1.movement.path.getPointAt(obstacle1.movement.path.length);
-	    var slast = obstacle1.movement.path.getPointAt(obstacle1.movement.path.length-1);
-	    var obs_vel = obs_last.subtract(slast);
-	    obs_vel = obs_vel.normalize();    //unit vector along obstacle velocity
-	    var obs_dpf;      //distance per frame moved by obstacle
-
-			//obs_dpf = speed * delta in moveAlongPath
-			//speed being recreated, based on eagerness of obstacle
-	    if (obstacle1.eagerness > 0) {
-				obs_dpf = 30 * obstacle1.eagerness * delta;
-			} else {
-				obs_dpf = 20 * (10 + obstacle1.eagerness) * delta;
+		var height = Math.exp(-this.focus/5.0) * 20;
+		if (gap < speed/45.0) {
+			this.movement.path.add(person2.phys.position);
+		} else {
+			if (cnt==0) {
+				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
+			if(cnt%15 == 0){
+				y = ynext;
+				ynext = vy.multiply(height * (2*Math.random()-1));
+			}
+			y = y.add((ynext.subtract(y)).multiply(1/15))
 
-	    var nframes = 10/(this.speed*delta);      //number of frames 'this' will take to reach vision
 
-	// we will consider the object which reaches vision simultaneously with 'this'
-	    var obs_ahead = obs_last.add(obs_vel.multiply(nframes * obs_dpf));
-	    var prox1 = obs_ahead.subtract(vision);
-			var pspace = 4 * 15;
-	    if(prox1.length <  pspace){
-	      console.log("Too close to 1");
-	      //console.log(dist.length - pspace);
-	      jump = vy.multiply(2000/(prox1.length*prox1.length));
-	      if(prox1.dot(vy)<0){
-	        this.movement.path.add(last.add(vx.multiply(speed/45.0).add(jump)));
-	      } else {
-	        jump = jump.multiply(-1);
-	        this.movement.path.add(last.add(vx.multiply(speed/45.0).add(jump)));
-	      }
-	    }	else {
-	    this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
-	    }
-	    cnt++;
-	  }
-	  this.movement.path.smooth();
+			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
+
+			cnt++;
+		}
+		this.movement.path.smooth();
+	}
+
+  this.followandAvoidPerson = function(person2, obstacle, delta) {
+		var last;
+
+		if (this.movement.path.length === 0) {
+			last = this.phys.position;
+		} else {
+			//console.log("Pathlength " + this.movement.path.length);
+			last = this.movement.path.getPointAt(this.movement.path.length);
+		}
+		var speed;
+		if (this.eagerness > 0) {
+			speed = 40 * this.eagerness;
+		} else {
+			speed = 20 * (10 + this.eagerness);
+		}
+		//vector from end of path (last) to goal
+		var vx = person2.phys.position.subtract(last);
+
+		var gap = vx.length;
+		vx = vx.normalize();
+
+		//perpendicular to vx
+		var vy = vx.rotate(90);
+
+		var height = Math.exp(-this.focus/5.0) * 20;
+		if (gap < speed/45.0) {
+			this.movement.path.add(person2.phys.position);
+		} else {
+			if (cnt==0) {
+				ynext = vy.multiply(height * (2*Math.random()-1));
+			}
+			if(cnt%15 == 0){
+				y = ynext;
+				ynext = vy.multiply(height * (2*Math.random()-1));
+			}
+			y = y.add((ynext.subtract(y)).multiply(1/15))
+
+      var nframes = 5;
+
+      var speed;
+      if (this.eagerness > 0) {
+  			speed = 30 * this.eagerness;
+  		} else {
+  			speed = 20 * (10 + this.eagerness);
+  		}
+      var p1 = last;
+      var i1 = vx;    //unit vector along intended motion
+      var f1 = last.add(vx.multiply(speed * delta * nframes));
+
+      var obs_speed;
+      if (obstacle.eagerness > 0) {
+  			obs_speed = 30 * this.eagerness;
+  		} else {
+  			obs_speed = 20 * (10 + this.eagerness);
+  		}
+      var p2 = obstacle.movement.path.getPointAt(obstacle.movement.path.length);
+      var obs_target = new Point(view.center.x, view.center.y-200);
+      var i2 = obs_target.subtract(p2);
+      i2 = i2.normalize();
+      var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
+
+      var dist = p1.subtract(p2);
+      var fdist = f1.subtract(f2);      //future distance
+      var pspace = 8 * 15;    //4 * RAD
+      if(fdist.length < pspace || dist.length < pspace) {
+        console.log("HERE");
+        var escape = i2.multiply(-4000/(dist.length * dist.length));
+        this.movement.path.add(last.add(vx.multiply(speed/45.0).add(escape)));
+      } else {
+        this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
+      }
+
+			cnt++;
+		}
+		this.movement.path.smooth();
+	}
+
+  this.followandAvoidPerson1 = function(person2, obstacle, delta) {
+		var last;
+
+		if (this.movement.path.length === 0) {
+			last = this.phys.position;
+		} else {
+			//console.log("Pathlength " + this.movement.path.length);
+			last = this.movement.path.getPointAt(this.movement.path.length);
+		}
+		var speed;
+		if (this.eagerness > 0) {
+			speed = 40 * this.eagerness;
+		} else {
+			speed = 20 * (10 + this.eagerness);
+		}
+		//vector from end of path (last) to goal
+		var vx = person2.phys.position.subtract(last);
+
+		var gap = vx.length;
+		vx = vx.normalize();
+
+		//perpendicular to vx
+		var vy = vx.rotate(90);
+
+		var height = Math.exp(-this.focus/5.0) * 20;
+		if (gap < speed/45.0) {
+			this.movement.path.add(person2.phys.position);
+		} else {
+			if (cnt==0) {
+				ynext = vy.multiply(height * (2*Math.random()-1));
+			}
+			if(cnt%15 == 0){
+				y = ynext;
+				ynext = vy.multiply(height * (2*Math.random()-1));
+			}
+			y = y.add((ynext.subtract(y)).multiply(1/15))
+
+      var nframes = 5;
+
+      var speed;
+      if (this.eagerness > 0) {
+  			speed = 30 * this.eagerness;
+  		} else {
+  			speed = 20 * (10 + this.eagerness);
+  		}
+      var p1 = last;
+      var i1 = vx;    //unit vector along intended motion
+      var f1 = last.add(vx.multiply(speed * delta * nframes));
+
+      var obs_speed;
+      if (obstacle.eagerness > 0) {
+  			obs_speed = 30 * this.eagerness;
+  		} else {
+  			obs_speed = 20 * (10 + this.eagerness);
+  		}
+      var p2;
+      if(obstacle.movement.path.length === 0){
+        p2 = obstacle.phys.position;
+      } else {
+        p2 = obstacle.movement.path.getPointAt(obstacle.movement.path.length);
+      }
+      var obs_target = new Point(view.center.x + 300, view.center.y-100);
+      var i2 = obs_target.subtract(p2);
+      i2 = i2.normalize();
+      var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
+
+      var dist = p1.subtract(p2);
+      var fdist = f1.subtract(f2);      //future distance
+      var pspace = 8 * 15;    //4 * RAD
+      if(fdist.length < pspace || dist.length < pspace) {
+        console.log("HERE");
+        var escape = i2.multiply(-4000/(dist.length * dist.length));
+        this.movement.path.add(last.add(vx.multiply(speed/45.0).add(escape)));
+      } else {
+        this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
+      }
+
+			cnt++;
+		}
+		this.movement.path.smooth();
 	}
 
 	this.moveAlongPath = function(offset,delta) {
@@ -236,13 +360,14 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			if (this.arousal > 0) {
 				var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + speed * delta)).rotate(30 + 60 * Math.random()).normalize();
 				vibrationvec = vibrationvec.multiply(amplitude * Math.random());
+				console.log(vibrationvec.length);
 				this.phys.position.x += vibrationvec.x;
 				this.phys.position.y += vibrationvec.y;
 			}
 			if (this.debug) {
 				//console.log(offset);
 			}
-
+			//console.log("DELTA is "+delta);
 			return (offset + delta * speed);
 		} else {
 			return -1;

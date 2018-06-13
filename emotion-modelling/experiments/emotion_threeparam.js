@@ -227,13 +227,14 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			if (this.arousal > 0) {
 				var vibrationvec = path.getPointAt(offset).subtract(path.getPointAt(offset + speed * delta)).rotate(30 + 60 * Math.random()).normalize();
 				vibrationvec = vibrationvec.multiply(amplitude * Math.random());
+				console.log(vibrationvec.length);
 				this.phys.position.x += vibrationvec.x;
 				this.phys.position.y += vibrationvec.y;
 			}
 			if (this.debug) {
 				//console.log(offset);
 			}
-
+			//console.log("DELTA is "+delta);
 			return (offset + delta * speed);
 		} else {
 			return -1;
