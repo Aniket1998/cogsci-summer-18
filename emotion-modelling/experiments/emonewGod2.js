@@ -147,7 +147,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		}
 		var speed;
 		if (this.eagerness > 0) {
-			speed = 40 * this.eagerness;
+			speed = 30 * this.eagerness;
 		} else {
 			speed = 20 * (10 + this.eagerness);
 		}
@@ -189,12 +189,6 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			//console.log("Pathlength " + this.movement.path.length);
 			last = this.movement.path.getPointAt(this.movement.path.length);
 		}
-		var speed;
-		if (this.eagerness > 0) {
-			speed = 40 * this.eagerness;
-		} else {
-			speed = 20 * (10 + this.eagerness);
-		}
 		//vector from end of path (last) to goal
 		var vx = person2.phys.position.subtract(last);
 
@@ -203,6 +197,12 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 
 		//perpendicular to vx
 		var vy = vx.rotate(90);
+		var speed;
+      if (this.eagerness > 0) {
+  			speed = 30 * this.eagerness;
+  		} else {
+  			speed = 20 * (10 + this.eagerness);
+  		}
 
 		var height = Math.exp(-this.focus/5.0) * 20;
 		if (gap < speed/45.0) {
@@ -245,21 +245,21 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
   		}
       i2 = i2.normalize();
       var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
-      var ff2 = p2.add(i2.multiply(obs_speed * delta * (nframes+3)));
-      var ff1 = last.add(i1.multiply(speed * delta * (nframes+3)));
+      var ff2 = p2.add(i2.multiply(obs_speed * delta * (nframes+2)));
+      var ff1 = last.add(i1.multiply(speed * delta * (nframes+2)));
       var dist = p1.subtract(p2);
       var fdist = f1.subtract(f2);
       var ffdist = ff1.subtract(ff2);     //future distance
-      var pspace = 8* 15;    //4 * RAD
-      if(fdist.dot(vy)<0&&ffdist.dot(vy)<0){
+      var pspace = 6* 15;    //4 * RAD
+      if(fdist.dot(vy)<0&&i2.dot(vy)<0){
       	var escape = vy.multiply(-4000/(Math.max(fdist.length*fdist.length,100)));
       }
-      else if(fdist.dot(vy)>0&&ffdist.dot(vy)>0){
+      else if(fdist.dot(vy)>0&&i2.dot(vy)>0){
       	var escape = vy.multiply(4000/(Math.max(fdist.length*fdist.length,100)));
       }
       else{
       	var escape = vy.multiply(0);
-      }
+     	}
 
       if(((fdist.length < pspace)|| (dist.length < pspace))) {
         console.log("HERE");
@@ -283,12 +283,6 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			//console.log("Pathlength " + this.movement.path.length);
 			last = this.movement.path.getPointAt(this.movement.path.length);
 		}
-		var speed;
-		if (this.eagerness > 0) {
-			speed = 40 * this.eagerness;
-		} else {
-			speed = 20 * (10 + this.eagerness);
-		}
 		//vector from end of path (last) to goal
 		var vx = person2.phys.position.subtract(last);
 
@@ -296,6 +290,12 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		vx = vx.normalize();
 		//perpendicular to vx
 		var vy = vx.rotate(90);
+		var speed;
+       if (this.eagerness > 0) {
+  			speed = 30 * this.eagerness;
+  		} else {
+  			speed = 20 * (10 + this.eagerness);
+  		}
 
 		var height = Math.exp(-this.focus/5.0) * 20;
 		if (gap < speed/45.0) {
@@ -346,16 +346,16 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
       var dist = p1.subtract(p2);
       var fdist = f1.subtract(f2);      //future distance
            //4 * RAD
-      var ff2 = p2.add(i2.multiply(obs_speed * delta * (nframes+5)));
-      var ff1 = last.add(i1.multiply(speed * delta * (nframes+5)));
+      var ff2 = p2.add(i2.multiply(obs_speed * delta * (nframes+2)));
+      var ff1 = last.add(i1.multiply(speed * delta * (nframes+2)));
       var dist = p1.subtract(p2);
       var fdist = f1.subtract(f2);
       var ffdist = ff1.subtract(ff2);     //future distance
-      var pspace = 8* 15;    //4 * RAD
-      if(fdist.dot(vy)<0&&ffdist.dot(vy)<0){
+      var pspace = 6* 15;    //4 * RAD
+      if(fdist.dot(vy)<0&&i2.dot(vy)<0){
       	var escape = vy.multiply(-4000/(Math.max(fdist.length*fdist.length,100)));
       }
-      else if(fdist.dot(vy)>0&&ffdist.dot(vy)>0){
+      else if(fdist.dot(vy)>0&&i2.dot(vy)>0){
       	var escape = vy.multiply(4000/((Math.max(fdist.length*fdist.length,100))));
       }
       else{
