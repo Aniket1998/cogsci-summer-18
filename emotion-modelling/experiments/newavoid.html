@@ -68,7 +68,7 @@
         obstacle.clearPath();
 			}
 			vars.framecount++;
-      obstacle.followPerson(ptarget);
+      obstacle.followandAvoidPerson1(ptarget, hero, event.delta);
       if (vars.offset1 != -1) {
 				vars.offset1 = obstacle.moveAlongPath(vars.offset1,event.delta);
 			}

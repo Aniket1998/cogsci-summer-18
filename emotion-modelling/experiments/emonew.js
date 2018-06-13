@@ -260,7 +260,6 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 
   this.followandAvoidPerson1 = function(person2, obstacle, delta) {
 		var last;
-
 		if (this.movement.path.length === 0) {
 			last = this.phys.position;
 		} else {
@@ -329,7 +328,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
       var pspace = 8 * 15;    //4 * RAD
       if(fdist.length < pspace || dist.length < pspace) {
         console.log("HERE");
-        var escape = i2.multiply(-4000/(dist.length * dist.length));
+        var escape = vy.multiply(2000/(dist.length * dist.length));
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(escape)));
       } else {
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
