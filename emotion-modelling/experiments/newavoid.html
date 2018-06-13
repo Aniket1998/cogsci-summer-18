@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Alcoholic</title>
 	<script type="text/javascript" src="paper.js"></script>
-	<script type="text/javascript" src="emonew.js"></script>
+	<script type="text/javascript" src="emonewGod.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
@@ -25,13 +25,13 @@
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
 
-		var hero = new Person(true,new Point(view.center.x-150, view.center.y-100),2,-8,20,new Path.Circle({
+		var hero = new Person(true,new Point(view.center.x-150, view.center.y-100),3,8,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'red'
 		}));
 
-		var obstacle = new Person(true,new Point(view.center.x, view.center.y+50),2,6,20,new Path.Circle({
+		var obstacle = new Person(true,new Point(view.center.x, view.center.y+50),3,6,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'black'
