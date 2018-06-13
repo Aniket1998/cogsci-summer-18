@@ -227,7 +227,8 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
   			speed = 20 * (10 + this.eagerness);
   		}
       var p1 = last;
-      var i1 = vx;    //unit vector along intended motion
+      var i1 = (this.movement.path.getPointAt(this.movement.path.length)).subtract((this.movement.path.getPointAt(this.movement.path.length-speed*delta)));
+      i1=i1.normalize();    //unit vector along intended motion
       var f1 = last.add(vx.multiply(speed * delta * nframes));
 
       var obs_speed;
@@ -238,20 +239,20 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
   		}
       var p2 = obstacle.movement.path.getPointAt(obstacle.movement.path.length);
       var obs_target = new Point(view.center.x, view.center.y-200);
-      var i2 = obs_target.subtract(p2);
+      var i2 = (obstacle.movement.path.getPointAt(obstacle.movement.path.length)).subtract((obstacle.movement.path.getPointAt(obstacle.movement.path.length-obs_speed*delta))); 
       i2 = i2.normalize();
       var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
-
+      //var f3 = p2.add(i2.multiply(obs_speed * delta * nframes+))
       var dist = p1.subtract(p2);
       var fdist = f1.subtract(f2);      //future distance
-      var pspace = 8 * 15;    //4 * RAD
-      if(fdist.dot(vy)<0){
-      	var escape = vy.multiply(-4000/(dist.length*dist.length))
+      var pspace = 8*15    //4 * RAD
+      if(fdist.dot(vy)<0&&(fdist.add(i2.multiply(obs_speed * delta*2))).dot(vy)<0){
+      	var escape = vy.multiply(-4000/(fdist.length*fdist.length))
       }
-      else{
-      	var escape = vy.multiply(4000/(dist.length*dist.length))
+      if(fdist.dot(vy)>0&&(fdist.add(i2.multiply(obs_speed * delta*2))).dot(vy)>0){
+      	var escape = vy.multiply(4000/(fdist.length*fdist.length))
       }
-      if(fdist.length < pspace || dist.length < pspace) {
+      if(fdist.length < pspace || dist.length < 8000) {
         console.log("HERE");
         //var escape = i2.multiply(-4000/(dist.length * dist.length));
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(escape)));
@@ -310,7 +311,8 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
   			speed = 20 * (10 + this.eagerness);
   		}
       var p1 = last;
-      var i1 = vx;    //unit vector along intended motion
+      var i1 = (this.movement.path.getPointAt(this.movement.path.length)).subtract((this.movement.path.getPointAt(this.movement.path.length-speed*delta)));
+      i1 = i1.normalize()   //unit vector along intended motion
       var f1 = last.add(vx.multiply(speed * delta * nframes));
 
       var obs_speed;
@@ -326,16 +328,22 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
         p2 = obstacle.movement.path.getPointAt(obstacle.movement.path.length);
       }
       var obs_target = new Point(view.center.x + 300, view.center.y-100);
-      var i2 = obs_target.subtract(p2);
+      var i2 = (obstacle.movement.path.getPointAt(obstacle.movement.path.length)).subtract((obstacle.movement.path.getPointAt(obstacle.movement.path.length-obs_speed*delta))); 
       i2 = i2.normalize();
       var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
 
       var dist = p1.subtract(p2);
       var fdist = f1.subtract(f2);      //future distance
       var pspace = 8 * 15;    //4 * RAD
+       if(fdist.dot(vy)<0){
+      	var escape = vy.multiply(-4000/(fdist.length*fdist.length))
+      }
+      else{
+      	var escape = vy.multiply(4000/(fdist.length*fdist.length))
+      }
       if(fdist.length < pspace || dist.length < pspace) {
         console.log("HERE");
-        var escape = i2.multiply(-4000/(dist.length * dist.length));
+        //var escape = i2.multiply(-4000/(dist.length * dist.length));
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(escape)));
       } else {
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));

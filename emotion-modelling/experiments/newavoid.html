@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Alcoholic</title>
 	<script type="text/javascript" src="paper.js"></script>
-	<script type="text/javascript" src="emonewGod.js"></script>
+	<script type="text/javascript" src="emonewGod2.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
@@ -25,25 +25,25 @@
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
 
-		var hero = new Person(true,new Point(view.center.x-150, view.center.y-100),3,8,20,new Path.Circle({
+		var hero = new Person(true,new Point(view.center.x-150, view.center.y-100),5,0,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'red'
 		}));
 
-		var obstacle = new Person(true,new Point(view.center.x, view.center.y+50),3,6,20,new Path.Circle({
+		var obstacle = new Person(true,new Point(view.center.x, view.center.y+50),5,0,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'black'
 		}));
 
-    var target = new Person(true,new Point(view.center.x + 300, view.center.y-100),0.1,2,20,new Path.Circle({
+    var target = new Person(false,new Point(view.center.x + 300, view.center.y-100),0.1,2,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'blue'
 		}));
 
-    var ptarget = new Person(true,new Point(view.center.x, view.center.y-200),0.1,2,20,new Path.Circle({
+    var ptarget = new Person(false,new Point(view.center.x, view.center.y-200),0.1,2,20,new Path.Circle({
 			center : view.center,
 			radius : RAD/5,
 			fillColor : 'blue'

@@ -218,7 +218,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			}
 			y = y.add((ynext.subtract(y)).multiply(1/15))
 
-      var nframes = 5;
+      var nframes = 10;
 
       var speed;
       if (this.eagerness > 0) {
@@ -294,7 +294,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			}
 			y = y.add((ynext.subtract(y)).multiply(1/15))
 
-      var nframes = 5;
+      var nframes = 10;
 
       var speed;
       if (this.eagerness > 0) {
