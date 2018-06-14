@@ -10,27 +10,30 @@
 		window.onload = function() {
 		paper.setup('canvas');
 		var RAD = 15;
-		var persons = new Array(4);
-		var targets = new Array(4);
-		var prev = new Array(4);
-		var personarrays = new Array(4);
+		var num = 10;
+		var persons = new Array(num);
+		var targets = new Array(num);
+		var offsets = new Array(num);
+		var prev = new Array(num);
+		var personarrays = new Array(num);
 		var persongrid = new PersonGrid(view.size.width,view.size.height);
 		for (var i = persons.length - 1; i >= 0; i--) {
-			persons[i] = new Person(true,Point.random().multiply(view.size),5 + 5 * Math.random(),5 + 5 * Math.random(),5 + 5 * Math.random(),new Path.Circle({
+			persons[i] = new Person(false,Point.random().multiply(view.size),5 + 5 * Math.random(),5 + 5 * Math.random(),5 + 5 * Math.random(),new Path.Circle({
 				center : view.center,
 				radius : 15,
 				fillColor : 'red'
 			}));
 			targets[i] = new Person(false,Point.random().multiply(view.size),5 + 5 * Math.random(),5 + 5 * Math.random(),5 + 5 * Math.random(),new Path.Circle({
 				center : view.center,
-				radius : 15,
+				radius : 5,
 				fillColor : 'blue'
 			}));
-			targets[i].phys.visible = false;
+			//targets[i].phys.visible = false;
 			persongrid.set(persons[i].phys.position,persons[i]);
 		}
 		for (var i = persons.length - 1; i >= 0; i--) {
 			persons[i].clearPath();
+			offsets[i] = 0;
 		}
 		view.onFrame = function(event) {
 			for (var i = persons.length - 1; i >= 0; i--) {
@@ -42,9 +45,13 @@
 			for (var i = persons.length - 1; i >= 0; i--) {
 				persons[i].followandAvoidPerson(targets[i],personarrays[i],event.delta);
 			}
-			/*
-				INSERT LOGIC OF MOTION HERE
-			*/
+
+			for (var i = persons.length - 1; i >= 0; i--) {
+        if (offsets[i] != -1) {
+  				offsets[i] = persons[i].moveAlongPath(offsets[i],event.delta);
+  			}
+			}
+
 			for (var i = persons.length - 1; i >= 0; i--) {
 				persongrid.update(prev[i],persons[i].phys.position,persons[i]);
 			}

@@ -136,9 +136,9 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	var ynext = Point.random()
 	var cnt = 0;
 
-	this.followPerson = function(person2, qarray) {
+	this.followPerson = function(person2, parray) {
 		var last;
-		console.log(qarray.length);
+		console.log(parray.length);
 
 		if (this.movement.path.length === 0) {
 			last = this.phys.position;
@@ -173,11 +173,11 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
 			y = y.add((ynext.subtract(y)).multiply(1/15))
-			if(qarray.length === 2){
+			if(parray.length === 2){
 			var jump;
 			var vision = last.add(vx.multiply(10));
-			var prox1 = (qarray[0]).phys.position.subtract(vision);
-			var prox2 = (qarray[1]).phys.position.subtract(vision);
+			var prox1 = (parray[0]).phys.position.subtract(vision);
+			var prox2 = (parray[1]).phys.position.subtract(vision);
 			var pspace = 4 * 15;
 
 			if(prox1.length < pspace){

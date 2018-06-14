@@ -180,8 +180,9 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		}
 		this.movement.path.smooth();
 	}
-  this.followandAvoidPerson = function(person2, obstacle, delta) {
+  this.followandAvoidPerson = function(person2, parray, delta) {
 		var last;
+		console.log(parray.length);
 
 		if (this.movement.path.length === 0) {
 			last = this.phys.position;
@@ -216,10 +217,22 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
 			y = y.add((ynext.subtract(y)).multiply(1/15))
+			if(parray.length) {
+			var mindist = ((parray[0]).phys.position.subtract(this.phys.position)).length;
+			var n = 0;
+
+			for(var i=1; i< parray.length; i++) {
+				var dist = ((parray[i]).phys.position.subtract(this.phys.position)).length;
+				if(dist<mindist){
+					mindist = dist;
+					n = i;
+				}
+			}
+			var obstacle = parray[n];
 
       var nframes = 10;
       var p1 = last;
-      var i1 = vx;    //unit vector along intended motion 
+      var i1 = vx;    //unit vector along intended motion
       var f1 = last.add(i1.multiply(speed * delta * nframes));
 
       var obs_speed;
@@ -258,18 +271,22 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
      	}
 
       if(((fdist.length < pspace)|| (dist.length < pspace))) {
-        console.log("HERE");
-        //var escape = i2.multiply(-4000/(dist.length * dist.length));
+        console.log("Swerving");
+				if(dist.length < 2.2 * 15){
+					console.log("ouch");
+				}
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(escape)));
       } else {
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
       }
-
+		} else {
+			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
+		}
 			cnt++;
 		}
 		this.movement.path.smooth();
 	}
-	
+
 	this.moveAlongPath = function(offset,delta) {
 		var path = this.movement.path;
 		var speed;
@@ -347,6 +364,8 @@ var EmotionTable = {
 	}
 }
 function PersonGrid(width,height) {
+	this.width = width;
+	this.height = height;
 	this.grid = new Array(width);
 	for (var i = this.grid.length - 1; i >= 0; i--) {
 		this.grid[i] = new Array(height);
@@ -360,9 +379,29 @@ function PersonGrid(width,height) {
 		var prevy = Math.floor(prev.y);
 		var nextx = Math.floor(next.x);
 		var nexty = Math.floor(next.y);
-		if (prevx >= 0 && prevy >= 0 && nextx >= 0 && nexty >= 0) {
-			this.grid[prevx][prevy] = null;
-			this.grid[nextx][nexty] = person;
+		if (prevx < 0) {
+			prevx = 0;
+		}
+		if (nextx < 0) {
+			nextx = 0;
+		}
+		if (prevy < 0) {
+			prevy = 0;
+		}
+		if (nexty < 0) {
+		 	nexty = 0;
+		}
+		if (prevx >= this.width) {
+			prevx = this.width - 1;
+		}
+		if (nextx >= this.width) {
+			nextx = this.width - 1;
+		}
+		if (prevy >= this.height) {
+			prevy = this.height - 1;
+		}
+		if (nexty >= this.height) {
+			nexty = this.height - 1;
 		}
 	}
 
