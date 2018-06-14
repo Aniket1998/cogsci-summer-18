@@ -346,3 +346,57 @@ var EmotionTable = {
 		focus : [6,8]
 	}
 }
+function PersonGrid(width,height) {
+	this.grid = new Array(width);
+	for (var i = this.grid.length - 1; i >= 0; i--) {
+		this.grid[i] = new Array(height);
+		for (var j = this.grid[i].length - 1; j >= 0; j--) {
+			this.grid[i][j] = null;
+		}
+	}
+
+	this.update = function(prev,next,person) {
+		var prevx = Math.floor(prev.x);
+		var prevy = Math.floor(prev.y);
+		var nextx = Math.floor(next.x);
+		var nexty = Math.floor(next.y);
+		if (prevx >= 0 && prevy >= 0 && nextx >= 0 && nexty >= 0) {
+			this.grid[prevx][prevy] = null;
+			this.grid[nextx][nexty] = person;
+		}
+	}
+
+	this.set = function(pos,person) {
+		var x = Math.floor(pos.x);
+		var y = Math.floor(pos.y);
+		if (x >= 0 && y >= 0) {
+			this.grid[x][y] = person;
+		}
+	}
+
+	this.localSearch = function (startx,endx,starty,endy,except) {
+		startx = Math.floor(startx);
+		endx = Math.floor(endx);
+		starty = Math.floor(starty);
+		endy = Math.floor(endy);
+		if(startx<0) startx = 0;
+		if(starty<0) starty = 0;
+		if(endx<0) endx = 0;
+		if(endy<0) endy = 0;
+
+		if(startx>=960) startx = 959;
+		if(starty>=960) starty = 959;
+		if(endx>=960) endx = 959;
+		if(endy>=960) endy = 959;
+
+		var persons = [];
+		for (var i = startx; i < endx; i++) {
+			for (var j = starty; j < endy; j++) {
+				if (this.grid[i][j] !== null && this.grid[i][j] !== except) {
+					persons.push(this.grid[i][j]);
+				}
+			}
+		}
+		return persons;
+	}
+}
