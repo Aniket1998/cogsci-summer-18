@@ -218,13 +218,6 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			y = y.add((ynext.subtract(y)).multiply(1/15))
 
       var nframes = 10;
-
-      var speed;
-      if (this.eagerness > 0) {
-  			speed = 30 * this.eagerness;
-  		} else {
-  			speed = 20 * (10 + this.eagerness);
-  		}
       var p1 = last;
       var i1 = vx;    //unit vector along intended motion 
       var f1 = last.add(i1.multiply(speed * delta * nframes));
@@ -235,13 +228,16 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
   		} else {
   			obs_speed = 20 * (10 + this.eagerness);
   		}
-      var p2 = obstacle.movement.path.getPointAt(obstacle.movement.path.length);
-      var obs_target = new Point(view.center.x, view.center.y-200);
+      if(obstacle.movement.path.length === 0){
+        p2 = obstacle.phys.position;
+      } else {
+        p2 = obstacle.movement.path.getPointAt(obstacle.movement.path.length);
+      }
       if(obstacle.movement.path.length>obs_speed*delta){
       var i2 = (obstacle.movement.path.getPointAt(obstacle.movement.path.length)).subtract((obstacle.movement.path.getPointAt(obstacle.movement.path.length-obs_speed*delta)));
   		}
   		else{
-  			i2 = obs_target.subtract(p2);
+  			i2 = last.subtract(p2);
   		}
       i2 = i2.normalize();
       var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
@@ -250,7 +246,7 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
       var dist = p1.subtract(p2);
       var fdist = f1.subtract(f2);
       var ffdist = ff1.subtract(ff2);     //future distance
-      var pspace = 6* 15;    //4 * RAD
+      var pspace = 8* 15;    //4 * RAD
       if(fdist.dot(vy)<0&&i2.dot(vy)<0){
       	var escape = vy.multiply(-4000/(Math.max(fdist.length*fdist.length,100)));
       }
@@ -274,106 +270,6 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		this.movement.path.smooth();
 	}
 	
-  this.followandAvoidPerson1 = function(person2, obstacle, delta) {
-		var last;
-
-		if (this.movement.path.length === 0) {
-			last = this.phys.position;
-		} else {
-			//console.log("Pathlength " + this.movement.path.length);
-			last = this.movement.path.getPointAt(this.movement.path.length);
-		}
-		//vector from end of path (last) to goal
-		var vx = person2.phys.position.subtract(last);
-
-		var gap = vx.length;
-		vx = vx.normalize();
-		//perpendicular to vx
-		var vy = vx.rotate(90);
-		var speed;
-       if (this.eagerness > 0) {
-  			speed = 30 * this.eagerness;
-  		} else {
-  			speed = 20 * (10 + this.eagerness);
-  		}
-
-		var height = Math.exp(-this.focus/5.0) * 20;
-		if (gap < speed/45.0) {
-			this.movement.path.add(person2.phys.position);
-		} else {
-			if (cnt==0) {
-				ynext = vy.multiply(height * (2*Math.random()-1));
-			}
-			if(cnt%15 == 0){
-				y = ynext;
-				ynext = vy.multiply(height * (2*Math.random()-1));
-			}
-			y = y.add((ynext.subtract(y)).multiply(1/15))
-
-      var nframes = 10;
-
-      var speed;
-      if (this.eagerness > 0) {
-  			speed = 30 * this.eagerness;
-  		} else {
-  			speed = 20 * (10 + this.eagerness);
-  		}
-      var p1 = last;
-      var i1 = vx;    //unit vector along intended motion
-      var f1 = last.add(i1.multiply(speed * delta * nframes));
-
-      var obs_speed;
-      if (obstacle.eagerness > 0) {
-  			obs_speed = 30 * this.eagerness;
-  		} else {
-  			obs_speed = 20 * (10 + this.eagerness);
-  		}
-      var p2;
-      if(obstacle.movement.path.length === 0){
-        p2 = obstacle.phys.position;
-      } else {
-        p2 = obstacle.movement.path.getPointAt(obstacle.movement.path.length);
-      }
-      var obs_target = new Point(view.center.x + 300, view.center.y-100);
-      if(obstacle.movement.path.length>obs_speed*delta){
-      var i2 = (obstacle.movement.path.getPointAt(obstacle.movement.path.length)).subtract((obstacle.movement.path.getPointAt(obstacle.movement.path.length-obs_speed*delta)));
-  		}
-  		else{
-  			i2 = obs_target.subtract(p2);
-  		}
-      i2 = i2.normalize();
-      var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
-      var dist = p1.subtract(p2);
-      var fdist = f1.subtract(f2);      //future distance
-           //4 * RAD
-      var ff2 = p2.add(i2.multiply(obs_speed * delta * (nframes+2)));
-      var ff1 = last.add(i1.multiply(speed * delta * (nframes+2)));
-      var dist = p1.subtract(p2);
-      var fdist = f1.subtract(f2);
-      var ffdist = ff1.subtract(ff2);     //future distance
-      var pspace = 6* 15;    //4 * RAD
-      if(fdist.dot(vy)<0&&i2.dot(vy)<0){
-      	var escape = vy.multiply(-4000/(Math.max(fdist.length*fdist.length,100)));
-      }
-      else if(fdist.dot(vy)>0&&i2.dot(vy)>0){
-      	var escape = vy.multiply(4000/((Math.max(fdist.length*fdist.length,100))));
-      }
-      else{
-      	var escape = vy.multiply(0);
-      }
-      if((fdist.length < pspace)|| (dist.length < pspace)) {
-        console.log("HERE");
-        //var escape = i2.multiply(-4000/(dist.length * dist.length));
-        this.movement.path.add(last.add(vx.multiply(speed/45.0).add(escape)));
-      } else {
-        this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
-      }
-
-			cnt++;
-		}
-		this.movement.path.smooth();
-	}
-
 	this.moveAlongPath = function(offset,delta) {
 		var path = this.movement.path;
 		var speed;
