@@ -136,8 +136,9 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 	var ynext = Point.random()
 	var cnt = 0;
 
-	this.followPerson = function(person2, obstacle1, obstacle2) {
+	this.followPerson = function(person2, qarray) {
 		var last;
+		console.log(qarray.length);
 
 		if (this.movement.path.length === 0) {
 			last = this.phys.position;
@@ -172,16 +173,15 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
 			y = y.add((ynext.subtract(y)).multiply(1/15))
-
+			if(qarray.length === 2){
 			var jump;
 			var vision = last.add(vx.multiply(10));
-			var prox1 = obstacle1.phys.position.subtract(vision);
-			var prox2 = obstacle2.phys.position.subtract(vision);
+			var prox1 = (qarray[0]).phys.position.subtract(vision);
+			var prox2 = (qarray[1]).phys.position.subtract(vision);
 			var pspace = 4 * 15;
 
-			if(prox1.length <  pspace){
+			if(prox1.length < pspace){
 				console.log("Too close to 1");
-				//console.log(dist.length - pspace);
 				jump = vy.multiply(2000/(prox1.length*prox1.length));
 				if(prox1.dot(vy)<0){
 					this.movement.path.add(last.add(vx.multiply(speed/45.0).add(jump)));
@@ -202,6 +202,10 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 			}	else {
 			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
 			}
+		}else {
+			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
+		}
+
 			cnt++;
 		}
 		this.movement.path.smooth();
@@ -281,5 +285,59 @@ var EmotionTable = {
 		eagerness : [-6,-4],
 		arousal : [3,5],
 		focus : [6,8]
+	}
+}
+function PersonGrid(width,height) {
+	this.grid = new Array(width);
+	for (var i = this.grid.length - 1; i >= 0; i--) {
+		this.grid[i] = new Array(height);
+		for (var j = this.grid[i].length - 1; j >= 0; j--) {
+			this.grid[i][j] = null;
+		}
+	}
+
+	this.update = function(prev,next,person) {
+		var prevx = Math.floor(prev.x);
+		var prevy = Math.floor(prev.y);
+		var nextx = Math.floor(next.x);
+		var nexty = Math.floor(next.y);
+		if (prevx >= 0 && prevy >= 0 && nextx >= 0 && nexty >= 0) {
+			this.grid[prevx][prevy] = null;
+			this.grid[nextx][nexty] = person;
+		}
+	}
+
+	this.set = function(pos,person) {
+		var x = Math.floor(pos.x);
+		var y = Math.floor(pos.y);
+		if (x >= 0 && y >= 0) {
+			this.grid[x][y] = person;
+		}
+	}
+
+	this.localSearch = function (startx,endx,starty,endy,except) {
+		startx = Math.floor(startx);
+		endx = Math.floor(endx);
+		starty = Math.floor(starty);
+		endy = Math.floor(endy);
+		if(startx<0) startx = 0;
+		if(starty<0) starty = 0;
+		if(endx<0) endx = 0;
+		if(endy<0) endy = 0;
+
+		if(startx>=960) startx = 959;
+		if(starty>=960) starty = 959;
+		if(endx>=960) endx = 959;
+		if(endy>=960) endy = 959;
+
+		var persons = [];
+		for (var i = startx; i < endx; i++) {
+			for (var j = starty; j < endy; j++) {
+				if (this.grid[i][j] !== null && this.grid[i][j] !== except) {
+					persons.push(this.grid[i][j]);
+				}
+			}
+		}
+		return persons;
 	}
 }

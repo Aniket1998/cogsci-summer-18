@@ -10,17 +10,8 @@
 		window.onload = function() {
 		paper.setup('canvas');
 
-		var grid = new Array(view.size.width);
-		for (var i = 0; i < view.size.width; i++) {
-  		grid[i] = new Array(view.size.height);
-		}
-		for (var i = 0; i < view.size.width; i++) {
-			for (var j = 0; j < view.size.height; j++) {
-				grid[i][j] = null;
-			}
-		}
-
-
+    var persongrid = new PersonGrid(view.size.width,view.size.height);
+		var personarray;
     var RAD = 15;
 		var WIDTH = view.size.width;
 		var HEIGHT = view.size.height;
@@ -31,13 +22,13 @@
 			fillColor : 'red'
 		}));
 
-		var obstacle1 = new Person(true,new Point(WIDTH - 15 * RAD,0.3 * HEIGHT),7,6,20,new Path.Circle({
+		var obstacle1 = new Person(true,new Point(WIDTH - 40 * RAD,0.3 * HEIGHT),7,6,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'black'
 		}));
 
-		var obstacle2 = new Person(true,new Point(WIDTH - 25 * RAD,0.275 * HEIGHT),7,6,20,new Path.Circle({
+		var obstacle2 = new Person(true,new Point(WIDTH - 50 * RAD,0.275 * HEIGHT),7,6,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'black'
@@ -48,8 +39,12 @@
 			radius : RAD,
 			fillColor : 'blue'
 		}));
-		var raster = target.phys.rasterize();
-		console.log("Width iz " + raster.width);
+
+		persongrid.set(hero.phys.position,hero);
+	  persongrid.set(obstacle1.phys.position,obstacle1);
+		persongrid.set(obstacle2.phys.position,obstacle2);
+		persongrid.set(target.phys.position,target);
+
 		var vars = {
 			offset : 0,
 			framecount : 0
@@ -61,16 +56,31 @@
 				hero.clearPath();
 			}
 			vars.framecount++;
-      hero.followPerson(target, obstacle1, obstacle2);
+      hero.followPerson(target, personarray);
       if (vars.offset != -1) {
 				vars.offset = hero.moveAlongPath(vars.offset,event.delta);
 			}
 		}
 		var currentScene = scene1;
 		view.onFrame = function(event) {
-
+			personarray = persongrid.localSearch(hero.phys.position.x-4*RAD, hero.phys.position.x+10*RAD, hero.phys.position.y-10*RAD, hero.phys.position.y+10*RAD, hero);
+			var heroprev = hero.phys.position;
+      var obstacle1prev = obstacle1.phys.position;
+      var obstacle2prev = obstacle2.phys.position;
+			var targetprev = target.phys.position;
 
 			currentScene(event);
+
+			persongrid.update(heroprev,hero.phys.position,hero);
+			persongrid.update(obstacle1prev,obstacle1.phys.position,obstacle1);
+			persongrid.update(obstacle2prev,obstacle2.phys.position,obstacle2);
+			persongrid.update(targetprev,target.phys.position,target);
+			//var person_array = persongrid.localSearch(0,960,0,960,hero);
+
+
+			var selrect = new Path.Rectangle(new Point(hero.phys.position.x-4*RAD, hero.phys.position.y-10*RAD), new Point(hero.phys.position.x+10*RAD, hero.phys.position.y+10*RAD))
+			selrect.selected = true;
+			//console.log(person_array.length + "is PA");
 		}
 	}
 	</script>
