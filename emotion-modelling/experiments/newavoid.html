@@ -9,79 +9,68 @@
 		paper.install(window);
 		window.onload = function() {
 		paper.setup('canvas');
+		var RAD = 15;
+		var num = 2;
+		var persons = new Array(num);
+		var targets = new Array(num);
+		var offsets = new Array(num);
+		var prev = new Array(num);
+		var personarrays = new Array(num);
+		var persongrid = new PersonGrid(view.size.width,view.size.height);
 
-		var grid = new Array(view.size.width);
-		for (var i = 0; i < view.size.width; i++) {
-  		grid[i] = new Array(view.size.height);
-		}
-		for (var i = 0; i < view.size.width; i++) {
-			for (var j = 0; j < view.size.height; j++) {
-				grid[i][j] = null;
-			}
-		}
-
-
-    var RAD = 15;
-		var WIDTH = view.size.width;
-		var HEIGHT = view.size.height;
-
-		var hero = new Person(false,new Point(view.center.x-150, view.center.y-100),6,0,20,new Path.Circle({
+			persons[0] = new Person(true,new Point(view.center.x-150, view.center.y-100),5,0,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'red'
 		}));
-
-		var obstacle = new Person(false,new Point(view.center.x, view.center.y+50),5,0,20,new Path.Circle({
-			center : view.center,
-			radius : RAD,
-			fillColor : 'black'
-		}));
-
-    var target = new Person(false,new Point(view.center.x + 300, view.center.y-100),0.1,2,20,new Path.Circle({
+			targets[0] = new Person(false,new Point(view.center.x + 300, view.center.y-100),0.1,2,20,new Path.Circle({
 			center : view.center,
 			radius : RAD,
 			fillColor : 'blue'
 		}));
+			//targets[i].phys.visible = false;
+			persongrid.set(persons[0].phys.position,persons[0]);
 
-    var ptarget = new Person(false,new Point(view.center.x, view.center.y-200),0.1,2,20,new Path.Circle({
+
+		    persons[1] = new Person(true,new Point(view.center.x, view.center.y+50),5,0,20,new Path.Circle({
+			center : view.center,
+			radius : RAD,
+			fillColor : 'black'
+		})); 
+			targets[1] = new Person(false,new Point(view.center.x, view.center.y-200),0.1,2,20,new Path.Circle({
 			center : view.center,
 			radius : RAD/5,
 			fillColor : 'blue'
 		}));
 
-    var pt = new Path.Circle({
-      center : new Point(view.center.x, view.center.y-100),
-			radius : RAD/8,
-			fillColor : 'red'
-    })
+			//targets[i].phys.visible = false;
+			persongrid.set(persons[1].phys.position,persons[1]);
 
-		var vars = {
-			offset : 0,
-      offset1 : 0,
-			framecount : 0
+		for (var i = persons.length - 1; i >= 0; i--) {
+			persons[i].clearPath();
+			offsets[i] = 0;
 		}
 
-		function scene1(event) {
-      console.log("In scene 1");
-			if (vars.framecount === 0) {
-				hero.clearPath();
-        obstacle.clearPath();
-			}
-			vars.framecount++;
-      obstacle.followandAvoidPerson(ptarget, hero, event.delta);
-      if (vars.offset1 != -1) {
-				vars.offset1 = obstacle.moveAlongPath(vars.offset1,event.delta);
-			}
-      hero.followandAvoidPerson(target, obstacle, event.delta);
-      if (vars.offset != -1) {
-				vars.offset = hero.moveAlongPath(vars.offset,event.delta);
-			}
-		}
-		var currentScene = scene1;
 		view.onFrame = function(event) {
+			for (var i = persons.length - 1; i >= 0; i--) {
+				prev[i] = persons[i].phys.position;
+			}
+			for (var i = persons.length - 1; i >= 0; i--) {
+				personarrays[i] = persongrid.localSearch(persons[i].phys.position.x-20*RAD, persons[i].phys.position.x+20*RAD, persons[i].phys.position.y-20*RAD, persons[i].phys.position.y+20*RAD,persons[i]);
+			}
+			for (var i = persons.length - 1; i >= 0; i--) {
+				persons[i].followandAvoidPerson(targets[i],personarrays[i],event.delta);
+			}
 
+			for (var i = persons.length - 1; i >= 0; i--) {
+        if (offsets[i] != -1) {
+  				offsets[i] = persons[i].moveAlongPath(offsets[i],event.delta);
+  			}
+			}
 
-			currentScene(event);
+			for (var i = persons.length - 1; i >= 0; i--) {
+				persongrid.update(prev[i],persons[i].phys.position,persons[i]);
+			}
 		}
 	}
 	</script>

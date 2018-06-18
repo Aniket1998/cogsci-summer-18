@@ -18,12 +18,12 @@
 		var personarrays = new Array(num);
 		var persongrid = new PersonGrid(view.size.width,view.size.height);
 		for (var i = persons.length - 1; i >= 0; i--) {
-			persons[i] = new Person(false,Point.random().multiply(view.size),5 + 5 * Math.random(),5 + 5 * Math.random(),5 + 5 * Math.random(),new Path.Circle({
+			persons[i] = new Person(false,Point.random().multiply(view.size),3 + 5 * Math.random(),0,5 + 5 * Math.random(),new Path.Circle({
 				center : view.center,
 				radius : 15,
 				fillColor : 'red'
 			}));
-			targets[i] = new Person(false,Point.random().multiply(view.size),5 + 5 * Math.random(),5 + 5 * Math.random(),5 + 5 * Math.random(),new Path.Circle({
+			targets[i] = new Person(true,Point.random().multiply(view.size),3 + 5 * Math.random(),0,5 + 5 * Math.random(),new Path.Circle({
 				center : view.center,
 				radius : 5,
 				fillColor : 'blue'
@@ -40,7 +40,7 @@
 				prev[i] = persons[i].phys.position;
 			}
 			for (var i = persons.length - 1; i >= 0; i--) {
-				personarrays[i] = persongrid.localSearch(persons[i].phys.position.x-4*RAD, persons[i].phys.position.x+10*RAD, persons[i].phys.position.y-10*RAD, persons[i].phys.position.y+10*RAD,persons[i]);
+				personarrays[i] = persongrid.localSearch(persons[i].phys.position.x-20*RAD, persons[i].phys.position.x+20*RAD, persons[i].phys.position.y-20*RAD, persons[i].phys.position.y+20*RAD,persons[i]);
 			}
 			for (var i = persons.length - 1; i >= 0; i--) {
 				persons[i].followandAvoidPerson(targets[i],personarrays[i],event.delta);

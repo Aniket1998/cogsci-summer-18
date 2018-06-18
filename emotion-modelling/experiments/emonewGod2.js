@@ -180,10 +180,8 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 		}
 		this.movement.path.smooth();
 	}
-  var repel = false
-  this.followandAvoidPerson = function(person2, parray, delta) {
+  this.followandAvoidPerson = function(person2, obstacle, delta) {
 		var last;
-		console.log(parray.length);
 
 		if (this.movement.path.length === 0) {
 			last = this.phys.position;
@@ -218,26 +216,12 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
 				ynext = vy.multiply(height * (2*Math.random()-1));
 			}
 			y = y.add((ynext.subtract(y)).multiply(1/15))
-			if(parray.length) {
-			var mindist = ((parray[0]).phys.position.subtract(this.phys.position)).length;
-			var n = 0;
 
-			for(var i=1; i< parray.length; i++) {
-				var dist = ((parray[i]).phys.position.subtract(this.phys.position)).length;
-				if(dist<mindist){
-					mindist = dist;
-					n = i;
-				}
-			}
-			var obstacle = parray[n];
-
-	var p1 = last;
-      var i1 = vx;
-	var minfdist = 1000;
-	var mincount = 0;
-      for (var nframes=1;nframes<11;nframes++){
-          //unit vector along intended motion
+      var nframes = 10;
+      var p1 = last;
+      var i1 = vx;    //unit vector along intended motion 
       var f1 = last.add(i1.multiply(speed * delta * nframes));
+
       var obs_speed;
       if (obstacle.eagerness > 0) {
   			obs_speed = 30 * this.eagerness;
@@ -250,75 +234,61 @@ function Person(debug,pos,eagerness,arousal,focus,shape) {
         p2 = obstacle.movement.path.getPointAt(obstacle.movement.path.length);
       }
       if(obstacle.movement.path.length>obs_speed*delta){
-      	if((p2.subtract(obstacle.phys.position)).length>2){
       var i2 = (obstacle.movement.path.getPointAt(obstacle.movement.path.length)).subtract((obstacle.movement.path.getPointAt(obstacle.movement.path.length-obs_speed*delta)));
-       }
-       else{
-  			var i2 = f1.multiply(0);
-  			console.log("hi");
-  			console.log(i2);
-  		}
   		}
   		else{
-  			var i2 = f1.multiply(0);
+  			i2 = last.subtract(p2);
   		}
       i2 = i2.normalize();
       var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
-      var fdist = f1.subtract(f2);
-      if ((fdist.length<minfdist)){
-      	minfdist = fdist.length;
-      	mincount = nframes;
-      }
-  }
-  var nframes = mincount;
-  console.log("nframes"+nframes);
-  var f1 = last.add(i1.multiply(speed * delta * nframes));
-  var f2 = p2.add(i2.multiply(obs_speed * delta * nframes));
-      var fdist = f1.subtract(f2);
       var ff2 = p2.add(i2.multiply(obs_speed * delta * (nframes+2)));
       var ff1 = last.add(i1.multiply(speed * delta * (nframes+2)));
       var dist = p1.subtract(p2);
       var fdist = f1.subtract(f2);
-      var ffdist = ff1.subtract(ff2);     //future distance
-      var pspace = 8* 15;    //4 * RAD
+      var ffdist = ff1.subtract(ff2);
       var adist = this.phys.position.subtract(obstacle.phys.position);
-      if(fdist.dot(vy)<0&&i2.dot(vy)<=0){
+      if()
+           //future distance
+      var pspace = 8* 15;    //4 * RAD
+      if(fdist.dot(vy)<0&&i2.dot(vy)<0){
       	var escape = vy.multiply(-4000/(Math.max(fdist.length*fdist.length,100)));
       }
-      else if(fdist.dot(vy)>0&&i2.dot(vy)>=0){
+      else if(fdist.dot(vy)>0&&i2.dot(vy)>0){
       	var escape = vy.multiply(4000/(Math.max(fdist.length*fdist.length,100)));
       }
       else if(fdist.dot(vy)<0&&i2.dot(vy)>0){
-      	if(fdist.length<5*15){
+      	if(fdist.length<4*15){
       	var escape = vy.multiply(-4000/(Math.max(fdist.length*fdist.length,100)));
       }
       }
       else if(fdist.dot(vy)>0&&i2.dot(vy)<0){
-      	if(fdist.length<5*15){
+      	if(fdist.length<4*15){
       	var escape = vy.multiply(4000/(Math.max(fdist.length*fdist.length,100)));
       }
       }
+      else if(adist.length<4*15){
+      	this.clearPath();
+      	this.movement.path.add(this.phys.position);
+      	this.movement.path.add(this.phys.position.add((adist.normalize()).multiply(speed/45.0).add(escape)));
+      }
+
       else{
       	var escape = vy.multiply(0);
      	}
 
       if(((fdist.length < pspace)|| (dist.length < pspace))) {
-        console.log("Swerving");
-				if(dist.length < 2.2 * 15){
-					console.log("ouch");
-				}
+        console.log("HERE");
+        //var escape = i2.multiply(-4000/(dist.length * dist.length));
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(escape)));
       } else {
         this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
       }
-		} else {
-			this.movement.path.add(last.add(vx.multiply(speed/45.0).add(y)));
-		}
+
 			cnt++;
 		}
 		this.movement.path.smooth();
 	}
-
+	
 	this.moveAlongPath = function(offset,delta) {
 		var path = this.movement.path;
 		var speed;
@@ -393,81 +363,5 @@ var EmotionTable = {
 		eagerness : [-6,-4],
 		arousal : [3,5],
 		focus : [6,8]
-	}
-}
-function PersonGrid(width,height) {
-	this.width = width;
-	this.height = height;
-	this.grid = new Array(width);
-	for (var i = this.grid.length - 1; i >= 0; i--) {
-		this.grid[i] = new Array(height);
-		for (var j = this.grid[i].length - 1; j >= 0; j--) {
-			this.grid[i][j] = null;
-		}
-	}
-
-	this.update = function(prev,next,person) {
-		var prevx = Math.floor(prev.x);
-		var prevy = Math.floor(prev.y);
-		var nextx = Math.floor(next.x);
-		var nexty = Math.floor(next.y);
-		if (prevx < 0) {
-			prevx = 0;
-		}
-		if (nextx < 0) {
-			nextx = 0;
-		}
-		if (prevy < 0) {
-			prevy = 0;
-		}
-		if (nexty < 0) {
-		 	nexty = 0;
-		}
-		if (prevx >= this.width) {
-			prevx = this.width - 1;
-		}
-		if (nextx >= this.width) {
-			nextx = this.width - 1;
-		}
-		if (prevy >= this.height) {
-			prevy = this.height - 1;
-		}
-		if (nexty >= this.height) {
-			nexty = this.height - 1;
-		}
-	}
-
-	this.set = function(pos,person) {
-		var x = Math.floor(pos.x);
-		var y = Math.floor(pos.y);
-		if (x >= 0 && y >= 0) {
-			this.grid[x][y] = person;
-		}
-	}
-
-	this.localSearch = function (startx,endx,starty,endy,except) {
-		startx = Math.floor(startx);
-		endx = Math.floor(endx);
-		starty = Math.floor(starty);
-		endy = Math.floor(endy);
-		if(startx<0) startx = 0;
-		if(starty<0) starty = 0;
-		if(endx<0) endx = 0;
-		if(endy<0) endy = 0;
-
-		if(startx>=960) startx = 959;
-		if(starty>=960) starty = 959;
-		if(endx>=960) endx = 959;
-		if(endy>=960) endy = 959;
-
-		var persons = [];
-		for (var i = startx; i < endx; i++) {
-			for (var j = starty; j < endy; j++) {
-				if (this.grid[i][j] !== null && this.grid[i][j] !== except) {
-					persons.push(this.grid[i][j]);
-				}
-			}
-		}
-		return persons;
 	}
 }
