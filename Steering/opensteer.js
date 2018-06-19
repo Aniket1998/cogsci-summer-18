@@ -48,6 +48,13 @@ function Locomotion(params) {
 		this.shape.position.x = this._smoothPos.x;
 		this.shape.position.y = this._smoothPos.y;
 	}
+
+	this.futurePosition = function(time) {
+		/*This could also be this.shape.position (both are different because of the linear interpolation)
+		TODO: If this gives poor results change to this.shape.position
+		Could also use quadratic approximation term 1/2at^2, is it necessary?*/
+		return this.position.add(this.velocity.multiply(time));
+	}
 }
 
 
