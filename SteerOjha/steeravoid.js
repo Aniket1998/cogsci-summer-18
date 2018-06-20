@@ -42,7 +42,7 @@ function Locomotion(params) {
 				if(offset.length < minimumsep) {
 					console.log("Oh so close");
 					close = 1;
-					this.shape.position = this.shape.position.add(this.basisPerpendicular.multiply(10 * this.basisPerpendicular.dot(offset)));
+					//changes
 				}
 			}
 
@@ -58,12 +58,12 @@ function Locomotion(params) {
 			var unitvrel = vrel.normalize();
 			var dist = parray[0].shape.position.subtract(this.shape.position);
 			var projection = Math.abs(dist.dot(unitvrel));
-			var my_future = this.shape.position.add(this.velocity.multiply(mintime));
-			var obs_future = parray[0].shape.position.add(parray[0].velocity.multiply(mintime));
+			time = projection/relspeed;
+			var my_future = this.shape.position.add(this.velocity.multiply(time));
+			var obs_future = parray[0].shape.position.add(parray[0].velocity.multiply(time));
 			var mindist = my_future.subtract(obs_future).length;
 
 					if (vrel.dot(dist) <= 0 && mindist < pspace) {
-						time = projection/relspeed;
 						if(time < mintime) {
 							mintime = time;
 							threat = 1;

@@ -3,7 +3,7 @@
 	<meta charset="utf-8">
 	<title>Emotion Test</title>
 	<script type="text/javascript" src="paper.js"></script>
-	<script type="text/javascript" src="emoopensteer.js"></script>
+	<script type="text/javascript" src="steeravoid.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
@@ -28,7 +28,7 @@
 			});
 
 			var target = new Locomotion({
-				velocity : new Point(0, 0),
+				velocity : new Point(0, -0.001),
 				mass : 1,
 				speed : 10,
 				boundingRadius : 25,
