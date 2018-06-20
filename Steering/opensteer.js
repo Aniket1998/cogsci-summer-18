@@ -27,6 +27,9 @@ function Locomotion(params) {
 	}
 
 	this.steer = function(force,dt) {
+
+		//parray marks return of the grid
+
 		var adjForce = this._adjustForce(force,dt);
 		var acc = adjForce.divide(this.mass);
 
@@ -39,10 +42,14 @@ function Locomotion(params) {
 		this.speed = this.velocity.length;
 		this.position = this.position.add(this.velocity.add(dt));
 
+
+//equivalent to this.vec and vy resp
 		this.basisParallel = this.velocity.normalize();
 		this.basisPerpendicular = this.basisParallel.rotate(90);
 
 		var posSmooth = dt * 0.06;
+
+		//._smoothPos + possmooth * (this.position - _smoothPos)
 		this._smoothPos = blend_vec(posSmooth,this.position,this._smoothPos);
 
 		this.shape.position.x = this._smoothPos.x;
@@ -85,6 +92,7 @@ function vector_interpolation(v1,v2,t) {
 	return v1.add(dif);
 }
 
+//smooth + t * (newvec - smooth)
 function blend_vec(t,newvec,smooth) {
 	return vector_interpolation(smooth,newvec,clip_value(t,0,1))
 }
