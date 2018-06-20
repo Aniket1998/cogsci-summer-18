@@ -8,23 +8,64 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
+
+			var persongrid = new PersonGrid(view.size.width,view.size.height);
+			var personarray;
+
 			var loc = new Locomotion({
 				velocity : new Point(0,0),
 				mass : 1,
 				speed : 0,
 				boundingRadius : 25,
-				maxForce : 100,
-				maxSpeed : 100,
+				maxForce : 4000000,
+				maxSpeed : 5,
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
 					fillColor : 'red'
-				})
+				}),
+				point : view.center.add(new Point(400,0))
 			});
+			
+
+			var obstacle1 = new Locomotion({
+				velocity : new Point(0,0),
+				mass : 1,
+				speed : 0,
+				boundingRadius : 25,
+				maxForce : 4000000,
+				maxSpeed : 5,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 20,
+					fillColor : 'blue'
+				}),
+				point : view.center.add(new Point(0, -400))
+			});
+
+			persongrid.set(loc.position,loc);
+	  		persongrid.set(obstacle1.position,obstacle1);
+			
+
+
 			view.onFrame = function(event) {
-				var ste = loc.steeringWander(event.delta);
-				console.log("X " + ste.x + "Y " + ste.y);
-				loc.steer(ste,event.delta);
+
+				personarray = persongrid.localSearch(loc.position.x-4*15, loc.position.x+10*15, loc.position.y-10*15, loc.position.y+10*15, loc);
+				var locprev = loc.position;
+      			var obstacle1prev = obstacle1.position;
+      			//console.log(loc.shape.position);
+
+				loc.steer(new Point(-480,-480), event.delta, personarray);
+				obstacle1.steer(new Point (500,500), event.delta, personarray);
+
+				persongrid.update(locprev,loc.position,loc);
+				persongrid.update(obstacle1prev,obstacle1.position,obstacle1);
+				
+				//var person_array = persongrid.localSearch(0,960,0,960,loc);
+
+
+				var selrect = new Path.Rectangle(new Point(loc.position.x-4*15, loc.position.y-10*15), new Point(loc.position.x+10*15, loc.position.y+10*15))
+				selrect.selected = false;
 			}
 		}
 	</script>
