@@ -17,7 +17,7 @@ function Locomotion(params) {
 	/*BASIS VECTORS INITIALISED TO RIGHT AND TOP TO MAKE SURE WANDER GIVES SOMETHING RIGHT FROM THE START*/
 	this.basisParallel = new Point(1,0); 
 	this.basisPerpendicular = new Point(0,-1);
-
+	/* MESSING UP BADLY, TRY TO FIGURE OUT BUG OR ALTERNATIVE */
 	this._adjustForce = function(force,dt) {
 		var maxAdjSpeed = this.maxSpeed * 0.2;
 		if (this.velocity.length > maxAdjSpeed || force.length == 0) {
@@ -63,11 +63,21 @@ function Locomotion(params) {
 	/* PROBLEM : WITHOUT SOME INITIAL VELOCITY THIS CAN NEVER WORK BECAUSE THE PARALLEL AND PERPENDICULAR
 	VECTORS ARE VELOCITY DEPENDENT AND INITIALISED TO 0*/
 	this.steeringWander = function(dt) {
-		var speed = 12.0 * dt; //TODO : Tune with this
+		var speed = 12 * dt; //TODO : Tune with this
 		this._wander_side = scalar_random_walk(this._wander_side,speed,-1,+1);
 		this._wander_up = scalar_random_walk(this._wander_up,speed,-1,+1);
-		var sideDist = this.basisParallel.multiply(this._wander_side);
-		var perpDist = this.basisPerpendicular.multiply(this._wander_up);
+		console.log(this._wander_side);
+		console.log(this._wander_up);
+		var vx = this.basisParallel;
+		var vy = this.basisPerpendicular;
+		if (this.basisParallel.length == 0) {
+			vx = new Point(1,0);
+		} 
+		if (this.basisPerpendicular.length == 0) {
+			vy = new Point(0,-1);
+		}
+		var sideDist = vx.multiply(this._wander_side);
+		var perpDist = vy.multiply(this._wander_up);
 		return sideDist.add(perpDist);
 	}
 
