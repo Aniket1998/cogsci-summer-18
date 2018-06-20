@@ -9,14 +9,14 @@
 		window.onload = function() {
 			paper.setup('canvas');
 			var loc = new Locomotion({
-				velocity : new Point(0,0),
+				velocity : new Point(0,-1),
 				mass : 1,
-				speed : 0,
+				speed : 1,
 				boundingRadius : 25,
 				maxForce : 100,
 				maxSpeed : 100,
 				shape : new Path.Circle({
-					center : view.center,
+					center : view.center.add(new Point(-300,400)),
 					radius : 15,
 					fillColor : 'red'
 				})
@@ -24,7 +24,7 @@
 			view.onFrame = function(event) {
 				var ste = loc.steeringWander(event.delta);
 				console.log("X " + ste.x + "Y " + ste.y);
-				loc.steer(ste,event.delta);
+				loc.steer(new Point(0,0),event.delta);
 			}
 		}
 	</script>

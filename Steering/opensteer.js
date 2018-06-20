@@ -115,7 +115,7 @@ function Locomotion(params) {
 		}
 		var tanget = relative.normalize();
 		var position = this.position.subtract(other.position);
-		var projection = tanget.dot(projection);
+		var projection = tanget.dot(position);
 		return projection/relativeSpeed;
 	}
 
@@ -127,7 +127,7 @@ function Locomotion(params) {
 		return vector_distance(myfinal,otherfinal);
 	}
 
-	this.steeringPursuit(quarry,maxPred) {
+	this.steeringPursuit = function(quarry,maxPred) {
 		if (maxPred == 0) {
 			maxPred = 100000;
 		}
@@ -192,6 +192,10 @@ function Locomotion(params) {
 	}	
 }
 
+
+function PersonGrid(width,height) {
+	
+}
 function interval_compare(x,min,max) {
 	if (x < min) {
 		return -1;
