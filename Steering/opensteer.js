@@ -53,6 +53,22 @@ function Locomotion(params) {
 		this.shape.position.y = this._smoothPos.y;
 	}
 
+	this.forward = function() {
+		if (this.basisParallel.length > 0) {
+			return this.basisParallel;
+		} else {
+			return new Point(1,0);
+		}
+	}
+
+	this.up = function() {
+		if (this.basisPerpendicular.length > 0) {
+			return this.basisPerpendicular;
+		} else {
+			return new Point(0,-1);
+		}
+	}
+
 	this.futurePosition = function(time) {
 		/*This could also be this.shape.position (both are different because of the linear interpolation)
 		TODO: If this gives poor results change to this.shape.position
@@ -64,7 +80,7 @@ function Locomotion(params) {
 	VECTORS ARE VELOCITY DEPENDENT AND INITIALISED TO 0*/
 	this.steeringWander = function(dt) {
 		var speed = 12 * dt; //TODO : Tune with this
-		this._wander_side = scalar_random_walk(this._wander_side,speed,-1,+1);
+		this._wander_side = scalar_random_walk(this._wander_side,speed,-5,+5);
 		this._wander_up = scalar_random_walk(this._wander_up,speed,-1,+1);
 		console.log(this._wander_side);
 		console.log(this._wander_up);
@@ -110,8 +126,81 @@ function Locomotion(params) {
 		var otherfinal = other.position.add(othertravel);
 		return vector_distance(myfinal,otherfinal);
 	}
+
+	this.steeringPursuit(quarry,maxPred) {
+		if (maxPred == 0) {
+			maxPred = 100000;
+		}
+		var offset = quarry.position.subtract(this.position);
+		var distance = offset.length();
+		offset = offset.normalize();
+		var parallelness = this.forward().dot(quarry.forward());
+		var forwardness = this.forward().dot(offset);
+		var directTime = distance/this.velocity.length;
+		var f = interval_compare(forwardness,-0.707,0.707);
+		var p = interval_compare(parallelness,-0.707,0.707);
+		var timeFactor = 0;
+		switch (f)
+    	{
+    		case +1:
+        			switch (p)
+        			{
+        				case +1:          // ahead, parallel
+            					timeFactor = 4;
+            					break;
+        				case 0:           // ahead, perpendicular
+            					timeFactor = 1.8;
+            					break;
+        				case -1:          // ahead, anti-parallel
+            					timeFactor = 0.85;
+            					break;
+        			}
+        			break;
+    		case 0:
+       				switch (p)
+        			{
+        				case +1:          // aside, parallel
+            					timeFactor = 1;
+            					break;
+        				case 0:           // aside, perpendicular
+            					timeFactor = 0.8;
+            					break;
+        				case -1:          // aside, anti-parallel
+            					timeFactor = 4;
+            					break;
+        			}
+        			break;
+    		case -1:
+        			switch (p)
+        			{
+        				case +1:          // behind, parallel
+            					timeFactor = 0.5;
+            					break;
+        				case 0:           // behind, perpendicular
+            					timeFactor = 2;
+            					break;
+        				case -1:          // behind, anti-parallel
+            					timeFactor = 2;
+            					break;
+        			}
+        			break;
+    	}
+    	var et = directTime * timeFactor;
+    	var etl = (et > maxPred) ? maxPred : et;
+    	var target = quarry.futurePosition(etl);
+    	return this.steeringSeek(target);
+	}	
 }
 
+function interval_compare(x,min,max) {
+	if (x < min) {
+		return -1;
+	}
+	if (x > min) {
+		return +1;
+	}
+	return 0;
+}
 function vector_distance(vec1,vec2) {
 	var res = vec1.subtract(vec2);
 	return res.length;
