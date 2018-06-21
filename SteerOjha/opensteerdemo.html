@@ -13,7 +13,7 @@
 			var personarray;
 
 			var loc = new Locomotion({
-				velocity : new Point(0,0),
+				velocity : new Point(-0.001,-0.001),
 				mass : 1,
 				speed : 0,
 				boundingRadius : 25,
@@ -29,7 +29,7 @@
 			
 
 			var obstacle1 = new Locomotion({
-				velocity : new Point(0,0),
+				velocity : new Point(0.001,0.001),
 				mass : 1,
 				speed : 0,
 				boundingRadius : 25,
@@ -42,6 +42,7 @@
 				}),
 				point : view.center.add(new Point(0, -400))
 			});
+
 
 			persongrid.set(loc.position,loc);
 	  		persongrid.set(obstacle1.position,obstacle1);
@@ -66,6 +67,27 @@
 
 				var selrect = new Path.Rectangle(new Point(loc.position.x-4*15, loc.position.y-10*15), new Point(loc.position.x+10*15, loc.position.y+10*15))
 				selrect.selected = false;
+
+				var cone = loc.shape.position;
+			var addn = loc.velocity.rotate(100);
+			var addm = loc.velocity.rotate(-100);
+			addn = addn.normalize();
+			addm = addm.normalize();
+			var cone1 = cone.add(addn.multiply(100));
+			var cone2 = cone.add(addm.multiply(100));
+
+			var p1 = new Path.Circle({
+				center : cone1,
+				radius : 5,
+				fillColor : 'green'	
+			})
+
+			var p2 = new Path.Circle({
+				center : cone2,
+				radius : 5,
+				fillColor : 'green'	
+			})
+			console.log()
 			}
 		}
 	</script>

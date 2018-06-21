@@ -11,7 +11,7 @@
 
 			paper.setup('canvas');
 			var RAD = 15;
-			var num = 12;
+			var num = 10;
 			var persons = new Array(num);
 			var targets = new Array(num);
 			var prev = new Array(num);
@@ -66,7 +66,7 @@
 
 				for (var i = persons.length - 1; i >= 0; i--) {
 					
-					persons[i].steer(targets[i].shape.position, event.delta, personarrays[i]);
+					persons[i].steer(persons[i].steeringSeek(targets[i].shape.position), event.delta, personarrays[i]);
 
 				}
 

@@ -129,6 +129,25 @@ function Locomotion(params) {
 		return vector_distance(myfinal,otherfinal);
 	}
 
+	this.checkInCone = function(object) {
+		var degToRad = 3.14/180;
+		var halfangle = 100 * degToRad;
+		var cus = Math.cos(halfangle);
+		console.log(cus);
+
+		var line = object.shape.position.subtract(this.shape.position);
+		var direction = this.velocity.normalize;
+		var ang = line.dot(direction);	//cosine of angle between obstacle and mover
+
+		//angle should be less than halfangle, so ang > cus should do
+		if(ang > cus) {
+			return 1;
+		} else {
+			return 0;
+		}
+
+	}
+
 	this.steerToAvoidCollisions = function(parray) {
 		//onsole.log(parray.length + " is array size");
 		if(parray.length) {
@@ -136,6 +155,7 @@ function Locomotion(params) {
 			//first see if any immediate threat
 			var minSeparation = 3 * 15;
 			for(var i=0; i<parray.length; i++) {
+				if(this.checkInCone(parray[i])) {
 				var dist = this.shape.position.subtract(parray[i].shape.position);
 				if(dist.length < minSeparation) {
 					console.log("Oh so close");
@@ -149,6 +169,7 @@ function Locomotion(params) {
 					// 	return vy.multiply(4000);
 					// }
 				}
+				}
 			}
 
 			//to avoid obstacles, moving AND stationary
@@ -159,7 +180,8 @@ function Locomotion(params) {
 			var time, mintime = mintimeuntilcollision;
 			var index = 0;
 			for(var i=0; i<parray.length; i++) {
-		
+				if(this.checkInCone(parray[i])) {
+
 				time = this.predictNearestApproachTime(parray[i]);
 				console.log(time +" TIME");
 				//if it collides soon enough -
@@ -174,6 +196,7 @@ function Locomotion(params) {
 						index = i;
 					}
 				}
+				} 
 			}
 			console.log(mintime + " is mintime.")
 			if(threat) {
