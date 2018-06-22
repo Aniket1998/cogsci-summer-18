@@ -35,7 +35,7 @@ function Locomotion(params) {
 
 		var adjForce = force;
 		//console.log(this.steerToAvoidCollisions(parray).length/this.maxForce + " is ratio");
-		adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
+		//adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
 		var acc = adjForce.divide(this.mass);
 
 		if (dt > 0) {

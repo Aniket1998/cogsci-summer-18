@@ -24,7 +24,7 @@
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : view.center + new Point(-450, 50)
+				point : view.center.add(new Point(-400,-200))
 			});
 
 			var bar = new Locomotion({
@@ -82,6 +82,30 @@
 	  		persongrid.set(alcohol.shape.position,alcohol);
 	  		persongrid.set(bar.shape.position,bar);
 			
+
+	  		function scene3(event) {
+
+	  			console.log("in scene3");
+	  		}
+
+	  		function scene2(event) {
+	  			console.log("In scene2");
+	  			var dest = new Point(200, 380);
+	  			drunk.steer(drunk.steeringSeek(dest), event.delta, personarray);
+	  			if(dest.subtract(drunk.shape.position).length < 1) {
+	  				currentscene = scene3;
+	  			}
+
+	  		}
+
+	  		function scene1(event) {
+	  			console.log("In scene1");
+	  			var dest = new Point(bar.shape.position.x, drunk.shape.position.y);
+	  			drunk.steer(drunk.steeringSeek(dest), event.delta, personarray);
+	  			if(dest.subtract(drunk.shape.position).length < 1) {
+	  				currentscene = scene2;
+	  			}
+	  		}
 
 	  		currentscene = scene1;
 			view.onFrame = function(event) {
