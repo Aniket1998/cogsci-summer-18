@@ -1,0 +1,116 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Emotion Test</title>
+	<script type="text/javascript" src="paper.js"></script>
+	<script type="text/javascript" src="finalsteer.js"></script>
+	<script type="text/javascript">
+		paper.install(window);
+		window.onload = function() {
+			paper.setup('canvas');
+
+			var persongrid = new PersonGrid(view.size.width,view.size.height);
+			var personarray;
+
+			var drunk = new Locomotion({
+				velocity : new Point(0,0),
+				mass : 1,
+				speed : 0,
+				boundingRadius : 25,
+				maxForce : 4000000,
+				maxSpeed : 5,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'red'
+				}),
+				point : view.center + new Point(-450, 50)
+			});
+
+			var bar = new Locomotion({
+				velocity : new Point(-0.001,-0.001),
+				mass : 1,
+				speed : 0,
+				boundingRadius : 25,
+				maxForce : 4000000,
+				maxSpeed : 5,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'red'
+				}),
+				point : new Point(200, 480)
+			});
+			
+			var rectangle = new Rectangle(new Point(150, 400), new Point(250, 450));
+			var path = new Path.Rectangle(rectangle);
+			path.fillColor = 'blue';
+
+			var wife = new Locomotion({
+				velocity : new Point(0.001,0.001),
+				mass : 1,
+				speed : 0,
+				boundingRadius : 25,
+				maxForce : 4000000,
+				maxSpeed : 5,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 20,
+					fillColor : 'blue'
+				}),
+				point : new Point(850, 50)
+			});
+
+			var alcohol = new Locomotion({
+				velocity : new Point(0.001,0.001),
+				mass : 1,
+				speed : 0,
+				boundingRadius : 25,
+				maxForce : 4000000,
+				maxSpeed : 5,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 7,
+					fillColor : 'blue'
+				}),
+				point : new Point(215, 396)
+			});
+
+
+			persongrid.set(drunk.shape.position,drunk);
+	  		persongrid.set(wife.shape.position,wife);
+	  		persongrid.set(alcohol.shape.position,alcohol);
+	  		persongrid.set(bar.shape.position,bar);
+			
+
+	  		currentscene = scene1;
+			view.onFrame = function(event) {
+
+				personarray = persongrid.localSearch(drunk.position.x-4*15, drunk.position.x+10*15, drunk.position.y-10*15, drunk.position.y+10*15, drunk);
+				var drunkprev = drunk.shape.position;
+      			var wifeprev = wife.shape.position;
+      			var alcoholprev = alcohol.shape.position;
+      			var barprev = bar.shape.position;
+      			//console.log(loc.shape.position);
+
+				currentscene(event);
+
+				persongrid.update(drunkprev, drunk.shape.position, drunk);
+				persongrid.update(wifeprev, wife.shape.position, wife);
+				persongrid.update(barprev,bar.shape.position,bar);
+				persongrid.update(alcoholprev,alcohol.shape.position, alcohol);
+				
+				//var person_array = persongrid.localSearch(0,960,0,960,loc);
+
+
+				var selrect = new Path.Rectangle(new Point(drunk.position.x-4*15, drunk.position.y-10*15), new Point(drunk.position.x+10*15, drunk.position.y+10*15))
+				selrect.selected = false;
+
+			}
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="960"></canvas>
+</body>
+</html>
