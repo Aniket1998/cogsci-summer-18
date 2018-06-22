@@ -35,7 +35,7 @@ function Locomotion(params) {
 
 		var adjForce = force;
 		//console.log(this.steerToAvoidCollisions(parray).length/this.maxForce + " is ratio");
-		//adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
+		adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
 		var acc = adjForce.divide(this.mass);
 
 		if (dt > 0) {
@@ -87,12 +87,12 @@ function Locomotion(params) {
 
 	this.steeringSeek = function(target) {
 		var desire = target.subtract(this.position);
-		return desire.subtract(this.velocity);
+		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
 
 	this.steeringFlee = function(target) {
 		var desire = position.subtract(this.target);
-		return desire.subtract(this.velocity);
+		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
 
 
@@ -159,11 +159,11 @@ function Locomotion(params) {
 				var dist = this.shape.position.subtract(parray[i].shape.position);
 				if(dist.length < minSeparation) {
 					console.log("Oh so close");
-					var vy = this.velocity.rotate(90);
-					// var projn = dist.dot(this.velocity);
+					var vy = this.velocity.rotate(90).normalize();
+					var projn = dist.dot(vy);
 					 console.log(vy.multiply(-4000) + " projn");
 					// if(projn>0) {
-					 	return vy.multiply(-400000).add(this.velocity.multiply(-1000000));
+					 return (vy.multiply(projn).normalize().multiply(this.maxForce*10)).add(this.velocity.multiply(-40000));
 					// }
 					// else {
 					// 	return vy.multiply(4000);
@@ -210,14 +210,14 @@ function Locomotion(params) {
 				var parallelness = my_unit.dot(obs_unit);
         		var angle = 0.707;
         		//console.log(this.velocity + " pll" + obstacle.velocity);
-        		if (parallelness < -angle)
+        		if (parallelness < -1*angle)
         		{
             		// anti-parallel "head on" paths:
 		            // steer away from future threat position
             		console.log("anti-parallel");
             		var offset = obs_future.subtract(this.shape.position);
             		var sideDot = offset.dot(my_side);
-            		steer = (sideDot > 0) ? -1 : 1;
+            		steer = (sideDot >= 0) ? -1 : 1;
         		}
         		else
         		{
@@ -227,7 +227,7 @@ function Locomotion(params) {
                 		console.log("parallel");
                 		offset = obstacle.shape.position.subtract(this.shape.position);
             			sideDot = offset.dot(my_side);
-            			steer = (sideDot > 0) ? -1 : 1;
+            			steer = (sideDot >= 0) ? -1 : 1;
             		}
             		else
             		{
@@ -243,7 +243,7 @@ function Locomotion(params) {
         		}
         		//offset = this.shaposition.subtract(obstacle.position);
         		//console.log(my_side.multiply(4000 * steer).add(this.velocity.multiply(-4000)) + " is force");
-        		return my_side.multiply(50000 * steer).add(this.velocity.multiply(-20000));
+        		return my_side.multiply(50000 * steer).add(this.velocity.multiply(-20000)).normalize().multiply(this.maxForce);
 
 			} else {
 				//nothing to avoid
