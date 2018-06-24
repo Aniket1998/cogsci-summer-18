@@ -10,10 +10,10 @@
 			paper.setup('canvas');
 
 			var persongrid = new PersonGrid(view.size.width,view.size.height);
-			var personarray = new Array(4);
+			var personarray = new Array(2);
 
 			var loc = new Locomotion({
-				velocity : new Point(-0.001,-0.001),
+				velocity : new Point(-0.001,0),
 				mass : 1,
 				speed : 0,
 				boundingRadius : 25,
@@ -29,7 +29,7 @@
 			
 
 			var obstacle1 = new Locomotion({
-				velocity : new Point(0.001,0.001),
+				velocity : new Point(0.001,0),
 				mass : 1,
 				speed : 0,
 				boundingRadius : 25,

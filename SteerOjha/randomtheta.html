@@ -12,8 +12,14 @@
 			var persongrid = new PersonGrid(view.size.width,view.size.height);
 			var personarray = new Array(4);
 
+			var origin = new Path.Circle({
+					center : view.center.add(new Point(0, -100)),
+					radius : 10,
+					fillColor : 'yellow'
+				});
+
 			var loc = new Locomotion({
-				velocity : new Point(-0.001,-0.001),
+				velocity : new Point(0.001,0),
 				mass : 1,
 				speed : 0,
 				boundingRadius : 25,
@@ -24,12 +30,14 @@
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : view.center.add(new Point(100,-50))
+				point : origin.position.add(new Point(-200,0))
 			});
 			
+			var theta = 80;		
+			var move = new Point (-1 * 200 * Math.cos(theta), 200 * Math.sin(theta));
 
 			var obstacle1 = new Locomotion({
-				velocity : new Point(0.001,0.001),
+				velocity : new Point(0,0),
 				mass : 1,
 				speed : 0,
 				boundingRadius : 25,
@@ -37,39 +45,23 @@
 				maxSpeed : 5,
 				shape : new Path.Circle({
 					center : view.center,
-					radius : 20,
+					radius : 15,
 					fillColor : 'blue'
 				}),
-				point : view.center.add(new Point(0,50))
+				point : origin.position.add(move)
 			});
 
 			var target1 = new Path.Circle({
-					center : view.center.add(new Point(-100, -50)),
+					center : origin.position.add(200, 0),
 					radius : 10,
 					fillColor : 'red'
 				});
 
 			var target2 = new Path.Circle({
-					center : view.center.add(new Point(0, -150)),
+					center : origin.position.subtract(move),
 					radius : 10,
 					fillColor : 'blue'
 				});
-
-
-			var see1 = new Path.Circle({
-					center : view.center,
-					radius : 7,
-					fillColor : 'red'
-				});
-
-			var see2 = new Path.Circle({
-					center : view.center,
-					radius : 7,
-					fillColor : 'blue'
-				});
-
-			see1.visible = false;
-			see2.visible = false;
 
 
 			persongrid.set(loc.shape.position,loc);
@@ -94,8 +86,8 @@
 
       			//console.log(loc.shape.position);
 
-				loc.steer(loc.steeringSeek(target1.position), event.delta, personarray[0], see1, see2);
-				obstacle1.steer(obstacle1.steeringSeek(target2.position), event.delta, personarray[1], see1, see2);
+				loc.steer(loc.steeringSeek(target1.position), event.delta, personarray[0]);
+				obstacle1.steer(obstacle1.steeringSeek(target2.position), event.delta, personarray[1]);
 
 				persongrid.update(locprev,loc.shape.position,loc);
 				persongrid.update(obstacle1prev,obstacle1.shape.position,obstacle1);

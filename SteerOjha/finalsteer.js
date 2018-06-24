@@ -31,11 +31,11 @@ function Locomotion(params) {
 		}
 	}
 
-	this.steer = function(force,dt, parray, see1, see2) {
+	this.steer = function(force,dt, parray) {
 
 		var adjForce = force;
 		//console.log(this.steerToAvoidCollisions(parray).length/this.maxForce + " is ratio");
-		adjForce = adjForce.add(this.steerToAvoidCollisions(parray, see1, see2));
+		adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
 		var acc = adjForce.divide(this.mass);
 
 		if (dt > 0) {
@@ -150,7 +150,7 @@ function Locomotion(params) {
 
 	}
 
-	this.steerToAvoidCollisions = function(parray, see1, see2) {
+	this.steerToAvoidCollisions = function(parray) {
 		console.log(parray.length + " is array size");
 		if(parray.length) {
 
@@ -188,7 +188,7 @@ function Locomotion(params) {
 				if(time >= 0 && time < mintime) {
 
 					//if it collides close enough
-					var mindist = this.predictNearestApproachPosition(parray[i], time, see1, see2);
+					var mindist = this.predictNearestApproachPosition(parray[i], time);
 					
 					if(mindist < pspace) {
 						mintime = time;
