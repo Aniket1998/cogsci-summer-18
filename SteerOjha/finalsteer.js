@@ -31,11 +31,11 @@ function Locomotion(params) {
 		}
 	}
 
-	this.steer = function(force,dt, parray) {
+	this.steer = function(force,dt, parray, see1, see2) {
 
 		var adjForce = force;
 		//console.log(this.steerToAvoidCollisions(parray).length/this.maxForce + " is ratio");
-		adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
+		adjForce = adjForce.add(this.steerToAvoidCollisions(parray, see1, see2));
 		var acc = adjForce.divide(this.mass);
 
 		if (dt > 0) {
@@ -98,8 +98,8 @@ function Locomotion(params) {
 
 // (1)
 	this.predictNearestApproachTime = function(other) {
-		console.log(this.shape.position+" is this.vel");
-		console.log(other.shape.position+" is obs.vel");
+		console.log(this.velocity + " is this.vel");
+		console.log(other.velocity + " is obs.vel");
 		
 		var relative = other.velocity.subtract(this.velocity);
 		var relativeSpeed = relative.length;
@@ -121,12 +121,14 @@ function Locomotion(params) {
 	}
 
 // (2)
-	this.predictNearestApproachPosition = function(other,time) {
+	this.predictNearestApproachPosition = function(other,time, see1, see2) {
 		var mytravel = this.velocity.multiply(time);
 		var othertravel = other.velocity.multiply(time);
 		var myfinal = this.shape.position.add(mytravel);
 		var otherfinal = other.shape.position.add(othertravel);
-		return vector_distance(myfinal,otherfinal);
+
+
+		return vector_distance(myfinal, otherfinal);
 	}
 
 	this.checkInCone = function(object) {
@@ -148,27 +150,25 @@ function Locomotion(params) {
 
 	}
 
-	this.steerToAvoidCollisions = function(parray) {
-		//onsole.log(parray.length + " is array size");
+	this.steerToAvoidCollisions = function(parray, see1, see2) {
+		console.log(parray.length + " is array size");
 		if(parray.length) {
 
 			//first see if any immediate threat
 			var minSeparation = 3 * 15;
 			for(var i=0; i<parray.length; i++) {
-				if(this.checkInCone(parray[i])) {
+				console.log("HEREEEEE");
+				if(true) {
 				var dist = this.shape.position.subtract(parray[i].shape.position);
 				if(dist.length < minSeparation) {
 					console.log("Oh so close");
 					var vy = this.velocity.rotate(90).normalize();
 					var projn = dist.dot(vy);
 					 console.log(vy.multiply(-4000) + " projn");
-					// if(projn>0) {
+
 					 return (vy.multiply(projn).normalize().multiply(this.maxForce*10)).add(this.velocity.multiply(-40000));
-					// }
-					// else {
-					// 	return vy.multiply(4000);
-					// }
-				}
+					
+					}
 				}
 			}
 
@@ -188,7 +188,7 @@ function Locomotion(params) {
 				if(time >= 0 && time < mintime) {
 
 					//if it collides close enough
-					var mindist = this.predictNearestApproachPosition(parray[i], time);
+					var mindist = this.predictNearestApproachPosition(parray[i], time, see1, see2);
 					
 					if(mindist < pspace) {
 						mintime = time;
@@ -208,7 +208,7 @@ function Locomotion(params) {
 				var my_side = my_unit.rotate(90);
 				var obs_unit = obstacle.velocity.normalize();
 				var parallelness = my_unit.dot(obs_unit);
-        		var angle = 0.707;
+        		var angle = 0.707, steer = 0;
         		//console.log(this.velocity + " pll" + obstacle.velocity);
         		if (parallelness < -1*angle)
         		{
