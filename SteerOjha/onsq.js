@@ -165,7 +165,7 @@ function Locomotion(params) {
 					var projn = dist.dot(vy);
 					 console.log(vy.multiply(-4000) + " projn");
 
-					 return (vy.multiply(projn).normalize().multiply(this.maxForce*10)).add(this.velocity.multiply(-40000));
+					 return (vy.multiply(projn).normalize().multiply(this.maxForce*1000)).add(this.velocity.multiply(-40000));
 					
 					}
 				}
@@ -242,13 +242,14 @@ function Locomotion(params) {
         		}
         		//offset = this.shaposition.subtract(obstacle.position);
         		//console.log(my_side.multiply(4000 * steer).add(this.velocity.multiply(-4000)) + " is force");
-        		return my_side.multiply(50000 * steer).add(this.velocity.multiply(-20000)).normalize().multiply(this.maxForce);
+        		return (my_side.multiply(30000 * steer).add(this.velocity.multiply(-12000))).normalize().multiply(this.maxForce);
 
 			} else {
 				//nothing to avoid
 				return new Point(0,0);
 			}
 		} else {
+			//nothing in sight
 			return new Point(0,0);
 		}
 	}

@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Ran.dom</title>
 	<script type="text/javascript" src="paper.js"></script>
-	<script type="text/javascript" src="finalsteer.js"></script>
+	<script type="text/javascript" src="onsq.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
@@ -14,9 +14,11 @@
 			var num = 10;
 			var persons = new Array(num);
 			var targets = new Array(num);
-			var prev = new Array(num);
-			var personarrays = new Array(num);
-			var persongrid = new PersonGrid(view.size.width,view.size.height);
+			// var prev = new Array(num);
+			// var personarrays = new Array(num);
+			// var persongrid = new PersonGrid(view.size.width,view.size.height);
+			var entities = [];
+
 
 			for (var i = persons.length - 1; i >= 0; i--) {
 
@@ -51,28 +53,29 @@
 				});
 
 				//targets[i].shape.visible = false;
-				persongrid.set(persons[i].shape.position,persons[i]);
+				entities.push(persons[i]);
+				// persongrid.set(persons[i].shape.position,persons[i]);
 
 			}
 
 			view.onFrame = function(event) {
-				for (var i = persons.length - 1; i >= 0; i--) {
-					prev[i] = persons[i].shape.position;
-				}
+				// for (var i = persons.length - 1; i >= 0; i--) {
+				// 	prev[i] = persons[i].shape.position;
+				// }
 
-				for (var i = persons.length - 1; i >= 0; i--) {
-					personarrays[i] = persongrid.localSearch(persons[i].shape.position.x-20*RAD, persons[i].shape.position.x+20*RAD, persons[i].shape.position.y-20*RAD, persons[i].shape.position.y+20*RAD,persons[i]);
-				}
+				// for (var i = persons.length - 1; i >= 0; i--) {
+				// 	personarrays[i] = persongrid.localSearch(persons[i].shape.position.x-20*RAD, persons[i].shape.position.x+20*RAD, persons[i].shape.position.y-20*RAD, persons[i].shape.position.y+20*RAD,persons[i]);
+				// }
 
 				for (var i = persons.length - 1; i >= 0; i--) {
 					
-					persons[i].steer(persons[i].steeringSeek(targets[i].shape.position), event.delta, personarrays[i]);
+					persons[i].steer(persons[i].steeringSeek(targets[i].shape.position), event.delta, entities);
 
 				}
 
-				for (var i = persons.length - 1; i >= 0; i--) {
-					persongrid.update(prev[i],persons[i].shape.position,persons[i]);
-				}
+				// for (var i = persons.length - 1; i >= 0; i--) {
+				// 	persongrid.update(prev[i],persons[i].shape.position,persons[i]);
+				// }
 			}
 		}
 	</script>
