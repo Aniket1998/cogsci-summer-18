@@ -156,9 +156,8 @@ function Locomotion(params) {
 
 			//first see if any immediate threat
 			var minSeparation = 3 * 15;
-			for(var i=0; i<parray.length; i++) {
-				console.log("HEREEEEE");
-				if(true) {
+			for(var i=0; i<parray.length && this != parray[i]; i++) {
+				if(this.checkInCone(parray[i])) {
 				var dist = this.shape.position.subtract(parray[i].shape.position);
 				if(dist.length < minSeparation) {
 					console.log("Oh so close");
@@ -322,84 +321,5 @@ function clip_length(vec,len) {
 		return vec.normalize().multiply(len);
 	} else {
 		return vec;
-	}
-}
-
-function PersonGrid(width,height) {
-	this.width = width;
-	this.height = height;
-	this.grid = new Array(width);
-	for (var i = this.grid.length - 1; i >= 0; i--) {
-		this.grid[i] = new Array(height);
-		for (var j = this.grid[i].length - 1; j >= 0; j--) {
-			this.grid[i][j] = null;
-		}
-	}
-
-	this.update = function(prev,next,person) {
-		var prevx = Math.floor(prev.x);
-		var prevy = Math.floor(prev.y);
-		var nextx = Math.floor(next.x);
-		var nexty = Math.floor(next.y);
-		if (prevx < 0) {
-			prevx = 0;
-		}
-		if (nextx < 0) {
-			nextx = 0;
-		}
-		if (prevy < 0) {
-			prevy = 0;
-		}
-		if (nexty < 0) {
-		 	nexty = 0;
-		}
-		if (prevx >= this.width) {
-			prevx = this.width - 1;
-		}
-		if (nextx >= this.width) {
-			nextx = this.width - 1;
-		}
-		if (prevy >= this.height) {
-			prevy = this.height - 1;
-		}
-		if (nexty >= this.height) {
-			nexty = this.height - 1;
-		}
-	}
-
-	this.set = function(pos,person) {
-		var x = Math.floor(pos.x);
-		var y = Math.floor(pos.y);
-		if (x >= 0 && y >= 0) {
-			if(x>959) x = 959;
-			if(y>959) y = 959;
-			this.grid[x][y] = person;
-		}
-	}
-
-	this.localSearch = function (startx,endx,starty,endy,except) {
-		startx = Math.floor(startx);
-		endx = Math.floor(endx);
-		starty = Math.floor(starty);
-		endy = Math.floor(endy);
-		if(startx<0) startx = 0;
-		if(starty<0) starty = 0;
-		if(endx<0) endx = 0;
-		if(endy<0) endy = 0;
-
-		if(startx>=960) startx = 959;
-		if(starty>=960) starty = 959;
-		if(endx>=960) endx = 959;
-		if(endy>=960) endy = 959;
-
-		var persons = [];
-		for (var i = startx; i < endx; i++) {
-			for (var j = starty; j < endy; j++) {
-				if (this.grid[i][j] !== null && this.grid[i][j] !== except) {
-					persons.push(this.grid[i][j]);
-				}
-			}
-		}
-		return persons;
 	}
 }

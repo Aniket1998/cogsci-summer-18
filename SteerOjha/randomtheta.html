@@ -10,7 +10,7 @@
 			paper.setup('canvas');
 
 			var persongrid = new PersonGrid(view.size.width,view.size.height);
-			var personarray = new Array(4);
+			var personarray = new Array(2);
 
 			var origin = new Path.Circle({
 					center : view.center.add(new Point(0, -100)),
@@ -33,7 +33,9 @@
 				point : origin.position.add(new Point(-200,0))
 			});
 			
-			var theta = 80;		
+			var theta = 10;		
+			var radToDeg = 3.14/180;
+			theta *= radToDeg;
 			var move = new Point (-1 * 200 * Math.cos(theta), 200 * Math.sin(theta));
 
 			var obstacle1 = new Locomotion({
@@ -74,11 +76,12 @@
 
 			view.onFrame = function(event) {
 
-				personarray[0] = persongrid.localSearch(loc.shape.position.x-4*15, loc.shape.position.x+10*15, loc.shape.position.y-10*15, loc.shape.position.y+10*15, loc);
-				personarray[1] = persongrid.localSearch(obstacle1.shape.position.x-4*15, obstacle1.shape.position.x+10*15, obstacle1.shape.position.y-10*15, obstacle1.shape.position.y+10*15, obstacle1);
+				//personarray[0] = persongrid.localSearch(loc.shape.position.x-10*15, loc.shape.position.x+10*15, loc.shape.position.y-10*15, loc.shape.position.y+10*15, loc);
+				// personarray[1] = persongrid.localSearch(obstacle1.shape.position.x-4*15, obstacle1.shape.position.x+10*15, obstacle1.shape.position.y-10*15, obstacle1.shape.position.y+10*15, obstacle1);
 				// personarray[2] = persongrid.localSearch(target1.shape.position.x-4*15, target1.shape.position.x+10*15, target1.shape.position.y-10*15, target1.shape.position.y+10*15, target1);
 				// personarray[3] = persongrid.localSearch(target2.shape.position.x-4*15, target2.shape.position.x+10*15, target2.shape.position.y-10*15, target2.shape.position.y+10*15, target2);
-
+				personarray[0] = [obstacle1];
+				personarray[1] = [loc];
 				var locprev = loc.shape.position;
       			var obstacle1prev = obstacle1.shape.position;
       			// var target1prev = target1.shape.position;
