@@ -269,11 +269,11 @@ function Locomotion(params) {
  
                 		}
                 		var fast = this.predictsloworfast(obstacle,mintime);
-                		return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.multiply(-0.1*fast*this.maxForce))).normalize().multiply(this.maxForce);
+                		return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.multiply(-0.1*fast*this.maxForce))).normalize().multiply(10*this.maxForce);
                 		//(my_side.multiply(30000 * steer).add(this.velocity.multiply(fast*12000))).normalize().multiply(this.maxForce)
             		}
         		}
-        		return(((my_side.multiply(steer)).multiply(this.maxForce))).normalize().multiply(this.maxForce);
+        		return(((my_side.multiply(steer)).multiply(this.maxForce))).normalize().multiply(10*this.maxForce);
         		//(my_side.multiply(30000 * steer).add(this.velocity.multiply(-12000))).normalize().multiply(this.maxForce)
         		//offset = this.shaposition.subtract(obstacle.position);
         		////console.log(my_side.multiply(4000 * steer).add(this.velocity.multiply(-4000)) + " is force");
