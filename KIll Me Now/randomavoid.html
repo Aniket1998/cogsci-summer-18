@@ -4,14 +4,14 @@
 	<meta charset="utf-8">
 	<title>Ran.dom</title>
 	<script type="text/javascript" src="paper.js"></script>
-	<script type="text/javascript" src="onsqtune.js"></script>
+	<script type="text/javascript" src="onsqtunegod.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
 
 			paper.setup('canvas');
 			var RAD = 15;
-			var num = 6;
+			var num = 20;
 			var persons = new Array(num);
 			var targets = new Array(num);
 			// var prev = new Array(num);
@@ -27,8 +27,8 @@
 					mass : 1,
 					speed : 0,
 					boundingRadius : 25,
-					maxForce : 20,
-					maxSpeed : 5,
+					maxForce : 3,
+					maxSpeed : 3,
 					shape : new Path.Circle({
 						center : view.center,
 						radius : 15,
@@ -43,7 +43,7 @@
 					speed : 0,
 					boundingRadius : 25,
 					maxForce : 80,
-					maxSpeed : 5,
+					maxSpeed : 4,
 					shape : new Path.Circle({
 						center : view.center,
 						radius : 7,

@@ -46,8 +46,8 @@ function Locomotion(params) {
 		this.basisPerpendicular = this.basisParallel.rotate(90);
 
 		var posSmooth = dt * 0.75;
-		this._smoothPos = blend_vec(posSmooth,this.position,this._smoothPos);
-
+		//this._smoothPos = blend_vec(posSmooth,this.position,this._smoothPos);
+		this._smoothPos = this.position
 		this.mean.x = this._smoothPos.x;
 		this.mean.y = this._smoothPos.y;
 
@@ -173,7 +173,7 @@ function Locomotion(params) {
 		//console.log(parray.length + " is array size");
 		if(parray.length) {
 			//first see if any immediate threat
-			var minSeparation = 3* 15;
+			var minSeparation = 2* 15;
 			for(var i=0; i<parray.length; i++) {
 				if(parray[i]!=this){
 				if(this.checkInCone(parray[i])) {
@@ -185,7 +185,7 @@ function Locomotion(params) {
 					var projn = dist.dot(vy);
 					projn = (projn >= 0) ? 1:-1;
 					 //console.log(vy.multiply(-4000) + " projn");
-					 return (vy.normalize()).multiply(200*projn*this.maxForce).add(this.velocity.multiply(-10*this.maxForce));
+					 return (vy.normalize()).multiply(20*projn*this.maxForce).add(this.velocity.multiply(-10*this.maxForce));
 					
 					}
 				}
@@ -195,8 +195,8 @@ function Locomotion(params) {
 
 			//to avoid obstacles, moving AND stationary
 			var threat = false;
-			var pspace = 3.5* 15;
-			var mintimeuntilcollision = 500;			//tune these
+			var pspace = 3* 15;
+			var mintimeuntilcollision = 40;			//tune these
 
 			var time, mintime = mintimeuntilcollision;
 			var index = 0;
@@ -224,11 +224,11 @@ function Locomotion(params) {
 			//console.log(mintime + " is mintime.")
 			if(threat) {
 				var obstacle = parray[index];
-				var mindist = this.predictNearestApproachPosition(obstacle, time);
-				var dist =(obstacle.shape.position.subtract(this.position)).length
+				var mindist = this.predictNearestApproachPosition(obstacle, mintime);
+				var dist =(obstacle.position.subtract(this.position)).length
 				// Del pos = v * t for now
-				var obs_future = obstacle.shape.position.add(obstacle.velocity.multiply(mintime));
-				var my_future = this.position.add(this.position.multiply(mintime));
+				var obs_future = obstacle.position.add(obstacle.velocity.multiply(mintime));
+				var my_future = this.position.add(this.velocity.multiply(mintime));
 				var my_unit = this.velocity.normalize();
 				var my_side = my_unit.rotate(90);
 				var obs_unit = obstacle.velocity.normalize();
@@ -243,6 +243,8 @@ function Locomotion(params) {
             		console.log("anti-parallel");
             		var offset = obs_future.subtract(this.position);
             		var sideDot = offset.dot(my_side);
+            		console.log(this.velocity);
+            		console.log(obstacle.velocity);
             		steer = (sideDot >= 0) ? -3:3;
         		}
         		else
@@ -251,7 +253,7 @@ function Locomotion(params) {
             		{
                 		// parallel paths: steer away from threat
                 		//console.log("parallel");
-                		offset = obstacle.shape.position.subtract(this.position);
+                		offset = obstacle.position.subtract(this.position);
             			sideDot = offset.dot(my_side);
             			steer = (sideDot >= 0) ? -1 : 1;
             		}
@@ -267,11 +269,11 @@ function Locomotion(params) {
  
                 		}
                 		var fast = this.predictsloworfast(obstacle,mintime);
-                		return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.multiply(-0.2*fast*this.maxForce))).normalize().multiply(25*this.maxForce);
+                		return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.multiply(-0.1*fast*this.maxForce))).normalize().multiply(this.maxForce);
                 		//(my_side.multiply(30000 * steer).add(this.velocity.multiply(fast*12000))).normalize().multiply(this.maxForce)
             		}
         		}
-        		return(((my_side.multiply(steer)).multiply(5*this.maxForce))).normalize().multiply(25*this.maxForce);
+        		return(((my_side.multiply(steer)).multiply(this.maxForce))).normalize().multiply(this.maxForce);
         		//(my_side.multiply(30000 * steer).add(this.velocity.multiply(-12000))).normalize().multiply(this.maxForce)
         		//offset = this.shaposition.subtract(obstacle.position);
         		////console.log(my_side.multiply(4000 * steer).add(this.velocity.multiply(-4000)) + " is force");
