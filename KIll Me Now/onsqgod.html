@@ -83,7 +83,7 @@
 					var avoidForce = persons[i].steerToAvoidCollisions(entities);
 					var dist = persons[i].position.subtract(targets[i].position).length;
 					if (dist > 100) {
-						var netForce = seekForce.add(avoidForce);
+						var netForce = seekForce.add(avoidForce.multiply(0.2));
 						persons[i].steer(netForce, event.delta);
 					} else {
 						persons[i].steer(seekForce,event.delta);
