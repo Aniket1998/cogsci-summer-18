@@ -41,7 +41,7 @@ function Locomotion(params) {
 
 		this.velocity = clip_length(this.velocity.add(this._smoothAcc.multiply(dt)),this.maxSpeed);
 		this.speed = this.velocity.length;
-		this.position = this.position.add(this.velocity.add(dt));
+		this.position = this.position.add(this.velocity.multiply(dt));
 
 		this.basisParallel = this.velocity.normalize();
 		this.basisPerpendicular = this.basisParallel.rotate(90);
