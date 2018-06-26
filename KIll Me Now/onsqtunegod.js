@@ -37,24 +37,22 @@ function Locomotion(params) {
 		////console.log(this.steerToAvoidCollisions(parray).length/this.maxForce + " is ratio");
 		//adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
 		var acc = adjForce.divide(this.mass);
-		if (dt > 0) {
-			var smoothRate = clip_value(20 * dt,0.15,0.4); // TUNE : Figure out a good formula, using default as of now
-			this._smoothAcc = blend_vec(smoothRate,acc,this._smoothAcc);
-		}
-		this.velocity = clip_length(this.velocity.add(this._smoothAcc.multiply(dt)),this.maxSpeed);
+
+		this.velocity = clip_length(this.velocity.add(acc.multiply(dt)),this.maxSpeed);
 		this.speed = this.velocity.length;
 		this.position = this.position.add(this.velocity.multiply(dt));
-		
-
 
 		this.basisParallel = this.velocity.normalize();
 		this.basisPerpendicular = this.basisParallel.rotate(90);
 
-
+		if (dt > 0) {
+			var smoothRate = clip_value(20 * dt,0.15,0.4); // TUNE : Figure out a good formula, using default as of now
+			this._smoothAcc = blend_vec(smoothRate,acc,this._smoothAcc);
+		}
 
 		var posSmooth = dt * 0.75;
 		this._smoothPos = blend_vec(posSmooth,this.position,this._smoothPos);
-		this.shape.position = this._smoothPos;
+		this._smoothPos = this.position
 		this.mean.x = this._smoothPos.x;
 		this.mean.y = this._smoothPos.y;
 
