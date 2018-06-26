@@ -111,9 +111,7 @@ function Locomotion(params) {
 
 		var pos = this.shape.position.subtract(other.shape.position);
 		//console.log(tanget + "  " + pos);
-		// if (position.length <= 2 * 15) {
-		// 	return 0;
-		// }
+		
 		var projection = tanget.dot(pos);
 		//console.log(projection + " is projection");
 
@@ -151,21 +149,27 @@ function Locomotion(params) {
 	}
 
 	this.steerToAvoidCollisions = function(parray) {
+
 		//console.log(parray.length + " is array size");
 		if(parray.length) {
+
 			//first see if any immediate threat
 			var minSeparation = 3 * 15;
 			for(var i=0; i<parray.length; i++) {
+
 				if(parray[i]!=this){
-				if(this.checkInCone(parray[i])) {
-				var dist = this.shape.position.subtract(parray[i].shape.position);
-				if(dist.length < minSeparation) {
-					console.log(dist.length)
-					console.log("Oh so close");
-					var vy = this.velocity.rotate(90).normalize();
-					var projn = dist.dot(vy);
-					 //console.log(vy.multiply(-4000) + " projn");
-					 return (vy.multiply(projn).normalize().multiply(this.maxForce*10)).add(this.velocity.multiply(-40000));
+
+					if(this.checkInCone(parray[i])) {
+
+						var dist = this.shape.position.subtract(parray[i].shape.position);
+						if(dist.length < minSeparation) {
+
+							console.log("Oh so close " + dist.length);
+							var vy = this.velocity.rotate(90).normalize();
+							var projn = dist.dot(vy);
+					 		//console.log(vy.multiply(-4000) + " projn");
+					 	
+					 	return (vy.multiply(projn).normalize().multiply(this.maxForce*10)).add(this.velocity.multiply(-40000));
 					
 					}
 				}
@@ -181,7 +185,7 @@ function Locomotion(params) {
 			var time, mintime = mintimeuntilcollision;
 			var index = 0;
 			for(var i=0; i<parray.length; i++) {
-				if(this.checkInCone(parray[i])) {
+				if(this != parray[i] && this.checkInCone(parray[i])) {
 
 				time = this.predictNearestApproachTime(parray[i]);
 				//console.log(time +" TIME");
@@ -209,6 +213,7 @@ function Locomotion(params) {
 				var my_side = my_unit.rotate(90);
 				var obs_unit = obstacle.velocity.normalize();
 				var parallelness = my_unit.dot(obs_unit);
+				//console.log(parallelness);
         		var angle = 0.707, steer = 0;
         		////console.log(this.velocity + " pll" + obstacle.velocity);
         		if (parallelness < -1*angle)

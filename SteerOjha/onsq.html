@@ -3,7 +3,7 @@
 	<meta charset="utf-8">
 	<title>Emotion Test</title>
 	<script type="text/javascript" src="paper.js"></script>
-	<script type="text/javascript" src="onsq.js"></script>
+	<script type="text/javascript" src="wallavoid.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
@@ -32,7 +32,7 @@
 				point : origin.position.add(new Point(-200,0))
 			});
 
-			entities.push(loc);
+			//entities.push(loc);
 			
 			var theta = 55;		
 			var radToDeg = 3.14/180;
@@ -48,30 +48,31 @@
 				maxSpeed : 5,
 				shape : new Path.Circle({
 					center : view.center,
-					radius : 15,
+					radius : 0,
 					fillColor : 'blue'
 				}),
 				point : origin.position.add(move)
 			});
 
-			entities.push(obstacle1);
+			obstacle1.shape.visible = false;
+			//entities.push(obstacle1);
 
 			var target1 = new Path.Circle({
-					center : origin.position.add(200, 0),
-					radius : 10,
+					center : origin.position.add(500, -200);
+					radius : 0,
 					fillColor : 'red'
 				});
 
 			var target2 = new Path.Circle({
 					center : origin.position.subtract(move),
-					radius : 10,
+					radius : 0,
 					fillColor : 'blue'
 				});
 
 			view.onFrame = function(event) {
 
-				loc.steer(loc.steeringSeek(target1.position), event.delta, entities);
-				obstacle1.steer(obstacle1.steeringSeek(target2.position), event.delta, entities);
+				loc.steer((target1.position), event.delta, entities, event);
+				//obstacle1.steer(obstacle1.steeringSeek(target2.position), event.delta, entities);
 
 			}
 

@@ -63,7 +63,7 @@ function Locomotion(params) {
 
 				var amplitude = arousal * 1.2;
 				var	vibrationvec = this.velocity.normalize().rotate(90);
-	 			vibrationvec = vibrationvec.multiply(Math.sin(this.mean.length) * amplitude);
+	 			vibrationvec = vibrationvec.multiply(Math.cos(this.mean.length) * amplitude);
 
 				this.shape.position = this.mean.add(vibrationvec);
 				//this.shape.position.y += Math.cos(this.mean.length) * amplitude;
