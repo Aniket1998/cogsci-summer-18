@@ -45,14 +45,9 @@ function Locomotion(params) {
 		this.basisParallel = this.velocity.normalize();
 		this.basisPerpendicular = this.basisParallel.rotate(90);
 
-		if (dt > 0) {
-			var smoothRate = clip_value(20 * dt,0.15,0.4); // TUNE : Figure out a good formula, using default as of now
-			this._smoothAcc = blend_vec(smoothRate,acc,this._smoothAcc);
-		}
-
 		var posSmooth = dt * 0.75;
 		this._smoothPos = blend_vec(posSmooth,this.position,this._smoothPos);
-		this._smoothPos = this.position
+		//this._smoothPos = this.position
 		this.mean.x = this._smoothPos.x;
 		this.mean.y = this._smoothPos.y;
 
@@ -190,7 +185,7 @@ function Locomotion(params) {
 					var projn = dist.dot(vy);
 					projn = (projn >= 0) ? 1:-1;
 					 //console.log(vy.multiply(-4000) + " projn");
-					 return (vy.normalize()).multiply(20*projn*this.maxForce).add(this.velocity.normalize().multiply(-10*this.maxForce));
+					 return (vy.normalize()).multiply(100*projn*this.maxForce).add(this.velocity.normalize().multiply(-20*this.maxForce));
 					
 					}
 				}
@@ -273,11 +268,11 @@ function Locomotion(params) {
                     		steer = (sideDot >= 0) ? -1 : 1;
  
                 		}
+                		//(my_side.multiply(30000 * steer).add(this.velocity.multiply(fast*12000))).normalize().multiply(this.maxForce)
             		}
         		}
         		var fast = this.predictsloworfast(obstacle,mintime);
-               	return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.multiply(fast*this.maxForce).normalize())).normalize().multiply(10*this.maxForce);
-        		//return(((my_side.multiply(steer)).multiply(this.maxForce))).normalize().multiply(10*this.maxForce);
+        		return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.normalize().multiply(-1*fast*this.maxForce))).normalize().multiply(15*this.maxForce);
         		//(my_side.multiply(30000 * steer).add(this.velocity.multiply(-12000))).normalize().multiply(this.maxForce)
         		//offset = this.shaposition.subtract(obstacle.position);
         		////console.log(my_side.multiply(4000 * steer).add(this.velocity.multiply(-4000)) + " is force");
