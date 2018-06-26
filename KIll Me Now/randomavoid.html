@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Ran.dom</title>
+	<script type="text/javascript" src="paper.js"></script>
+	<script type="text/javascript" src="onsqtune.js"></script>
+	<script type="text/javascript">
+		paper.install(window);
+		window.onload = function() {
+
+			paper.setup('canvas');
+			var RAD = 15;
+			var num = 10;
+			var persons = new Array(num);
+			var targets = new Array(num);
+			// var prev = new Array(num);
+			// var personarrays = new Array(num);
+			// var persongrid = new PersonGrid(view.size.width,view.size.height);
+			var entities = [];
+
+
+			for (var i = persons.length - 1; i >= 0; i--) {
+
+				persons[i] = new Locomotion({
+					velocity : new Point(0,0),
+					mass : 1,
+					speed : 0,
+					boundingRadius : 25,
+					maxForce : 20,
+					maxSpeed : 5,
+					shape : new Path.Circle({
+						center : view.center,
+						radius : 15,
+						fillColor : 'red'
+					}),
+					point : Point.random().multiply(view.size)
+				});
+
+				targets[i] = new Locomotion({
+					velocity : new Point(0,0),
+					mass : 1,
+					speed : 0,
+					boundingRadius : 25,
+					maxForce : 80,
+					maxSpeed : 5,
+					shape : new Path.Circle({
+						center : view.center,
+						radius : 7,
+						fillColor : 'blue'
+					}),
+					point : Point.random().multiply(view.size)
+				});
+
+				//targets[i].shape.visible = false;
+				entities.push(persons[i]);
+				// persongrid.set(persons[i].shape.position,persons[i]);
+
+			}
+
+			view.onFrame = function(event) {
+				// for (var i = persons.length - 1; i >= 0; i--) {
+				// 	prev[i] = persons[i].shape.position;
+				// }
+
+				// for (var i = persons.length - 1; i >= 0; i--) {
+				// 	personarrays[i] = persongrid.localSearch(persons[i].shape.position.x-20*RAD, persons[i].shape.position.x+20*RAD, persons[i].shape.position.y-20*RAD, persons[i].shape.position.y+20*RAD,persons[i]);
+				// }
+
+				for (var i = persons.length - 1; i >= 0; i--) {
+					var seekForce = persons[i].steeringSeek(targets[i].position);
+					var avoidForce = persons[i].steerToAvoidCollisions(entities);
+					var dist = persons[i].position.subtract(targets[i].position).length;
+					if (dist > 100) {
+						var netForce = seekForce.add(avoidForce);
+						persons[i].steer(netForce, event.delta);
+					} else {
+						persons[i].steer(seekForce,event.delta);
+					}
+				}
+
+				// for (var i = persons.length - 1; i >= 0; i--) {
+				// 	persongrid.update(prev[i],persons[i].shape.position,persons[i]);
+				// }
+			}
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="960"></canvas>
+</body>
+</html>
