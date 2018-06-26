@@ -30,10 +30,37 @@ function Locomotion(params) {
 		}
 	}
 
+	this.steerAwayFromWall = function() {
+
+		var minWallDist = 130;
+
+		if(this.shape.position.x < minWallDist) {
+			
+			return new Point(1,0).multiply(this.maxForce * 1000);
+			
+		} else if(this.shape.position.x > 960 - minWallDist) {
+
+			return new Point(-1,0).multiply(this.maxForce);
+
+		} else if(this.shape.position.y < minWallDist) {
+
+			return new Point(0, 1).multiply(this.maxForce * 1000);
+
+		} else if(this.shape.position.y > 960 - minWallDist) {
+
+			return new Point(0, -1).multiply(this.maxForce * 1000);
+
+		} else {
+
+			return new Point(0,0);
+		}
+
+	}
+
 	this.steer = function(force,dt, parray,target) {
 
 		var adjForce = force;
-		////console.log(this.steerToAvoidCollisions(parray).length/this.maxForce + " is ratio");
+		adjForce = adjForce.add(this.steerAwayFromWall());
 		adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
 		var acc = adjForce.divide(this.mass);
 

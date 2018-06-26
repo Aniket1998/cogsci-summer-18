@@ -8,7 +8,7 @@ function Locomotion(params) {
 	this.maxForce = params.maxForce;
 	this.maxSpeed = params.maxSpeed;
 	this.shape.position = new Point(params.point.x,params.point.y);
-	this.mean = this.shape.position;
+
 	this.position = this.shape.position;
 	this._smoothPos = new Point(params.shape.position.x,params.shape.position.y);
 	this._smoothAcc = new Point(0,0);
@@ -31,17 +31,45 @@ function Locomotion(params) {
 		}
 	}
 
-	this.steer = function(force,dt, parray, event) {
+	this.steerAwayFromWall = function() {
+
+		var minWallDist = 130;
+
+		if(this.shape.position.x < minWallDist) {
+			
+			return new Point(1,0).multiply(this.maxForce * 1000);
+			
+		} else if(this.shape.position.x > 960 - minWallDist) {
+
+			return new Point(-1,0).multiply(this.maxForce);
+
+		} else if(this.shape.position.y < minWallDist) {
+
+			return new Point(0, 1).multiply(this.maxForce * 1000);
+
+		} else if(this.shape.position.y > 960 - minWallDist) {
+
+			return new Point(0, -1).multiply(this.maxForce * 1000);
+
+		} else {
+
+			return new Point(0,0);
+		}
+
+	}
+
+	this.steer = function(force, dt, parray) {
 
 		var adjForce = force;
-		//adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
+		adjForce = adjForce.add(this.steerToAvoidCollisions(parray));
+		adjForce = adjForce.add(this.steerAwayFromWall());
+
 		var acc = adjForce.divide(this.mass);
 
 		if (dt > 0) {
 			var smoothRate = clip_value(9 * dt,0.15,0.4); // TUNE : Figure out a good formula, using default as of now
 			this._smoothAcc = blend_vec(smoothRate,acc,this._smoothAcc);
 		}
-
 
 		this.velocity = clip_length(this.velocity.add(this._smoothAcc.multiply(dt)),this.maxSpeed);
 		this.speed = this.velocity.length;
@@ -54,23 +82,8 @@ function Locomotion(params) {
 		var posSmooth = dt * 0.6;
 		this._smoothPos = blend_vec(posSmooth,this.position,this._smoothPos);
 
-		this.mean.x = this._smoothPos.x;
-		this.mean.y = this._smoothPos.y;
-
-		var arousal = 8;		//property of a perosn later
-
-		if (arousal > 0 && event.count%1.5) {
-
-				var amplitude = arousal * 1.2;
-				var	vibrationvec = this.velocity.normalize().rotate(90);
-	 			vibrationvec = vibrationvec.multiply(Math.cos(this.mean.length) * amplitude);
-
-				this.shape.position = this.mean.add(vibrationvec);
-				//this.shape.position.y += Math.cos(this.mean.length) * amplitude;
-
-				console.log("AROUSED " + event);
-			}
-
+		this.shape.position.x = this._smoothPos.x;
+		this.shape.position.y = this._smoothPos.y;
 
 	}
 
@@ -115,8 +128,8 @@ function Locomotion(params) {
 
 // (1)
 	this.predictNearestApproachTime = function(other) {
-		console.log(this.velocity + " is this.vel");
-		console.log(other.velocity + " is obs.vel");
+		//console.log(this.velocity + " is this.vel");
+		//console.log(other.velocity + " is obs.vel");
 		
 		var relative = other.velocity.subtract(this.velocity);
 		var relativeSpeed = relative.length;
@@ -127,7 +140,7 @@ function Locomotion(params) {
 		var tanget = relative.normalize();
 
 		var pos = this.shape.position.subtract(other.shape.position);
-		console.log(tanget + "  " + pos);
+		//console.log(tanget + "  " + pos);
 		// if (position.length <= 2 * 15) {
 		// 	return 0;
 		// }
@@ -183,7 +196,7 @@ function Locomotion(params) {
 
 				if(dist.length < minSeparation) {
 
-					console.log("DISTANCE ");
+					//console.log("DISTANCE ");
 					console.log("OH SO CLOSE ");
 
 					var vy = this.velocity.rotate(90).normalize();
