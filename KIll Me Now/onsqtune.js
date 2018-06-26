@@ -9,6 +9,7 @@ function Locomotion(params) {
 	this.maxSpeed = params.maxSpeed;
 	this.shape.position = new Point(params.point.x,params.point.y);
 	this.position = this.shape.position;
+	this.mean = this.shape.position;
 	this._smoothPos = new Point(params.shape.position.x,params.shape.position.y);
 	this._smoothAcc = new Point(0,0);
 	this._wander_side = 0;
@@ -30,7 +31,7 @@ function Locomotion(params) {
 		}
 	}
 
-	this.steer = function(force,dt) {
+	this.steer = function(force,dt,event) {
 
 		var adjForce = force;
 		////console.log(this.steerToAvoidCollisions(parray).length/this.maxForce + " is ratio");
@@ -47,8 +48,22 @@ function Locomotion(params) {
 		var posSmooth = dt * 0.75;
 		this._smoothPos = blend_vec(posSmooth,this.position,this._smoothPos);
 
-		this.shape.position.x = this._smoothPos.x;
-		this.shape.position.y = this._smoothPos.y;
+		this.mean.x = this._smoothPos.x;
+		this.mean.y = this._smoothPos.y;
+
+		var arousal = 8;		//property of a perosn later
+
+		/*if (arousal > 0 && event.count%1.5) {
+
+				var amplitude = arousal * 1.2;
+				var	vibrationvec = this.velocity.normalize().rotate(90);
+	 			vibrationvec = vibrationvec.multiply(Math.cos(this.mean.length) * amplitude);
+
+				this.shape.position = this.mean.add(vibrationvec);
+				//this.shape.position.y += Math.cos(this.mean.length) * amplitude;
+
+				//console.log("AROUSED " + event);
+		}*/
 	}
 
 	this.futurePosition = function(time) {

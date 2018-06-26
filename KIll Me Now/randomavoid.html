@@ -11,7 +11,7 @@
 
 			paper.setup('canvas');
 			var RAD = 15;
-			var num = 10;
+			var num = 6;
 			var persons = new Array(num);
 			var targets = new Array(num);
 			// var prev = new Array(num);
@@ -71,11 +71,11 @@
 					var seekForce = persons[i].steeringSeek(targets[i].position);
 					var avoidForce = persons[i].steerToAvoidCollisions(entities);
 					var dist = persons[i].position.subtract(targets[i].position).length;
-					if (dist > 100) {
+					if (dist > 40) {
 						var netForce = seekForce.add(avoidForce);
-						persons[i].steer(netForce, event.delta);
+						persons[i].steer(netForce, event.delta, event);
 					} else {
-						persons[i].steer(seekForce,event.delta);
+						persons[i].steer(seekForce,event.delta, event);
 					}
 				}
 
