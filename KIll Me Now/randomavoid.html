@@ -11,7 +11,7 @@
 
 			paper.setup('canvas');
 			var RAD = 15;
-			var num = 20;
+			var num = 10;
 			var persons = new Array(num);
 			var targets = new Array(num);
 			// var prev = new Array(num);
@@ -27,8 +27,8 @@
 					mass : 1,
 					speed : 0,
 					boundingRadius : 25,
-					maxForce : 5,
-					maxSpeed : 2,
+					maxForce : 400,
+					maxSpeed : 100,
 					shape : new Path.Circle({
 						center : view.center,
 						radius : 15,
@@ -72,7 +72,7 @@
 					var avoidForce = persons[i].steerToAvoidCollisions(entities);
 					var dist = persons[i].position.subtract(targets[i].position).length;
 					if (dist > 40) {
-						var netForce = seekForce.add(avoidForce);
+						var netForce = seekForce.add(avoidForce.multiply(0.5));
 						persons[i].steer(netForce, event.delta, event);
 					} else {
 						persons[i].steer(seekForce,event.delta, event);
