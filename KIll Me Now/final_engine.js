@@ -17,11 +17,11 @@ function Behavior(eagerness,arousal,focus) {
 	}
 
 	this.wanderSpeed = function(dt) {
-		return (100* dt);
+		return (2500* dt);
 	}
 
 	this.wanderMagnitude = function() {
-		return 50;
+		return 20;
 	}
 
 	this.visionAngle = function() {
