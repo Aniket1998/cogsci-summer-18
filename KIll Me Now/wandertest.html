@@ -25,10 +25,16 @@
 				point : view.center
 
 			});
+			var k = new Path.Circle({
+				center : new Point(10,10),
+				radius : 5,
+				fillColor : 'blue'
+			});
+			k.position = new Point(10,10);
 			view.onFrame = function(event) {
 				var x = man.steeringWander(event.delta);
-				console.log(x);
-				man.steer(x,event.delta,event.count);		
+				var y = man.steeringSeek(new Point(10,10));
+				man.steer(y.add(x.multiply(20)),event.delta,event.count);		
 			}
 		}
 	</script>
