@@ -276,7 +276,7 @@ function Locomotion(params) {
             		}
         		}
         		var fast = this.predictsloworfast(obstacle,mintime);
-               	return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.multiply(fast*this.maxForce).normalize())).normalize().multiply(10*this.maxForce);
+               	return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.normalize().multiply(fast*this.maxForce))).normalize().multiply(10*this.maxForce);
         		//return(((my_side.multiply(steer)).multiply(this.maxForce))).normalize().multiply(10*this.maxForce);
         		//(my_side.multiply(30000 * steer).add(this.velocity.multiply(-12000))).normalize().multiply(this.maxForce)
         		//offset = this.shaposition.subtract(obstacle.position);
