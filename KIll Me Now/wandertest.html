@@ -32,9 +32,10 @@
 			});
 			k.position = new Point(10,10);
 			view.onFrame = function(event) {
-				var x = man.steeringWander(event.delta);
-				var y = man.steeringSeek(new Point(10,10));
-				man.steer(y.add(x.multiply(20)),event.delta,event.count);		
+				var fa = man.xSteeringWander(event.delta).multiply(50);
+				console.log(fa);
+				var fb = man.steeringSeek(new Point(10,10));
+				man.steer(fb.add(fa),event.delta,event.count);		
 			}
 		}
 	</script>

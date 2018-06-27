@@ -17,11 +17,11 @@ function Behavior(eagerness,arousal,focus) {
 	}
 
 	this.wanderSpeed = function(dt) {
-		return (1000* dt);
+		return (100* dt);
 	}
 
 	this.wanderMagnitude = function() {
-		return 15;
+		return 50;
 	}
 
 	this.visionAngle = function() {
@@ -63,6 +63,17 @@ function Locomotion(params) {
 	this.basisParallel = new Point(1,0); 
 	this.basisPerpendicular = new Point(0,-1);
 
+	this._adjustForce = function(force,dt) {
+		var maxAdjSpeed = this.maxSpeed * 0.2;
+		if (this.velocity.length > maxAdjSpeed || force.length == 0) {
+			return force;
+		} else {
+			var range = this.velocity.length/maxAdjSpeed;
+			var cosine = scalar_interpolation(1.0,-1.0,Math.pow(range,20));
+			return limit_max_deviation(force,cosine,this.basisParallel);
+		}
+	}
+
 	this.steer = function(force,dt,count) {
 		var acc = force.divide(this.mass);
 
@@ -97,6 +108,15 @@ function Locomotion(params) {
 		var sideDist = vx.multiply(this._wander_side);
 		var perpDist = vy.multiply(this._wander_up);
 		return sideDist.add(perpDist);
+	}
+
+	this.xSteeringWander = function(dt) {
+		var wanderRate = this.behavior.wanderSpeed(dt);
+		var wanderStrength = this.behavior.wanderMagnitude();
+		var displacement = random_vector(wanderRate);
+		var wander = this.basisParallel.multiply(wanderStrength);
+		wander = wander.add(displacement);
+		return wander;
 	}
 
 	this.steeringSeek = function(target) {
@@ -236,6 +256,17 @@ function Locomotion(params) {
 		}
 	}
 
+}
+
+function random_vector(mag) {
+	var randomx = Math.random();
+	var randomy = Math.random();
+	var maxAngle = 2 * Math.PI;
+	var dx = Math.cos(randomx * maxAngle);
+	var dy = Math.cos(randomy * maxAngle);
+	var rand_vec = new Point(dx,dy);
+	rand_vec = rand_vec.normalize();
+	return rand_vec.multiply(mag);	
 }
 
 function vector_distance(vec1,vec2) {
