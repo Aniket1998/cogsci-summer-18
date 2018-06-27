@@ -17,11 +17,11 @@ function Behavior(eagerness,arousal,focus) {
 	}
 
 	this.wanderSpeed = function(dt) {
-		return (12 * dt);
+		return (1000* dt);
 	}
 
 	this.wanderMagnitude = function() {
-		return 10;
+		return 15;
 	}
 
 	this.visionAngle = function() {
@@ -244,7 +244,7 @@ function vector_distance(vec1,vec2) {
 }
 
 function scalar_random_walk(initial,walkspeed,min,max) {
-	var next = initial + rand_range(-walkspeed,walkspeed);
+	var next = initial + rand_range(-1*walkspeed,walkspeed);
 	if (next < min) {
 		return min;
 	}
