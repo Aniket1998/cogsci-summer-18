@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Final Testing</title>
+	<script type="text/javascript" src="paper.js"></script>
+	<script type="text/javascript" src="final_engine.js"></script>
+	<script type="text/javascript">
+		paper.install(window);
+		window.onload = function() {
+			paper.setup('canvas');
+
+			var behavior1 = new Behavior(5,7,8);
+			var behavior2 = new Behavior(5,7,8);			
+			
+			var origin = new Path.Circle({
+					center : view.center.add(new Point(0, -100)),
+					radius : 10,
+					fillColor : 'yellow'
+				});
+
+			var loc = new Locomotion({
+				behavior : behavior1,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 10000,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'red'
+				}),
+				point : origin.position.add(new Point(-350,0))
+
+			});
+			
+			var theta = 120;		
+			var radToDeg = 3.14/180;
+			theta *= radToDeg;
+
+			var move = new Point (-1 * 350 * Math.cos(theta), 350 * Math.sin(theta));
+
+			var obstacle1 = new Locomotion({
+				behavior : behavior2,
+				velocity : new Point(0,0),
+				mass : 1,
+				speed : 0,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 10000,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'blue'
+				}),
+				point : origin.position.add(move)
+			});
+
+			var target1 = new Path.Circle({
+					center : origin.position.add(350, 0),
+					radius : 10,
+					fillColor : 'red'
+				});
+
+			var target2 = new Path.Circle({
+					center : origin.position.subtract(move),
+					radius : 10,
+					fillColor : 'blue'
+				});
+
+			var entities = [];
+			entities.push(loc);
+			entities.push(obstacle1);
+
+
+			var persons =[];
+			persons.push(loc);
+			persons.push(obstacle1);
+
+			var targets =[];
+			targets.push(target1);
+			targets.push(target2);
+
+			view.onFrame = function(event) {
+				
+				for (var i = persons.length - 1; i >= 0; i--) {
+					var seekForce = persons[i].steeringSeek(targets[i].position);
+					var avoidForce = persons[i].steerToAvoidCollisions(entities);
+					var fleeForce = persons[i].steeringFlee(targets[i].position);
+					var wanderForce = persons[i].steeringWander(event.delta);
+
+					var seekCoeff = Math.pow(Math.abs(persons[i].behavior.eagerness), 1.5)/20;				//parametrize
+					var fleeCoeff = Math.pow(Math.abs(persons[i].behavior.eagerness), 1.5)/20;
+					var avoidCoeff = 0.05;
+					//var wanderCoeff = 0;
+
+					seekForce = seekForce.multiply(seekCoeff);
+					fleeForce = fleeForce.multiply(fleeCoeff);
+					avoidForce = avoidForce.multiply(avoidCoeff);
+					//wanderForce = wanderForce.multiply(avoidCoeff);
+
+					var dist = persons[i].position.subtract(targets[i].position).length;
+
+					if (dist > 100) {
+						if(persons[i].behavior.eagerness > 0) {
+							var netForce = seekForce.add(avoidForce.add(wanderForce));		//paramatrize
+							persons[i].steer(netForce, event.delta,event.count);
+							console.log("velocity "+i+" "+ persons[i].velocity.length);
+						} else {
+							var netForce = seekForce.add(avoidForce.add(wanderForce));
+							persons[i].steer(netForce, event.delta,event.count);
+						}
+					} else if(dist > 0){						// should be : dist > 2.1 * RAD
+						persons[i].steer(seekForce,event.delta,event.count);
+					} else {
+						// stop
+					}
+
+				}
+			}
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="960"></canvas>
+</body>
+</html>
