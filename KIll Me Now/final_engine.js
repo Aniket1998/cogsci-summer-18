@@ -456,7 +456,7 @@ function Person(pid,params,interactions) {
 				inter.push(array[i]);
 			}
 		}
-		console.log(inter);
+		//console.log(inter);
 		var min = 0;
 		for (var i = 1; i < inter.length; i++) {
 			var action = inter[i];
@@ -470,16 +470,16 @@ function Person(pid,params,interactions) {
 		//console.log("min" + min);
 		var mindist = (this.loco.position.subtract(inter[min].point())).length;
 		if (this.pid < 2) {
-			console.log("For pid " + this.pid);
+			//console.log("For pid " + this.pid);
 			console.log("Distance " + mindist);
-			console.log("Other" + inter[min].interaction.status);
+		//	console.log("Other" + inter[min].interaction.status);
 		}
 		if (mindist < this.behavior.minInteractionDistance() && inter[min].interaction.status < 3) {
 			inter[min].interaction.setPerson(this);
-			console.log("Choosing " + min + "for pid " + this.pid);
+		//	console.log("Choosing " + min + "for pid " + this.pid);
 			return inter[min].interaction;
 		} else {
-			console.log("Choosing longterm" + "for pid " + this.pid);
+			//console.log("Choosing longterm" + "for pid " + this.pid);
 			return this.longterm_goal;
 		}
 	}
