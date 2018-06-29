@@ -10,18 +10,18 @@
 		window.onload = function() {
 			paper.setup('canvas');
 			var behavior1 = new Behavior({
-				eagerness : 1,
-				arousal : 0,
-				focus : 1
+				eagerness : 8,
+				arousal : 5,
+				focus : 10
 			});
 			var behavior2 = new Behavior({
-				eagerness : 1,
-				arousal : 4,
-				focus : 1
+				eagerness : 10,
+				arousal : 10,
+				focus : 4
 			});
 			var behavior3 = new Behavior({
-				eagerness : 1,
-				arousal : 8,
+				eagerness : 5,
+				arousal : 0,
 				focus : 1
 			});
 			var loco = {
@@ -47,7 +47,7 @@
 					avoid_context : 0,
 					wander_context : 1,
 					flee_context : 0,
-					time : 4 * 60,
+					time : 7 * 60,
 				},
 				interaction : {
 					behavior : behavior2,
@@ -56,7 +56,7 @@
 					avoid_context : 0,
 					wander_context : 0,
 					flee_context : 1,
-					time : 5 * 60
+					time : 7 * 60
 				},
 				termination : {
 					behavior : behavior3,
@@ -65,7 +65,7 @@
 					avoid_context : 0,
 					wander_context : 10,
 					flee_context : 0,
-					time : 2000 * 60
+					time : 7 * 60
 				},
 				after_behavior : behavior1
 			}

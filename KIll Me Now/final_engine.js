@@ -1,3 +1,4 @@
+//change to be made in wanderspeed
 function Behavior(params) {
 	this.eagerness = params.eagerness;
 	this.arousal = params.arousal;
@@ -13,15 +14,15 @@ function Behavior(params) {
 	}
 
 	this.vibrationAmplitude = function() {
-		return this.arousal/1.5;
+		return this.arousal;
 	}
 
 	this.wanderSpeed = function(dt) {
-		return (2500* dt);
+		return (25* dt);
 	}
 
 	this.wanderMagnitude = function() {
-		return 20;
+		return 20 * this.focus;
 	}
 
 	this.visionAngle = function() {
@@ -316,6 +317,7 @@ function Interaction(params,parray) {
 	this.getSteer = function(section,dt) {
 		//console.log(section);
 		if (this.params[section].time == 0) {
+			console.log("End "+this.status);
 			this.status++;
 			if (this.status < 3) {
 				this.person.setBehavior(this.params[this.sections[this.status]].behavior);
@@ -327,13 +329,13 @@ function Interaction(params,parray) {
 		if (this.params[section].target != null) {
 			var c1 = this.params[section].steer_context;
 			var b1 = this.person.behavior.getSeekCoefficient();
-			console.log("b1" + b1);
-			console.log("c1" + c1);
+			//console.log("b1" + b1);
+			//console.log("c1" + c1);
 			netForce = netForce.add(this.loco.steeringSeek(this.params[section].target).multiply(c1 * b1));
 			var c4 = this.params[section].flee_context;
 			var b4 = this.person.behavior.getFleeCoefficient();
-						console.log("b4" + b4);
-			console.log("c4" + c4);
+			//console.log("b4" + b4);
+			//console.log("c4" + c4);
 			netForce = netForce.add(this.loco.steeringFlee(this.params[section].target).multiply(c4 * b4));
 		}
 		//var c2 = this.params[section].avoid_context;
@@ -359,7 +361,7 @@ function Person(params) {
 
 	this.run = function(event) {
 		var force = this.longterm_goal.run(event.delta);
-		console.log(force);
+		//console.log(force);
 		this.loco.steer(force,event.delta,event.count);
 	}
 }
