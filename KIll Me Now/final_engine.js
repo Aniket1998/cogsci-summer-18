@@ -44,33 +44,6 @@ function Behavior(params) {
 		return 40;
 	}
 
-	this.getSeekCoefficient = function() {
-		var seekCoeff;
-		if(this.eagerness > 0){			
-			seekCoeff = Math.pow(this.eagerness, 1.75)/30;
-		} else {
-			seekCoeff = Math.pow((10+this.eagerness)/10, 1.75)/30;
-		}
-		return seekCoeff;
-	}
-
-	this.getFleeCoefficient = function()  {
-		var fleeCoeff;
-		if(this.eagerness > 0){
-			fleeCoeff = Math.pow(this.eagerness, 1.75)/30;
-		} else {
-			fleeCoeff = Math.pow((10+this.eagerness)/10, 1.75)/30;
-		}
-	}
-
-	this.getAvoidCoefficient = function() {
-		return 0.03 * this.focus;
-	}
-
-	this.getWanderCoefficient = function() {
-		return 3 * (10 - this.focus);
-	}
-
 }
 function Locomotion(params) {
 	this.behavior = params.behavior;
@@ -135,7 +108,7 @@ function Locomotion(params) {
 	}
 
 	this.steeringFlee = function(target) {
-		var desire = position.subtract(this.target);
+		var desire = this.position.subtract(this.target);
 		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
 
@@ -272,7 +245,6 @@ function Locomotion(params) {
 //Termination Time
 
 //Interaction can also serve the purpose of a longterm goal
-
 /*
 params = {
 	approach : {
@@ -283,24 +255,30 @@ params = {
 		avoid_context :
 		flee_context :
 		time : 
-	} and similar for interaction, termination
+	} and similar for interaction
 
 }
 */
-
 function Interaction(params,parray) {
-	this.loco = person.loco;
+	this.loco = null;
 	this.person = null;
 	this.params = params;
 	this.status = 0;
 	this.parray = parray; //PASS THIS JUST FOR NOW LATER WE TURN THIS INTO SOMETHING GLOBAL
 
 	this.sections = ['approach','interaction','termination'];
+
+	this.setPerson = function(person) {
+		this.person = person;
+		this.loco = person.loco;
+		person.setBehavior(this.sections[this.status].behavior);
+	}
+
 	this.run = function(dt) {
-		if (this.status > 2) {
+		if (this.status < 3) {
 			var force = this.getSteer(this.sections[this.status],dt);
 			if (this.status == 3) {
-				person.behavior = this.params.after_behavior;
+				this.person.setBehavior(this.params.after_behavior);
 			}
 			return force;
 		}
@@ -309,34 +287,48 @@ function Interaction(params,parray) {
 	this.getSteer = function(section,dt) {
 		if (this.params[section].time == 0) {
 			this.status++;
+			if (this.status < 3) {
+				this.person.setBehavior(this.sections[this.status].behavior);
+			}
 			return new Point(0,0);
 		}
 		this.params[section].time--;
 		var netForce = new Point(0,0);
-		//var avoidForce = new Point(0,0);
-		//var wanderForce = new Point(0,0);
+		var b1,b2,b3,b4 = 1;
+		b3 = 50;
 		if (this.params[section].target != null) {
-			var c1 = this.params[section].seek_context;
-			var b1 = this.person.behavior.getSeekCoefficient();
+			var c1 = this.params[section].steer_context;
+			//var b1 = this.person.behavior.getSeekCoefficient();
 			netForce.add(this.loco.steeringSeek(this.params[section].target).multiply(c1 * b1));
 			var c4 = this.params[section].flee_context;
-			var b4 = this.person.behavior.getFleeCoefficient();
+			//var b4 = this.person.behavior.getFleeCoefficient();
 			netForce.add(this.loco.steeringFlee(this.params[section].target).multiply(c4 * b4));
 		}
-		var c2 = this.params[section].avoid_context;
-		var b2 = this.person.behavior.getAvoidCoefficient();
-		netForce.add(this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2));
+		//var c2 = this.params[section].avoid_context;
+		//var b2 = this.person.behavior.getAvoidCoefficient();
+		//netForce.add(this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2));
 		var c3 = this.params[section].wander_context;
-		var b3 = this.person.behavior.getWanderCoefficient();
+		//var b3 = this.person.behavior.getWanderCoefficient();
 		netForce.add(this.loco.steeringWander(dt).multiply(c3 * b3));
 		return netForce;
 	}
 }
-
+//Only testing a single long term interaction right now
 function Person(params) {
-	this.locomotion = new Locomotion(params.locomotion_params);
-	this.behavior = new Behavior(params.behavior);
-	this.long_term_goal = new Interaction(params.longterm_goal);
+	this.loco = new Locomotion(params.locomotion_params);
+	this.behavior = this.loco.behavior;
+	this.longterm_goal = new Interaction(params.longterm_goal,null);
+	this.longterm_goal.setPerson(this);
+
+	this.setBehavior = function(behavior) {
+		this.loco.behavior = behavior;
+		this.behavior = behavior;
+	}
+
+	this.run = function(event) {
+		var force = this.longterm_goal.run(event.delta);
+		this.loco.steer(force,event.delta,event.count);
+	}
 }
 
 function random_vector(mag) {
