@@ -184,7 +184,7 @@ function Locomotion(params) {
 
 	this.steerToAvoidCollisions = function(parray) {
 		if(parray.length) {
-			var minSeparation = this.behavior.minSeparation(); //PARAMETERISE
+			var minSeparation = this.behavior.minDistance(); //PARAMETERISE
 			for(var i=0; i<parray.length; i++) {
 				if(parray[i]!=this){
 					if(this.checkInCone(parray[i])) {
@@ -236,8 +236,8 @@ function Locomotion(params) {
         		{
             		var offset = obs_future.subtract(this.position);
             		var sideDot = offset.dot(my_side);
-            		console.log(this.velocity);
-            		console.log(obstacle.velocity);
+            	//	console.log(this.velocity);
+            	//	console.log(obstacle.velocity);
             		steer = (sideDot >= 0) ? -3:3;
         		}
         		else
@@ -335,7 +335,7 @@ function Interaction(params,parray) {
 			}
 		} else {
 			if (this.params[section].time == 0) {
-				console.log("End "+this.status);
+	//			console.log("End "+this.status);
 				this.status++;
 				if (this.status < 3) {
 					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
@@ -345,7 +345,7 @@ function Interaction(params,parray) {
 			this.params[section].time--;
 		}
 		if (this.params[section].time == 0) {
-			console.log("End "+this.status);
+			//console.log("End "+this.status);
 			this.status++;
 			if (this.status < 3) {
 				this.person.setBehavior(this.params[this.sections[this.status]].behavior);
@@ -366,11 +366,19 @@ function Interaction(params,parray) {
 			//console.log("c4" + c4);
 			netForce = netForce.add(this.loco.steeringFlee(this.params[section].target).multiply(c4 * b4));
 		}
-		//var c2 = this.params[section].avoid_context;
-		//var b2 = this.person.behavior.getAvoidCoefficient();
-		//netforce = netForce.add(this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2));
+		var c2 = this.params[section].avoid_context;
+		var b2 = this.person.behavior.getAvoidCoefficient();
+		//console.log("c2 " + c2);
+	//	console.log("b2" + b2);
+		if (this.parray != null) {
+			var f = this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2);
+			console.log("FOrce" + f);
+			netForce = netForce.add(f);
+		}
 		var c3 = this.params[section].wander_context;
 		var b3 = this.person.behavior.getWanderCoefficient();
+		//console.log("c3" + c3);
+		//console.log("c4" + c4);
 		netForce = netForce.add(this.loco.steeringWander(dt).multiply(c3 * b3));
 		return netForce;
 	}
@@ -381,6 +389,10 @@ function Person(params) {
 	this.behavior = this.loco.behavior;
 	this.longterm_goal = new Interaction(params.longterm_goal,null);
 	this.longterm_goal.setPerson(this);
+
+	this.setparray = function(parray) {
+		this.longterm_goal.parray = parray;
+	}
 
 	this.setBehavior = function(behavior) {
 		this.loco.behavior = behavior;

@@ -11,7 +11,7 @@
 			paper.setup('canvas');
 			var behavior1 = new Behavior({
 				eagerness : 8,
-				arousal : 5,
+				arousal : 0,
 				focus : 10
 			});
 			var behavior2 = new Behavior({
@@ -73,6 +73,7 @@
 				locomotion_params : loco,
 				longterm_goal : longterm_goals
 			});
+			man.setparray(null);
 			var inter = man.longterm_goal;
 			console.log(inter);
 			console.log(man.loco.behavior)
