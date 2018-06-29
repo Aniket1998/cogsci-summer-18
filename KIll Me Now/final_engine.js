@@ -315,7 +315,35 @@ function Interaction(params,parray) {
 	}
 
 	this.getSteer = function(section,dt) {
-		//console.log(section);
+		if (section === 'approach') {
+			var target = this.params[section].target;
+			if (target != null) {
+				var dist = (target.subtract(this.person.loco.position)).length;
+				if(dist < this.params[section].mindist) {
+					this.status++;
+					if (this.status < 3) {
+						this.person.setBehavior(this.params[this.sections[this.status]].behavior);
+					}
+					return new Point(0,0);
+				}
+			} else {
+				this.status++;
+				if (this.status < 3) {
+					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
+				}
+				return new Point(0,0)
+			}
+		} else {
+			if (this.params[section].time == 0) {
+				console.log("End "+this.status);
+				this.status++;
+				if (this.status < 3) {
+					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
+				}
+				return new Point(0,0);
+			}
+			this.params[section].time--;
+		}
 		if (this.params[section].time == 0) {
 			console.log("End "+this.status);
 			this.status++;
