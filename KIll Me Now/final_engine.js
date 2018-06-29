@@ -1,7 +1,7 @@
-function Behavior(eagerness,arousal,focus) {
-	this.eagerness = eagerness;
-	this.arousal = arousal;
-	this.focus = focus;
+function Behavior(params) {
+	this.eagerness = params.eagerness;
+	this.arousal = params.arousal;
+	this.focus = params.focus;
 
 	this.vibrate = function(basis,mean,count) {
 		if (this.arousal > 0 && ((2 * count) % 3)) {
@@ -94,23 +94,6 @@ function Locomotion(params) {
 	}
 
 	this.steeringWander = function(dt) {
-		var speed = this.behavior.wanderSpeed(dt); 
-		this._wander_side = this.behavior.wanderMagnitude() * scalar_random_walk(this._wander_side,speed,-1,+1);
-		this._wander_up = this.behavior.wanderMagnitude() * scalar_random_walk(this._wander_up,speed,-1,+1);
-		var vx = this.basisParallel;
-		var vy = this.basisPerpendicular;
-		if (this.basisParallel.length == 0) {
-			vx = new Point(1,0);
-		} 
-		if (this.basisPerpendicular.length == 0) {
-			vy = new Point(0,-1);
-		}
-		var sideDist = vx.multiply(this._wander_side);
-		var perpDist = vy.multiply(this._wander_up);
-		return sideDist.add(perpDist);
-	}
-
-	this.xSteeringWander = function(dt) {
 		var wanderRate = this.behavior.wanderSpeed(dt);
 		var wanderStrength = this.behavior.wanderMagnitude();
 		var displacement = random_vector(wanderRate);
@@ -256,6 +239,74 @@ function Locomotion(params) {
 		}
 	}
 
+}
+//Appproach Time
+//Interaction Time
+//Termination Time
+
+//Interaction can also serve the purpose of a longterm goal
+/*
+params = {
+	approach : {
+		behavior : new Behavior() 
+		target : Point.random(),
+		steer_context : 
+		wander_context :
+		avoid_context :
+		flee_context :
+	} and similar for interaction
+
+}
+*/
+function Interaction(params,parray) {
+	this.loco = person.loco;
+	this.person = null;
+	this.params = params;
+	this.status = 0;
+	this.parray = parray; //PASS THIS JUST FOR NOW LATER WE TURN THIS INTO SOMETHING GLOBAL
+
+	this.sections = ['approach','interaction','postinteraction'];
+	this.run = function(dt) {
+		if (this.status > 2) {
+			var force = this.getSteer(this.sections[this.status],dt);
+			if (this.status == 3) {
+				person.behavior = this.params.after_behavior;
+			}
+			return force;
+		}
+	}
+
+	this.getSteer = function(section,dt) {
+		if (this.params[section].time == 0) {
+			this.status++;
+			return new Point(0,0);
+		}
+		this.params[section].time--;
+		var netForce = new Point(0,0);
+		//var avoidForce = new Point(0,0);
+		//var wanderForce = new Point(0,0);
+		if (this.params[section].target != null) {
+			var c1 = this.params[section].steer_context;
+			var b1 = this.person.behavior.getSteerCoefficient();
+			netForce.add(this.loco.steeringSeek(this.params[section].target).multiply(c1 * b1));
+			var c4 = this.params[section].flee_context;
+			var b4 = this.person.behavior.getFleeCoefficient();
+			netForce.add(this.loco.steeringFlee(this.params[section].target).multiply(c4 * b4));
+		}
+		var c2 = this.params[section].avoid_context;
+		var b2 = this.person.behavior.getAvoidCoefficient();
+		netForce.add(this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2));
+		var c3 = this.params[section].wander_context;
+		var b3 = this.person.behavior.getWanderCoefficient();
+		netForce.add(this.loco.steeringWander(dt).multiply(c3 * b3));
+		return netForce;
+	}
+}
+
+function Person(params) {
+	this.locomotion = new Locomotion(params.locomotion_params);
+	this.behavior = new Behavior(params.behavior);
+	this.long_term_goal = new Interaction(params.longterm_goal);
 }
 
 function random_vector(mag) {
