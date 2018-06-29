@@ -10,8 +10,8 @@
 		window.onload = function() {
 			paper.setup('canvas');
 
-			var behavior1 = new Behavior(5,7,8);
-			var behavior2 = new Behavior(5,7,8);			
+			var behavior1 = new Behavior(7,5,1);
+			var behavior2 = new Behavior(7,0,1);			
 			
 			var origin = new Path.Circle({
 					center : view.center.add(new Point(0, -100)),
@@ -35,7 +35,7 @@
 
 			});
 			
-			var theta = 120;		
+			var theta = 90;		
 			var radToDeg = 3.14/180;
 			theta *= radToDeg;
 
@@ -90,23 +90,39 @@
 					var fleeForce = persons[i].steeringFlee(targets[i].position);
 					var wanderForce = persons[i].steeringWander(event.delta);
 
-					var seekCoeff = Math.pow(Math.abs(persons[i].behavior.eagerness), 1.5)/20;				//parametrize
-					var fleeCoeff = Math.pow(Math.abs(persons[i].behavior.eagerness), 1.5)/20;
-					var avoidCoeff = 0.05;
-					//var wanderCoeff = 0;
+					var seekCoeff;
+					if(persons[i].behavior.eagerness > 0){			
+						seekCoeff = Math.pow(persons[i].behavior.eagerness, 1.75)/25;
+					} else {
+						seekCoeff = Math.pow((10+persons[i].behavior.eagerness)/10, 1.75)/25;
+					}
+					var fleeCoeff;
+					if(persons[i].behavior.eagerness > 0){
+						fleeCoeff = Math.pow(persons[i].behavior.eagerness, 1.75)/25;
+					} else {
+						fleeCoeff = Math.pow((10+persons[i].behavior.eagerness)/10, 1.75)/25;
+					}
+					var avoidCoeff = 0.05 * persons[i].behavior.focus;
+					var wanderCoeff = 2.5 * (10 - persons[i].behavior.focus);
 
 					seekForce = seekForce.multiply(seekCoeff);
 					fleeForce = fleeForce.multiply(fleeCoeff);
 					avoidForce = avoidForce.multiply(avoidCoeff);
-					//wanderForce = wanderForce.multiply(avoidCoeff);
+					wanderForce = wanderForce.multiply(wanderCoeff);
 
 					var dist = persons[i].position.subtract(targets[i].position).length;
 
-					if (dist > 100) {
-						if(persons[i].behavior.eagerness > 0) {
-							var netForce = seekForce.add(avoidForce.add(wanderForce));		//paramatrize
+					if (dist > 100) {											//decide parameter to judge whether to flee or to seek
+						if(persons[i].behavior.eagerness > 0) {							//just seeking right now
+							var netForce = seekForce;		//paramatrize
+							if(persons[i].behavior.focus > 5) {
+								//console.log("Avoid");
+								netForce = netForce.add(avoidForce.add(wanderForce));
+							} else {
+								netForce = netForce.add(avoidForce.multiply((persons[i].behavior.focus)/10));
+								netForce = netForce.add(wanderForce.add(seekForce.multiply(-0.05 * (10 - persons[i].behavior.focus) * seekCoeff)));							
+							}
 							persons[i].steer(netForce, event.delta,event.count);
-							console.log("velocity "+i+" "+ persons[i].velocity.length);
 						} else {
 							var netForce = seekForce.add(avoidForce.add(wanderForce));
 							persons[i].steer(netForce, event.delta,event.count);
@@ -114,7 +130,7 @@
 					} else if(dist > 0){						// should be : dist > 2.1 * RAD
 						persons[i].steer(seekForce,event.delta,event.count);
 					} else {
-						// stop
+						// put condition to stop if the dot is too close to target
 					}
 
 				}

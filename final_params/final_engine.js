@@ -12,36 +12,35 @@ function Behavior(eagerness,arousal,focus) {
 		}
 	}
 
-	this.vibrationAmplitude = function() {			// increases with a
-		return Math.pow(this.arousal, 0.75)*2;
+	this.vibrationAmplitude = function() {
+		return this.arousal/1.5;
 	}
 
-	this.wanderSpeed = function(dt) {				
-		return (12 * (10 - this.focus) * dt);
+	this.wanderSpeed = function(dt) {			//stablising value
+		return (2750 * dt);
 	}
 
-	this.wanderMagnitude = function() {
-		return 10 * (10 - this.focus);
+	this.wanderMagnitude = function() {			//amplitude
+		return 2 * (10 - this.focus);
 	}
 
-	this.visionAngle = function() {				// decreases with both e, a, increases with f
-		return 200 * (this.focus) / (this.arousal + Math.abs(this.eagerness));
+	this.visionAngle = function() {
+		return 100;
 	}
 
-	this.minDistance = function() {				// increases with f
-		return 30 ;
+	this.minDistance = function() {
+		return 30;
 	}
 
-	this.threat = function() {
-		return false;
+	this.threat = false;
+	
+
+	this.pspace = function() {
+		return 45;
 	}
 
-	this.pspace = function() {					// decreases with a, increases with f
-		return (this.focus) * 50 / (this.arousal);
-	}
-
-	this.minTimeUntilCollision = function() {	// decreases with a, increases with f
-		return Math.floor((this.focus+2) * 40 / (this.arousal));
+	this.minTimeUntilCollision = function() {
+		return 40;
 	}
 
 }
@@ -150,6 +149,7 @@ function Locomotion(params) {
 	}
 
 	this.steerToAvoidCollisions = function(parray) {
+		this.behavior.threat = false;
 		if(parray.length) {
 			var minSeparation = this.behavior.minDistance(); //PARAMETERISE
 			for(var i=0; i<parray.length; i++) {
@@ -166,7 +166,7 @@ function Locomotion(params) {
 				}
 			}
 
-			var threat = this.behavior.threat();
+			var threat = this.behavior.threat;
 			var pspace = this.behavior.pspace();
 			var mintimeuntilcollision = this.behavior.minTimeUntilCollision();			//tune these
 
