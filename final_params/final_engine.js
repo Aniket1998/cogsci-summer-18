@@ -21,7 +21,7 @@ function Behavior(eagerness,arousal,focus) {
 	}
 
 	this.wanderMagnitude = function() {			//amplitude
-		return 2 * (10 - this.focus);
+		return 3 * (10 - this.focus);
 	}
 
 	this.visionAngle = function() {
@@ -33,14 +33,13 @@ function Behavior(eagerness,arousal,focus) {
 	}
 
 	this.threat = false;
-	
 
 	this.pspace = function() {
 		return 45;
 	}
-
+	
 	this.minTimeUntilCollision = function() {
-		return 40;
+		return 50;
 	}
 
 }

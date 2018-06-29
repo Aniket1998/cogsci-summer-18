@@ -10,8 +10,8 @@
 		window.onload = function() {
 			paper.setup('canvas');
 
-			var behavior1 = new Behavior(7,5,1);
-			var behavior2 = new Behavior(7,0,1);			
+			var behavior1 = new Behavior(1,5,10);
+			var behavior2 = new Behavior(-10,4,6);			
 			
 			var origin = new Path.Circle({
 					center : view.center.add(new Point(0, -100)),
@@ -92,18 +92,20 @@
 
 					var seekCoeff;
 					if(persons[i].behavior.eagerness > 0){			
-						seekCoeff = Math.pow(persons[i].behavior.eagerness, 1.75)/25;
+						seekCoeff = Math.pow(persons[i].behavior.eagerness, 1.75)/30;
 					} else {
-						seekCoeff = Math.pow((10+persons[i].behavior.eagerness)/10, 1.75)/25;
+						seekCoeff = Math.pow((10+persons[i].behavior.eagerness)/10, 1.75)/30;
 					}
+
 					var fleeCoeff;
 					if(persons[i].behavior.eagerness > 0){
-						fleeCoeff = Math.pow(persons[i].behavior.eagerness, 1.75)/25;
+						fleeCoeff = Math.pow(persons[i].behavior.eagerness, 1.75)/30;
 					} else {
-						fleeCoeff = Math.pow((10+persons[i].behavior.eagerness)/10, 1.75)/25;
+						fleeCoeff = Math.pow((10+persons[i].behavior.eagerness)/10, 1.75)/30;
 					}
-					var avoidCoeff = 0.05 * persons[i].behavior.focus;
-					var wanderCoeff = 2.5 * (10 - persons[i].behavior.focus);
+
+					var avoidCoeff = 0.03 * persons[i].behavior.focus;
+					var wanderCoeff = 3 * (10 - persons[i].behavior.focus);
 
 					seekForce = seekForce.multiply(seekCoeff);
 					fleeForce = fleeForce.multiply(fleeCoeff);
@@ -117,14 +119,14 @@
 							var netForce = seekForce;		//paramatrize
 							if(persons[i].behavior.focus > 5) {
 								//console.log("Avoid");
-								netForce = netForce.add(avoidForce.add(wanderForce));
+								netForce = netForce.add(avoidForce.add(wanderForce.multiply((10-persons[i].behavior.focus)/3)));
 							} else {
 								netForce = netForce.add(avoidForce.multiply((persons[i].behavior.focus)/10));
 								netForce = netForce.add(wanderForce.add(seekForce.multiply(-0.05 * (10 - persons[i].behavior.focus) * seekCoeff)));							
 							}
 							persons[i].steer(netForce, event.delta,event.count);
 						} else {
-							var netForce = seekForce.add(avoidForce.add(wanderForce));
+							var netForce = fleeForce.add(avoidForce.add(wanderForce));
 							persons[i].steer(netForce, event.delta,event.count);
 						}
 					} else if(dist > 0){						// should be : dist > 2.1 * RAD
