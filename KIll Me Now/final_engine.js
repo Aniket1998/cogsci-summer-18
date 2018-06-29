@@ -66,7 +66,7 @@ function Behavior(params) {
 	}
 
 	this.minInteractionDistance = function() {
-		return 40;
+		return 100;
 	}
 
 	this.getAvoidCoefficient = function() {
@@ -381,7 +381,7 @@ function Interaction(params,parray) {
 	//	console.log("b2" + b2);
 		if (this.parray != null) {
 			var f = this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2);
-			console.log("FOrce" + f);
+	//		console.log("FOrce" + f);
 			netForce = netForce.add(f);
 		}
 		var c3 = this.params[section].wander_context;
@@ -467,11 +467,14 @@ function Person(pid,params,interactions) {
 				min = i;
 			}
 		}
-		console.log("min" + min);
+		//console.log("min" + min);
 		var mindist = (this.loco.position.subtract(inter[min].point())).length;
-		console.log("Distance " + mindist);
-		console.log("Other" + inter[min].interaction.status);
-		if (mindist > this.behavior.minInteractionDistance() && inter[min].interaction.status < 3) {
+		if (this.pid < 2) {
+			console.log("For pid " + this.pid);
+			console.log("Distance " + mindist);
+			console.log("Other" + inter[min].interaction.status);
+		}
+		if (mindist < this.behavior.minInteractionDistance() && inter[min].interaction.status < 3) {
 			inter[min].interaction.setPerson(this);
 			console.log("Choosing " + min + "for pid " + this.pid);
 			return inter[min].interaction;
