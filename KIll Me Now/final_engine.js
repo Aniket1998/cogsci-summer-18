@@ -271,7 +271,7 @@ function Interaction(params,parray) {
 	this.setPerson = function(person) {
 		this.person = person;
 		this.loco = person.loco;
-		person.setBehavior(this.sections[this.status].behavior);
+		//person.setBehavior(this.params[this.sections[this.status]].behavior);
 	}
 
 	this.run = function(dt) {
@@ -288,7 +288,7 @@ function Interaction(params,parray) {
 		if (this.params[section].time == 0) {
 			this.status++;
 			if (this.status < 3) {
-				this.person.setBehavior(this.sections[this.status].behavior);
+				this.person.setBehavior(this.params[this.sections[this.status]].behavior);
 			}
 			return new Point(0,0);
 		}

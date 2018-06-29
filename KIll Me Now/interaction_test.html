@@ -73,6 +73,8 @@
 				locomotion_params : loco,
 				longterm_goal : longterm_goals
 			});
+			var inter = man.longterm_goal;
+			console.log(inter);
 			console.log(man.loco.behavior)
 			var k = new Path.Circle({
 				center : new Point(10,10),
@@ -81,7 +83,8 @@
 			});
 			k.position = new Point(10,10);
 			view.onFrame = function(event) {
-				man.run(event);		
+				man.run(event);
+				console.log(man.longterm_goal.status);		
 			}
 		}
 	</script>
