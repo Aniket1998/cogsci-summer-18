@@ -1,4 +1,3 @@
-//change to be made in wanderspeed
 function Behavior(params) {
 	this.eagerness = params.eagerness;
 	this.arousal = params.arousal;
@@ -14,15 +13,15 @@ function Behavior(params) {
 	}
 
 	this.vibrationAmplitude = function() {
-		return this.arousal;
+		return this.arousal/1.5;
 	}
 
 	this.wanderSpeed = function(dt) {
-		return (25* dt);
+		return (2500* dt);
 	}
 
 	this.wanderMagnitude = function() {
-		return 20 * this.focus;
+		return 20;
 	}
 
 	this.visionAngle = function() {
@@ -184,7 +183,7 @@ function Locomotion(params) {
 
 	this.steerToAvoidCollisions = function(parray) {
 		if(parray.length) {
-			var minSeparation = this.behavior.minDistance(); //PARAMETERISE
+			var minSeparation = this.behavior.minSeparation(); //PARAMETERISE
 			for(var i=0; i<parray.length; i++) {
 				if(parray[i]!=this){
 					if(this.checkInCone(parray[i])) {
@@ -236,8 +235,8 @@ function Locomotion(params) {
         		{
             		var offset = obs_future.subtract(this.position);
             		var sideDot = offset.dot(my_side);
-            	//	console.log(this.velocity);
-            	//	console.log(obstacle.velocity);
+            		console.log(this.velocity);
+            		console.log(obstacle.velocity);
             		steer = (sideDot >= 0) ? -3:3;
         		}
         		else
@@ -315,37 +314,8 @@ function Interaction(params,parray) {
 	}
 
 	this.getSteer = function(section,dt) {
-		if (section === 'approach') {
-			var target = this.params[section].target;
-			if (target != null) {
-				var dist = (target.subtract(this.person.loco.position)).length;
-				if(dist < this.params[section].mindist) {
-					this.status++;
-					if (this.status < 3) {
-						this.person.setBehavior(this.params[this.sections[this.status]].behavior);
-					}
-					return new Point(0,0);
-				}
-			} else {
-				this.status++;
-				if (this.status < 3) {
-					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
-				}
-				return new Point(0,0)
-			}
-		} else {
-			if (this.params[section].time == 0) {
-	//			console.log("End "+this.status);
-				this.status++;
-				if (this.status < 3) {
-					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
-				}
-				return new Point(0,0);
-			}
-			this.params[section].time--;
-		}
+		//console.log(section);
 		if (this.params[section].time == 0) {
-			//console.log("End "+this.status);
 			this.status++;
 			if (this.status < 3) {
 				this.person.setBehavior(this.params[this.sections[this.status]].behavior);
@@ -357,28 +327,20 @@ function Interaction(params,parray) {
 		if (this.params[section].target != null) {
 			var c1 = this.params[section].steer_context;
 			var b1 = this.person.behavior.getSeekCoefficient();
-			//console.log("b1" + b1);
-			//console.log("c1" + c1);
+			console.log("b1" + b1);
+			console.log("c1" + c1);
 			netForce = netForce.add(this.loco.steeringSeek(this.params[section].target).multiply(c1 * b1));
 			var c4 = this.params[section].flee_context;
 			var b4 = this.person.behavior.getFleeCoefficient();
-			//console.log("b4" + b4);
-			//console.log("c4" + c4);
+						console.log("b4" + b4);
+			console.log("c4" + c4);
 			netForce = netForce.add(this.loco.steeringFlee(this.params[section].target).multiply(c4 * b4));
 		}
-		var c2 = this.params[section].avoid_context;
-		var b2 = this.person.behavior.getAvoidCoefficient();
-		//console.log("c2 " + c2);
-	//	console.log("b2" + b2);
-		if (this.parray != null) {
-			var f = this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2);
-			console.log("FOrce" + f);
-			netForce = netForce.add(f);
-		}
+		//var c2 = this.params[section].avoid_context;
+		//var b2 = this.person.behavior.getAvoidCoefficient();
+		//netforce = netForce.add(this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2));
 		var c3 = this.params[section].wander_context;
 		var b3 = this.person.behavior.getWanderCoefficient();
-		//console.log("c3" + c3);
-		//console.log("c4" + c4);
 		netForce = netForce.add(this.loco.steeringWander(dt).multiply(c3 * b3));
 		return netForce;
 	}
@@ -390,10 +352,6 @@ function Person(params) {
 	this.longterm_goal = new Interaction(params.longterm_goal,null);
 	this.longterm_goal.setPerson(this);
 
-	this.setparray = function(parray) {
-		this.longterm_goal.parray = parray;
-	}
-
 	this.setBehavior = function(behavior) {
 		this.loco.behavior = behavior;
 		this.behavior = behavior;
@@ -401,7 +359,7 @@ function Person(params) {
 
 	this.run = function(event) {
 		var force = this.longterm_goal.run(event.delta);
-		//console.log(force);
+		console.log(force);
 		this.loco.steer(force,event.delta,event.count);
 	}
 }
