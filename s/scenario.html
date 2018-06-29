@@ -15,24 +15,24 @@
 				focus : 10
 			});
 			var behavior2 = new Behavior({//angry but not eager
-				eagerness : 10,
+				eagerness : 8,
 				arousal : 10,
 				focus : 4
 			});
 			var behavior3 = new Behavior({//fearful (running away)
-				eagerness : 5,
-				arousal : 0,
+				eagerness : 10,
+				arousal : 7,
 				focus : 1
 			});
 			var behavior4 = new Behavior({//very violent chase
-				eagerness : 8,
-				arousal : 0,
+				eagerness : 10,
+				arousal : 10,
 				focus : 10
 			});
 			var behavior5 = new Behavior({//sad 
-				eagerness : 8,
+				eagerness : 3,
 				arousal : 0,
-				focus : 10
+				focus : 5
 			});
 			var behavior6 = new Behavior({//wander 
 				eagerness : 8,
@@ -49,7 +49,7 @@
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
-					fillColor : 'red'
+					fillColor : 'blue'
 				}),
 				point : view.center.add(new Point(-200,-200))
 
