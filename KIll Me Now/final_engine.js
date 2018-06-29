@@ -44,7 +44,35 @@ function Behavior(params) {
 		return 40;
 	}
 
+	this.getSeekCoefficient = function() {
+		var seekCoeff;
+		if(this.eagerness > 0){			
+			seekCoeff = Math.pow(this.eagerness, 1.75)/30;
+		} else {
+			seekCoeff = Math.pow((10+this.eagerness)/10, 1.75)/30;
+		}
+		return seekCoeff;
+	}
+
+	this.getFleeCoefficient = function()  {
+		var fleeCoeff;
+		if(this.eagerness > 0){
+			fleeCoeff = Math.pow(this.eagerness, 1.75)/30;
+		} else {
+			fleeCoeff = Math.pow((10+this.eagerness)/10, 1.75)/30;
+		}
+	}
+
+	this.getAvoidCoefficient = function() {
+		return 0.03 * this.focus;
+	}
+
+	this.getWanderCoefficient = function() {
+		return 3 * (10 - this.focus);
+	}
+
 }
+
 function Locomotion(params) {
 	this.behavior = params.behavior;
 
