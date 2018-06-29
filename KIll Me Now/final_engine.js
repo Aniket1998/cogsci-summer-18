@@ -401,7 +401,7 @@ function InteractionGroup(interaction,point,loco) {
 	this.interaction = interaction;
 	this.point = point;
 	this.loco = loco;
-	this.point = function() {
+	this.getpoint = function() {
 		if (this.point != null) {
 			return this.point;
 		} else {
@@ -461,17 +461,18 @@ function Person(pid,params,interactions) {
 		for (var i = 1; i < inter.length; i++) {
 			var action = inter[i];
 			minaction = inter[min];
-			var dist = (this.loco.position.subtract(action.point())).length;
-			var mindist = (this.loco.position.subtract(minaction.point())).length;
+			var dist = (this.loco.position.subtract(action.getpoint())).length;
+			var mindist = (this.loco.position.subtract(minaction.getpoint())).length;
 			if (dist < mindist) {
 				min = i;
 			}
 		}
 		//console.log("min" + min);
-		var mindist = (this.loco.position.subtract(inter[min].point())).length;
-		if (this.pid == 1) {
+		var mindist = this.loco.position.subtract(inter[min].getpoint()).length;
+	//	if (this.pid == 1) {
+			//this.loco.position = new Point(10,10);
 			console.log("Distance" + mindist);
-		}
+	//	}
 		if (mindist < this.behavior.minInteractionDistance() && inter[min].interaction.status < 3) {
 			inter[min].interaction.setPerson(this);
 			//console.log("Choosing " + min + "for pid " + this.pid);
