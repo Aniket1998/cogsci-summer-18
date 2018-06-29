@@ -339,6 +339,12 @@ function Interaction(params,parray) {
 				this.status++;
 				if (this.status < 3) {
 					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
+					/*if (this.status == 3) {
+						this.person.setBehavior(this.params.after_behavior);
+					}*/
+				}
+				if (this.status == 3) {
+					this.person.setBehavior(this.params.after_behavior);
 				}
 				return new Point(0,0)
 			}
@@ -349,19 +355,13 @@ function Interaction(params,parray) {
 				if (this.status < 3) {
 					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
 				}
+				if (this.status == 3) {
+					this.person.setBehavior(this.params.after_behavior);
+				}
 				return new Point(0,0);
 			}
 			this.params[section].time--;
 		}
-		if (this.params[section].time == 0) {
-			//console.log("End "+this.status);
-			this.status++;
-			if (this.status < 3) {
-				this.person.setBehavior(this.params[this.sections[this.status]].behavior);
-			}
-			return new Point(0,0);
-		}
-		this.params[section].time--;
 		var netForce = new Point(0,0);
 		if (this.params[section].target != null) {
 			var c1 = this.params[section].steer_context;
@@ -379,7 +379,7 @@ function Interaction(params,parray) {
 		var b2 = this.person.behavior.getAvoidCoefficient();
 		//console.log("c2 " + c2);
 	//	console.log("b2" + b2);
-		if (this.parray != null) {
+		if (this.parray != null && c2 != 0) {
 			var f = this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2);
 	//		console.log("FOrce" + f);
 			netForce = netForce.add(f);
@@ -468,6 +468,10 @@ function Person(pid,params,interactions) {
 			}
 		}
 		//console.log("min" + min);
+		if (inter[min] == null) {
+			//console.log("pid " + this.pid + " longterm");
+			return this.longterm_goal;
+		}
 		var mindist = this.loco.position.subtract(inter[min].getpoint()).length;
 	//	if (this.pid == 1) {
 			//this.loco.position = new Point(10,10);
@@ -475,10 +479,10 @@ function Person(pid,params,interactions) {
 	//	}
 		if (mindist < this.behavior.minInteractionDistance() && inter[min].interaction.status < 3) {
 			inter[min].interaction.setPerson(this);
-			//console.log("Choosing " + min + "for pid " + this.pid);
+			console.log("Choosing " + min + "for pid " + this.pid);
 			return inter[min].interaction;
 		} else {
-			//console.log("Choosing longterm" + "for pid " + this.pid);
+			console.log("Choosing longterm" + "for pid " + this.pid);
 			return this.longterm_goal;
 		}
 	}
