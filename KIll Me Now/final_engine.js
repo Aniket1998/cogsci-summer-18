@@ -44,6 +44,33 @@ function Behavior(params) {
 		return 40;
 	}
 
+	this.getSeekCoefficient = function() {
+		var seekCoeff;
+		if(this.eagerness > 0){			
+			seekCoeff = Math.pow(this.eagerness, 1.75)/30;
+		} else {
+			seekCoeff = Math.pow((10+this.eagerness)/10, 1.75)/30;
+		}
+		return seekCoeff;
+	}
+
+	this.getFleeCoefficient = function()  {
+		var fleeCoeff;
+		if(this.eagerness > 0){
+			fleeCoeff = Math.pow(this.eagerness, 1.75)/30;
+		} else {
+			fleeCoeff = Math.pow((10+this.eagerness)/10, 1.75)/30;
+		}
+	}
+
+	this.getAvoidCoefficient = function() {
+		return 0.03 * this.focus;
+	}
+
+	this.getWanderCoefficient = function() {
+		return 3 * (10 - this.focus);
+	}
+
 }
 function Locomotion(params) {
 	this.behavior = params.behavior;
@@ -245,6 +272,7 @@ function Locomotion(params) {
 //Termination Time
 
 //Interaction can also serve the purpose of a longterm goal
+
 /*
 params = {
 	approach : {
@@ -254,10 +282,12 @@ params = {
 		wander_context :
 		avoid_context :
 		flee_context :
-	} and similar for interaction
+		time : 
+	} and similar for interaction, termination
 
 }
 */
+
 function Interaction(params,parray) {
 	this.loco = person.loco;
 	this.person = null;
@@ -265,7 +295,7 @@ function Interaction(params,parray) {
 	this.status = 0;
 	this.parray = parray; //PASS THIS JUST FOR NOW LATER WE TURN THIS INTO SOMETHING GLOBAL
 
-	this.sections = ['approach','interaction','postinteraction'];
+	this.sections = ['approach','interaction','termination'];
 	this.run = function(dt) {
 		if (this.status > 2) {
 			var force = this.getSteer(this.sections[this.status],dt);
@@ -286,8 +316,8 @@ function Interaction(params,parray) {
 		//var avoidForce = new Point(0,0);
 		//var wanderForce = new Point(0,0);
 		if (this.params[section].target != null) {
-			var c1 = this.params[section].steer_context;
-			var b1 = this.person.behavior.getSteerCoefficient();
+			var c1 = this.params[section].seek_context;
+			var b1 = this.person.behavior.getSeekCoefficient();
 			netForce.add(this.loco.steeringSeek(this.params[section].target).multiply(c1 * b1));
 			var c4 = this.params[section].flee_context;
 			var b4 = this.person.behavior.getFleeCoefficient();
