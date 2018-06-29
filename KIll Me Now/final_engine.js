@@ -469,14 +469,12 @@ function Person(pid,params,interactions) {
 		}
 		//console.log("min" + min);
 		var mindist = (this.loco.position.subtract(inter[min].point())).length;
-		if (this.pid < 2) {
-			//console.log("For pid " + this.pid);
-			console.log("Distance " + mindist);
-		//	console.log("Other" + inter[min].interaction.status);
+		if (this.pid == 1) {
+			console.log("Distance" + mindist);
 		}
 		if (mindist < this.behavior.minInteractionDistance() && inter[min].interaction.status < 3) {
 			inter[min].interaction.setPerson(this);
-		//	console.log("Choosing " + min + "for pid " + this.pid);
+			//console.log("Choosing " + min + "for pid " + this.pid);
 			return inter[min].interaction;
 		} else {
 			//console.log("Choosing longterm" + "for pid " + this.pid);

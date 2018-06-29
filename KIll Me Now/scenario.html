@@ -378,6 +378,11 @@
 					interactions[i][j] = null;
 				}
 			}
+			//var i12 = new Interaction(interaction12,entities);
+			//i12.setPerson()
+			//var i21 = new Interaction(interaction21,entities);
+			//var i31 = new Interaction(interaction32,entities);
+			//var i42 = new Interaction(interaction42,entities);
 			interactions[0][1] = new InteractionGroup(new Interaction(interaction12,entities),null,person2.loco);
 			interactions[1][0] = new InteractionGroup(new Interaction(interaction21,entities),null,person1.loco);
 			interactions[2][0] = new InteractionGroup(new Interaction(interaction31,entities),null,person1.loco);
@@ -393,6 +398,8 @@
 				person2.run(event);
 				person3.run(event);
 				person4.run(event);
+				console.log("Actual distance "+ person1.loco.position.subtract(person2.loco.position).length);
+			//	console.log(interactions[0][1].loco.position === person2.loco.position);
 				//console.log(man.longterm_goal.status);		
 			}
 		}
