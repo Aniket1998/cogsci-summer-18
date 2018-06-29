@@ -61,6 +61,7 @@ function Behavior(params) {
 		} else {
 			fleeCoeff = Math.pow((10+this.eagerness)/10, 1.75)/30;
 		}
+		return fleeCoeff;
 	}
 
 	this.getAvoidCoefficient = function() {
@@ -68,7 +69,7 @@ function Behavior(params) {
 	}
 
 	this.getWanderCoefficient = function() {
-		return 3 * (10 - this.focus);
+		return 5 * (10 - this.focus);
 	}
 
 }
@@ -313,7 +314,7 @@ function Interaction(params,parray) {
 	}
 
 	this.getSteer = function(section,dt) {
-		console.log(section);
+		//console.log(section);
 		if (this.params[section].time == 0) {
 			this.status++;
 			if (this.status < 3) {
@@ -323,23 +324,23 @@ function Interaction(params,parray) {
 		}
 		this.params[section].time--;
 		var netForce = new Point(0,0);
-		var b1 = 1;
-		var b2 = 1;
-		var b3 = 50;
-		var b4 = 1;
 		if (this.params[section].target != null) {
 			var c1 = this.params[section].steer_context;
-			//var b1 = this.person.behavior.getSeekCoefficient();
+			var b1 = this.person.behavior.getSeekCoefficient();
+			console.log("b1" + b1);
+			console.log("c1" + c1);
 			netForce = netForce.add(this.loco.steeringSeek(this.params[section].target).multiply(c1 * b1));
 			var c4 = this.params[section].flee_context;
-			//var b4 = this.person.behavior.getFleeCoefficient();
+			var b4 = this.person.behavior.getFleeCoefficient();
+						console.log("b4" + b4);
+			console.log("c4" + c4);
 			netForce = netForce.add(this.loco.steeringFlee(this.params[section].target).multiply(c4 * b4));
 		}
 		//var c2 = this.params[section].avoid_context;
 		//var b2 = this.person.behavior.getAvoidCoefficient();
-		//netForce.add(this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2));
+		//netforce = netForce.add(this.loco.steerToAvoidCollisions(this.parray).multiply(c2 * b2));
 		var c3 = this.params[section].wander_context;
-		//var b3 = this.person.behavior.getWanderCoefficient();
+		var b3 = this.person.behavior.getWanderCoefficient();
 		netForce = netForce.add(this.loco.steeringWander(dt).multiply(c3 * b3));
 		return netForce;
 	}
