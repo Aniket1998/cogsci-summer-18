@@ -9,30 +9,31 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
+			
 			var behavior1 = new Behavior({//normal(happy)
 				eagerness : 8,
 				arousal : 0,
 				focus : 10
 			});
-			var behavior2 = new Behavior({//angry but nnot eager
-				eagerness : 10,
+			var behavior2 = new Behavior({//angry but not eager
+				eagerness : 8,
 				arousal : 10,
 				focus : 4
 			});
 			var behavior3 = new Behavior({//fearful (running away)
-				eagerness : 5,
-				arousal : 0,
+				eagerness : 10,
+				arousal : 7,
 				focus : 1
 			});
 			var behavior4 = new Behavior({//very violent chase
-				eagerness : 8,
-				arousal : 0,
+				eagerness : 10,
+				arousal : 10,
 				focus : 10
 			});
 			var behavior5 = new Behavior({//sad 
-				eagerness : 8,
+				eagerness : 3,
 				arousal : 0,
-				focus : 10
+				focus : 5
 			});
 			var behavior6 = new Behavior({//wander 
 				eagerness : 8,
@@ -64,7 +65,7 @@
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
-					fillColor : 'red'
+					fillColor : 'yellow'
 				}),
 				point : view.center.add(new Point(-200,200))
 
@@ -79,7 +80,7 @@
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
-					fillColor : 'red'
+					fillColor : 'blue'
 				}),
 				point : view.center.add(new Point(200,200))
 			}
@@ -93,7 +94,7 @@
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
-					fillColor : 'red'
+					fillColor : 'green'
 				}),
 				point : view.center.add(new Point(200,-200))
 
@@ -105,7 +106,7 @@
 					behavior : behavior1,
 					target : loco3.point,
 					steer_context : 1,
-					avoid_context : 0,
+					avoid_context : 1,
 					wander_context : 1,
 					flee_context : 0,
 					mindist : 30,
@@ -133,16 +134,16 @@
 			var longterm_goals2 = {
 				approach : {
 					behavior : behavior1,
-					target : loco2.point,
+					target : loco4.point,
 					steer_context : 1,
-					avoid_context : 0,
+					avoid_context : 1,
 					wander_context : 1,
 					flee_context : 0,
 					mindist : 30,
 				},
 				interaction : {
 					behavior : behavior6,
-					target : loco2.point,
+					target : loco4.point,
 					steer_context : 0,
 					avoid_context : 0,
 					wander_context : 0,
@@ -343,22 +344,23 @@
 				after_behavior : behavior5
 			}
 
-			var person1 = new Person({
+			var person1 = new Person(1,{
 				locomotion_params : loco1,
 				longterm_goal : longterm_goals1
-			});
-			var person2 = new Person({
+			},null);
+			var person2 = new Person(2,{
 				locomotion_params : loco2,
 				longterm_goal : longterm_goals2
-			});
-			var person3 = new Person({
+			},null);
+			var person3 = new Person(3,{
 				locomotion_params : loco3,
 				longterm_goal : longterm_goals3
-			});
-			var person4 = new Person({
+			},null);
+			var person4 = new Person(4,{
 				locomotion_params : loco4,
 				longterm_goal : longterm_goals4
-			});
+			},null);
+
 			var entities = [];
 			entities.push(person1.loco);
 			entities.push(person2.loco);
@@ -368,6 +370,23 @@
 			person2.setparray(entities);
 			person3.setparray(entities);
 			person4.setparray(entities);
+			
+			var interactions = new Array(4);
+			for (var i = interactions.length - 1; i >= 0; i--) {
+				interactions[i] = new Array(4);
+				for (var j = interactions[i].length - 1; j >= 0; j--) {
+					interactions[i][j] = null;
+				}
+			}
+			interactions[0][1] = new InteractionGroup(new Interaction(interaction12,entities),null,person2.loco);
+			interactions[1][0] = new InteractionGroup(new Interaction(interaction21,entities),null,person1.loco);
+			interactions[2][0] = new InteractionGroup(new Interaction(interaction31,entities),null,person1.loco);
+			interactions[3][1] = new InteractionGroup(new Interaction(interaction42,entities),null,person2.loco);
+
+			person1.interactions = interactions;
+			person2.interactions = interactions;
+			person3.interactions = interactions;
+			person4.interactions = interactions;
 
 			view.onFrame = function(event) {
 				person1.run(event);
