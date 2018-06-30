@@ -9,9 +9,10 @@
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('canvas');
+			parray = null;
 			var behavior1 = new Behavior({
 				eagerness : 8,
-				arousal : 0,
+				arousal : 4,
 				focus : 10
 			});
 			var behavior2 = new Behavior({
@@ -21,7 +22,7 @@
 			});
 			var behavior3 = new Behavior({
 				eagerness : 5,
-				arousal : 0,
+				arousal : 2,
 				focus : 1
 			});
 			var loco = {
@@ -56,13 +57,13 @@
 					avoid_context : 0,
 					wander_context : 0,
 					flee_context : 0,
-					time : 6000
+					time : 60
 				},
 				termination : {
 					behavior : behavior3,
 					target : new Point(10,10),
 					steer_context : 0,
-					avoid_context : 0,
+					avoid_context : 1,
 					wander_context : 0,
 					flee_context : 1,
 					time : 7 * 60
@@ -73,10 +74,6 @@
 				locomotion_params : loco,
 				longterm_goal : longterm_goals
 			});
-			man.setparray(null);
-			var inter = man.longterm_goal;
-			console.log(inter);
-			console.log(man.loco.behavior)
 			var k = new Path.Circle({
 				center : new Point(10,10),
 				radius : 5,
@@ -89,6 +86,7 @@
 				if (stat !== man.longterm_goal.status) {
 					stat = man.longterm_goal.status;
 					console.log("Now in status " + stat);
+					console.log(man.behavior);
 				}	
 				if (man.longterm_goal.status < 3) {
 					man.run(event);
