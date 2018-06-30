@@ -104,30 +104,30 @@
 			var longterm_goals1 = {
 				approach : {
 					behavior : behavior1,
-					target : loco3.point,
+					target : loco3.point.subtract(new Point(20,0)),
 					steer_context : 1,
 					avoid_context : 1,
-					wander_context : 1,
+					wander_context : 0,
 					flee_context : 0,
 					mindist : 30,
 				},
 				interaction : {
 					behavior : behavior4,
 					target : loco3.point,
-					steer_context : 0,
+					steer_context : 1,
 					avoid_context : 0,
 					wander_context : 0,
-					flee_context : 1,
-					time : 7 * 60
+					flee_context : 0,
+					time : 60
 				},
 				termination : {
 					behavior : behavior4,
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
-					time : 7 * 60
+					time : 60
 				},
 				after_behavior : behavior4
 			}
@@ -144,10 +144,10 @@
 				interaction : {
 					behavior : behavior6,
 					target : loco4.point,
-					steer_context : 0,
+					steer_context : 1,
 					avoid_context : 0,
 					wander_context : 0,
-					flee_context : 1,
+					flee_context : 0,
 					time : 7 * 60
 				},
 				termination : {
@@ -155,7 +155,7 @@
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
 					time : 7 * 60
 				},
@@ -252,7 +252,39 @@
 				},
 				after_behavior : behavior4
 			}
+
 			var interaction21 = {
+				approach : {
+					behavior : behavior1,
+					target : null,
+					steer_context : 0,
+					avoid_context : 0,
+					wander_context : 0,
+					flee_context : 0,
+					mindist : 0,
+				},
+				interaction : {
+					behavior : behavior2,
+					target : null,
+					steer_context : 0,
+					avoid_context : 0,
+					wander_context : 0,
+					flee_context : 0,
+					time : 10 * 60
+				},
+				termination : {
+					behavior : behavior2,
+					target : null,
+					steer_context : 0,
+					avoid_context : 0,
+					wander_context : 0,
+					flee_context : 0,
+					time : 10 * 60
+				},
+				after_behavior : behavior4
+			}
+
+			/*var interaction21 = {
 				approach : {
 					behavior : behavior1,
 					target : new Point(10,10),
@@ -281,7 +313,7 @@
 					time : 7 * 60
 				},
 				after_behavior : behavior5
-			}
+			}*/
 			var interaction31 = {
 				approach : {
 					behavior : behavior1,
@@ -306,7 +338,7 @@
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
 					time : 7 * 60
 				},
@@ -337,7 +369,7 @@
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
 					time : 7 * 60
 				},

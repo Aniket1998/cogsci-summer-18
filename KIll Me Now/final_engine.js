@@ -330,6 +330,7 @@ function Interaction(params,parray) {
 				var dist = (target.subtract(this.person.loco.position)).length;
 				if(dist < this.params[section].mindist) {
 					this.status++;
+					this.loco.velocity = new Point(0,0);
 					if (this.status < 3) {
 						this.person.setBehavior(this.params[this.sections[this.status]].behavior);
 					}
@@ -337,6 +338,7 @@ function Interaction(params,parray) {
 				}
 			} else {
 				this.status++;
+				this.loco.velocity = new Point(0,0);
 				if (this.status < 3) {
 					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
 					/*if (this.status == 3) {
@@ -352,6 +354,7 @@ function Interaction(params,parray) {
 			if (this.params[section].time == 0) {
 	//			console.log("End "+this.status);
 				this.status++;
+				this.loco.velocity = new Point(0,0);
 				if (this.status < 3) {
 					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
 				}
@@ -475,14 +478,19 @@ function Person(pid,params,interactions) {
 		var mindist = this.loco.position.subtract(inter[min].getpoint()).length;
 	//	if (this.pid == 1) {
 			//this.loco.position = new Point(10,10);
-			console.log("Distance" + mindist);
+		//console.log("Status" + mindist);
 	//	}
 		if (mindist < this.behavior.minInteractionDistance() && inter[min].interaction.status < 3) {
 			inter[min].interaction.setPerson(this);
-			console.log("Choosing " + min + "for pid " + this.pid);
+			if (this.pid == 2) {
+				console.log("Choosing status " + inter[min].interaction.status + "for pid " + this.pid);
+			}
 			return inter[min].interaction;
 		} else {
-			console.log("Choosing longterm" + "for pid " + this.pid);
+			if (this.pid == 2) {
+				console.log("Choosing longterm" + "for pid " + this.pid + " with status " + this.longterm_goal.status);	
+			}
+			
 			return this.longterm_goal;
 		}
 	}
