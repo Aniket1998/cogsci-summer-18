@@ -1,5 +1,7 @@
 //change to be made in wanderspeed
 var parray = [];
+var interactions = null;
+var parray = []
 function Behavior(params) {
 	this.eagerness = params.eagerness;
 	this.arousal = params.arousal;
@@ -42,6 +44,10 @@ function Behavior(params) {
 		return 45;
 	}
 
+	this.minInteractionDistance = function() {
+		return 100;
+	}
+
 	this.minTimeUntilCollision = function() {
 		return 40;
 	}
@@ -55,6 +61,7 @@ function Behavior(params) {
 		}
 		return seekCoeff;
 	}
+
 
 	this.getFleeCoefficient = function()  {
 		var fleeCoeff;
@@ -397,7 +404,7 @@ function Interaction(params) {
 		var b2 = this.person.behavior.getAvoidCoefficient();
 		//console.log("c2 " + c2);
 	//	console.log("b2" + b2);
-		if (this.parray != null) {
+		if (parray != null) {
 			var f = this.loco.steerToAvoidCollisions().multiply(c2 * b2);
 		//	console.log("FOrce" + f);
 			netForce = netForce.add(f);
@@ -410,21 +417,77 @@ function Interaction(params) {
 		return netForce;
 	}
 }
+function LocalInteraction(interaction,point,loco) {
+	this.interaction = interaction;
+	this.point = point;
+	this.loco = loco;
+	this.getpoint = function() {
+		if (this.point != null) {
+			return this.point;
+		} else {
+			return this.loco.position;
+		}
+	}
+}
 //Only testing a single long term interaction right now
-function Person(params) {
+function Person(pid,params) {
 	this.loco = new Locomotion(params.locomotion_params);
 	this.behavior = this.loco.behavior;
 	this.longterm_goal = new Interaction(params.longterm_goal,null);
 	this.longterm_goal.setPerson(this);
+	this.pid = pid;
 
 	this.setBehavior = function(behavior) {
 		this.loco.behavior = behavior;
 		this.behavior = behavior;
 	}
 
+	this.action_select = function(event) {
+		if (interactions == null) {
+			return this.longterm_goal;
+		} else {
+			var ids = [];
+			var actions = [];
+			for (var i = interactions[this.pid-1].length - 1; i >= 0; i--) {
+				var act = interactions[this.pid-1][i];
+				if (act != null && act.interaction.status < 3) {
+					ids.push(i);
+					actions.push(act);
+				} else if(act != null && act.interaction.status >= 3) {
+					interactions[this.pid-1][i] = null;
+				}
+			}
+			var min = 0;
+			if (actions[min] == null) {
+				return this.longterm_goal;
+			}
+			var mindist = this.loco.position.subtract(actions[min].getpoint()).length;
+			for (var i = 1;i < actions.length;i++) {
+				var dist = this.loco.position.subtract(actions[i].getpoint()).length;
+				if (dist < mindist) {
+					min = i;
+					mindist = dist;
+				}
+			}
+			if (actions[min] != null && actions[min].interaction.status < 3 && mindist <= this.behavior.minInteractionDistance()) {
+				actions[min].interaction.setPerson(this);
+				var status = actions[min].interaction.status;
+				var phase = actions[min].interaction.sections[status];
+				var behavior = actions[min].interaction.params[phase].behavior;
+				console.log(behavior);
+				this.setBehavior(behavior);
+				actions[min].interaction.setPerson(this);
+				return actions[min].interaction;
+			} else {
+				return this.longterm_goal;
+			}
+		}
+	}
+
 	this.run = function(event) {
+		var goal = this.action_select(event);
 		if (this.longterm_goal.status < 3) {
-			var force = this.longterm_goal.run(event.delta);
+			var force = goal.run(event.delta);
 			console.log(force);
 			this.loco.steer(force,event.delta,event.count);
 		}

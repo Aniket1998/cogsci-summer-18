@@ -117,7 +117,7 @@
 					steer_context : 0,
 					avoid_context : 0,
 					wander_context : 0,
-					flee_context : 1,
+					flee_context : 0,
 					time : 7 * 60
 				},
 				termination : {
@@ -125,7 +125,7 @@
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
 					time : 7 * 60
 				},
@@ -147,7 +147,7 @@
 					steer_context : 0,
 					avoid_context : 0,
 					wander_context : 0,
-					flee_context : 1,
+					flee_context : 0,
 					time : 7 * 60
 				},
 				termination : {
@@ -155,7 +155,7 @@
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
 					time : 7 * 60
 				},
@@ -185,7 +185,7 @@
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
 					time : 7 * 60
 				},
@@ -225,7 +225,7 @@
 			var interaction12 = {
 				approach : {
 					behavior : behavior1,
-					target : new Point(10,10),
+					target : null,
 					steer_context : 1,
 					avoid_context : 0,
 					wander_context : 1,
@@ -234,28 +234,28 @@
 				},
 				interaction : {
 					behavior : behavior2,
-					target : new Point(10,10),
+					target : null,
 					steer_context : 0,
 					avoid_context : 0,
 					wander_context : 0,
-					flee_context : 1,
-					time : 7 * 60
+					flee_context : 0,
+					time : 3 * 60
 				},
 				termination : {
 					behavior : behavior2,
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
-					time : 7 * 60
+					time : 60
 				},
 				after_behavior : behavior4
 			}
 			var interaction21 = {
 				approach : {
 					behavior : behavior1,
-					target : new Point(10,10),
+					target : null,
 					steer_context : 1,
 					avoid_context : 0,
 					wander_context : 1,
@@ -263,24 +263,24 @@
 					mindist : 30,
 				},
 				interaction : {
-					behavior : behavior5,
-					target : new Point(10,10),
-					steer_context : 0,
-					avoid_context : 0,
-					wander_context : 0,
-					flee_context : 1,
-					time : 7 * 60
-				},
-				termination : {
-					behavior : behavior5,
+					behavior : behavior2,
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
-					time : 7 * 60
+					time : 3 * 60
 				},
-				after_behavior : behavior5
+				termination : {
+					behavior : behavior2,
+					target : null,
+					steer_context : 0,
+					avoid_context : 0,
+					wander_context : 0,
+					flee_context : 0,
+					time : 60
+				},
+				after_behavior : behavior4
 			}
 			var interaction31 = {
 				approach : {
@@ -344,31 +344,43 @@
 				after_behavior : behavior5
 			}
 
-			var person1 = new Person({
+			var person1 = new Person(1,{
 				locomotion_params : loco1,
 				longterm_goal : longterm_goals1
 			});
-			var person2 = new Person({
+			var person2 = new Person(2,{
 				locomotion_params : loco2,
 				longterm_goal : longterm_goals2
 			});
-			var person3 = new Person({
+			var person3 = new Person(3,{
 				locomotion_params : loco3,
 				longterm_goal : longterm_goals3
 			});
-			var person4 = new Person({
+			var person4 = new Person(4,{
 				locomotion_params : loco4,
 				longterm_goal : longterm_goals4
 			});
-			var entities = [];
-			entities.push(person1.loco);
-			entities.push(person2.loco);
-			entities.push(person3.loco);
-			entities.push(person4.loco);
-			person1.setparray(entities);
+			
+			parray.push(person1.loco);
+			parray.push(person2.loco);
+			parray.push(person3.loco);
+			parray.push(person4.loco);
+
+			interactions = new Array(4);
+			for (var i = interactions.length - 1; i >= 0; i--) {
+				interactions[i] = new Array(4);
+				for (var j = interactions[i].length - 1; j >= 0; j--) {
+					interactions[i][j] = null;
+				}
+			}
+			interactions[0][1] = new LocalInteraction(new Interaction(interaction12),null,person2.loco);
+			interactions[1][0] = new LocalInteraction(new Interaction(interaction21),null,person1.loco);
+			interactions[2][0] = new LocalInteraction(new Interaction(interaction31),null,person1.loco);
+			interactions[3][1] = new LocalInteraction(new Interaction(interaction42),null,person2.loco);
+			/*person1.setparray(entities);
 			person2.setparray(entities);
 			person3.setparray(entities);
-			person4.setparray(entities);
+			person4.setparray(entities);*/
 
 			view.onFrame = function(event) {
 				person1.run(event);
