@@ -1,4 +1,118 @@
 //change to be made in wanderspeed
+
+/*
+var behavior1 = new Behavior({//normal(happy)
+				eagerness : 8,
+				arousal : 0,
+				focus : 10
+			});
+
+
+var loco1 = {
+				behavior : behavior1,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 100,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'red'
+				}),
+				point : view.center.add(new Point(-200,-200))
+
+			}
+
+var longterm_goals1 = {
+				approach : {
+					behavior : behavior1,
+					target : loco3.point,
+					steer_context : 1,
+					avoid_context : 1,
+					wander_context : 1,
+					flee_context : 0,
+					mindist : 30,
+				},
+				interaction : {
+					behavior : behavior4,
+					target : loco3.point,
+					steer_context : 0,
+					avoid_context : 0,
+					wander_context : 0,
+					flee_context : 0,
+					time : 7 * 60
+				},
+				termination : {
+					behavior : behavior4,
+					target : null,
+					steer_context : 0,
+					avoid_context : 0,
+					wander_context : 0,
+					flee_context : 0,
+					time : 7 * 60
+				},
+				after_behavior : behavior4
+			}
+
+var interaction12 = {
+				approach : {
+					behavior : behavior1,
+					target : loco2.shape.position,
+					steer_context : 1,
+					avoid_context : 0,
+					wander_context : 1,
+					flee_context : 0,
+					mindist : 65,
+				},
+				interaction : {
+					behavior : behavior2,
+					target : null,
+					steer_context : 0,
+					avoid_context : 0,
+					wander_context : 0,
+					flee_context : 0,
+					time : 3 * 60
+				},
+				termination : {
+					behavior : behavior2,
+					target : null,
+					steer_context : 0,
+					avoid_context : 0,
+					wander_context : 0,
+					flee_context : 0,
+					time : 60
+				},
+				after_behavior : behavior4
+			}			
+
+var person1 = new Person(1,{
+				locomotion_params : loco1,
+				longterm_goal : longterm_goals1
+			});
+
+parray.push(person4.loco);
+
+			interactions = new Array(4);
+			for (var i = interactions.length - 1; i >= 0; i--) {
+				interactions[i] = new Array(4);
+				for (var j = interactions[i].length - 1; j >= 0; j--) {
+					interactions[i][j] = null;
+				}
+			}
+			interactions[0][1] = new LocalInteraction(new Interaction(interaction12),null,person2.loco);
+			interactions[1][0] = new LocalInteraction(new Interaction(interaction21),null,person1.loco);
+			interactions[2][0] = new LocalInteraction(new Interaction(interaction31),null,person1.loco);
+			interactions[3][1] = new LocalInteraction(new Interaction(interaction42),null,person2.loco);
+			/*person1.setparray(entities);
+			person2.setparray(entities);
+			person3.setparray(entities);
+			person4.setparray(entities);
+
+			view.onFrame = function(event) {
+				person1.run(event);			
+*/
+
 var parray = [];
 var interactions = null;
 var parray = []
@@ -260,8 +374,6 @@ function Locomotion(params) {
         		{
             		var offset = obs_future.subtract(this.position);
             		var sideDot = offset.dot(my_side);
-            	//	console.log(this.velocity);
-            	//	console.log(obstacle.velocity);
             		steer = (sideDot >= 0) ? -3:3;
         		}
         		else
@@ -365,7 +477,6 @@ function Interaction(params) {
 			}
 		} else {
 			if (this.params[section].time == 0) {
-	//			console.log("End "+this.status);
 				this.status++;
 				this.loco.velocity = new Point(0,0);
 				if (this.status < 3) {
@@ -403,7 +514,7 @@ function Interaction(params) {
 		var c2 = this.params[section].avoid_context;
 		var b2 = this.person.behavior.getAvoidCoefficient();
 		//console.log("c2 " + c2);
-	//	console.log("b2" + b2);
+		//console.log("b2" + b2);
 		if (parray != null) {
 			var f = this.loco.steerToAvoidCollisions().multiply(c2 * b2);
 		//	console.log("FOrce" + f);
@@ -462,7 +573,7 @@ function Person(pid,params) {
 				return this.longterm_goal;
 			}
 			var mindist = this.loco.position.subtract(actions[min].getpoint()).length;
-			for (var i = 1;i < actions.length;i++) {
+			for (var i = 1; i < actions.length; i++) {
 				var dist = this.loco.position.subtract(actions[i].getpoint()).length;
 				if (dist < mindist) {
 					min = i;
@@ -474,7 +585,6 @@ function Person(pid,params) {
 				var status = actions[min].interaction.status;
 				var phase = actions[min].interaction.sections[status];
 				var behavior = actions[min].interaction.params[phase].behavior;
-				console.log(behavior);
 				this.setBehavior(behavior);
 				actions[min].interaction.setPerson(this);
 				return actions[min].interaction;
@@ -488,7 +598,7 @@ function Person(pid,params) {
 		var goal = this.action_select(event);
 		if (this.longterm_goal.status < 3) {
 			var force = goal.run(event.delta);
-			console.log(force);
+			// console.log(force);
 			this.loco.steer(force,event.delta,event.count);
 		}
 	}

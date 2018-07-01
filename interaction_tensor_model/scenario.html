@@ -16,7 +16,7 @@
 				focus : 10
 			});
 			var behavior2 = new Behavior({//angry but not eager
-				eagerness : 8,
+				eagerness : 6,
 				arousal : 10,
 				focus : 4
 			});
@@ -32,7 +32,7 @@
 			});
 			var behavior5 = new Behavior({//sad 
 				eagerness : 3,
-				arousal : 0,
+				arousal : 10,
 				focus : 5
 			});
 			var behavior6 = new Behavior({//wander 
@@ -165,9 +165,9 @@
 				approach : {
 					behavior : behavior1,
 					target : loco3.point,
-					steer_context : 1,
+					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 1,
+					wander_context : 0,
 					flee_context : 0,
 					mindist : 30,
 				},
@@ -208,7 +208,7 @@
 					steer_context : 0,
 					avoid_context : 0,
 					wander_context : 0,
-					flee_context : 1,
+					flee_context : 0,
 					time : 7 * 60
 				},
 				termination : {
@@ -216,7 +216,7 @@
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
 					time : 7 * 60
 				},
@@ -225,12 +225,12 @@
 			var interaction12 = {
 				approach : {
 					behavior : behavior1,
-					target : null,
+					target : loco2.shape.position,
 					steer_context : 1,
 					avoid_context : 0,
 					wander_context : 1,
 					flee_context : 0,
-					mindist : 30,
+					mindist : 65,
 				},
 				interaction : {
 					behavior : behavior2,
@@ -255,12 +255,12 @@
 			var interaction21 = {
 				approach : {
 					behavior : behavior1,
-					target : null,
+					target : loco1.shape.position,
 					steer_context : 1,
 					avoid_context : 0,
 					wander_context : 1,
 					flee_context : 0,
-					mindist : 30,
+					mindist : 65,
 				},
 				interaction : {
 					behavior : behavior2,
@@ -285,16 +285,16 @@
 			var interaction31 = {
 				approach : {
 					behavior : behavior1,
-					target : new Point(10,10),
-					steer_context : 1,
+					target : loco1.shape.position,
+					steer_context : 0,
 					avoid_context : 0,
 					wander_context : 1,
-					flee_context : 0,
+					flee_context : 1,
 					mindist : 30,
 				},
 				interaction : {
 					behavior : behavior3,
-					target : new Point(10,10),
+					target : null,
 					steer_context : 0,
 					avoid_context : 0,
 					wander_context : 0,
@@ -315,8 +315,8 @@
 
 			var interaction42 = {
 				approach : {
-					behavior : behavior5,
-					target : new Point(10,10),
+					behavior : behavior2,
+					target : null,
 					steer_context : 1,
 					avoid_context : 0,
 					wander_context : 1,
@@ -324,8 +324,8 @@
 					mindist : 30,
 				},
 				interaction : {
-					behavior : behavior5,
-					target : new Point(10,10),
+					behavior : behavior2,
+					target : null,
 					steer_context : 0,
 					avoid_context : 0,
 					wander_context : 0,
@@ -333,11 +333,11 @@
 					time : 7 * 60
 				},
 				termination : {
-					behavior : behavior5,
+					behavior : behavior2,
 					target : null,
 					steer_context : 0,
 					avoid_context : 0,
-					wander_context : 10,
+					wander_context : 0,
 					flee_context : 0,
 					time : 7 * 60
 				},
@@ -387,7 +387,6 @@
 				person2.run(event);
 				person3.run(event);
 				person4.run(event);
-				//console.log(man.longterm_goal.status);		
 			}
 		}
 	</script>
