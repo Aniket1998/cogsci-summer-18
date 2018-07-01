@@ -205,6 +205,81 @@ function Locomotion(params) {
 		return (ang > cus);
 	}
 
+	this.steeringEvasion = function(other,maxpred) {
+		var offset = this.position.subtract(other.position);
+		var distance = offset.length;
+		var roughtime = distance/other.speed;
+		var predtime = roughtime;
+		if (predtime > maxpred) {
+			predtime = maxpred;
+		}
+		var target = other.futurePosition(predtime);
+		return this.steeringFlee(target);
+	}
+
+	this.steeringPursuit = function(other,maxpred) {
+		var offset = other.position.subtract(this.position);
+		var distance = offset.length;
+		var unitOffset = offset.normalize();
+		var parallelness = this.basisParallel.dot(other.basisParallel);
+		var forwardness = this.basisParallel.dot(unitOffset);
+		var directTravelTime = distance/this.speed;
+		var f = intervalComparison(forwardness,-0.707,+0.707);
+		var p = intervalComparison(parallelness,-0.707,+0.707);
+		var timeFactor = 0;
+		switch (f)	{
+    		case +1:
+        		switch (p)
+        		{
+        			case +1:          // ahead, parallel
+            			timeFactor = 4;
+            			break;
+        			case 0:           // ahead, perpendicular
+            			timeFactor = 1.8;
+            			break;
+        			case -1:          // ahead, anti-parallel
+            			timeFactor = 0.85;
+            			break;
+        		}
+        		break;
+    		case 0:
+        		switch (p)
+        		{
+        			case +1:          // aside, parallel
+            			timeFactor = 1;
+            			break;
+        			case 0:           // aside, perpendicular
+            			timeFactor = 0.8;
+            			break;
+        			case -1:          // aside, anti-parallel
+            			timeFactor = 4;
+            			break;
+        		}
+        		break;
+    		case -1:
+        		switch (p)
+        		{
+        			case +1:          // behind, parallel
+            			timeFactor = 0.5;
+            			break;
+        			case 0:           // behind, perpendicular
+            			timeFactor = 2;
+            			break;
+        			case -1:          // behind, anti-parallel
+            			timeFactor = 2;
+            			break;
+        		}
+        	break;
+    	}
+    	var et = directTravelTime * timeFactor;
+    	var etl = et;
+    	if (etl > maxpred) {
+    		etl = maxpred;
+    	}
+    	var target = other.futurePosition(etl);
+    	return this.steeringSeek(target);
+	}
+
 	this.steerToAvoidCollisions = function() {
 		if(parray.length) {
 			var minSeparation = this.behavior.minDistance(); //PARAMETERISE
@@ -340,6 +415,12 @@ function Interaction(after_behavior) {
 		this.wander_context = params.wander_context;
 		if ('target' in params) {
 			this.target = params.target;
+			if ('moving' in params) {
+				this.moving = params.moving;
+				this.predictTime = params.predictTime;
+			} else {
+				this.moving = false;
+			}
 		} else {
 			this.target = null;
 		}
@@ -365,14 +446,23 @@ function Interaction(after_behavior) {
 			}
 			var netForce = new Point(0,0);
 			if (this.target != null && this.seek_context != null && this.seek_context != 0) {
-				//console.log("Entering seek");
 				var b1 = self.person.behavior.getSeekCoefficient();
-				var seekForce = self.loco.steeringSeek(this.target).multiply(b1 * this.seek_context);
+				var seekForce;
+				if (this.moving == false) {
+					seekForce = self.loco.steeringSeek(this.target).multiply(b1 * this.seek_context);
+				} else {
+					seekForce = self.loco.steeringPursuit(this.target.loco,this.predictTime).multiply(b1 * this.seek_context);
+				}
 				netForce = netForce.add(seekForce);
 			}
 			if (this.target != null && this.flee_context != null && this.flee_context != 0) {
 				var b2 = self.person.behavior.getSeekCoefficient();
-				var fleeForce = self.loco.steeringFlee(this.target).multiply(b2 * this.flee_context);
+				var fleeForce;
+				if (this.moving == false) {
+					fleeForce = self.loco.steeringFlee(this.target).multiply(b2 * this.flee_context);
+				} else {
+					fleeForce = self.loco.steeringEvasion(this.target.loco,this.predictTime).multiply(b2 * this.flee_context);
+				}
 				netForce = netForce.add(fleeForce);
 			}
 			if (parray != null && parray.length > 0 && this.avoid_context != null && this.avoid_context != 0) {
@@ -726,4 +816,14 @@ function clip_length(vec,len) {
 	} else {
 		return vec;
 	}
+}
+
+function intervalComparison(x,lower,upper) {
+	if (x < lower) {
+		return -1;
+	}
+	if (x > upper) {
+		return 1;
+	}
+	return 0;
 }
