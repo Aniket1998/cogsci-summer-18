@@ -5,10 +5,8 @@ This is a library that can autonomously recreate depictions of real-life situati
 
 This library borrows from the following paper :
 
-'''
-@MISC{Reynolds99steeringbehaviors,
-Author = {Craig Reynolds},
-Title = {Steering Behaviours For Autonomous Characters},
-Year = {1999}
-}
-'''
+>@MISC{Reynolds99steeringbehaviors,  
+>Author = {Craig Reynolds},   
+>Title = {Steering Behaviours For Autonomous Characters},  
+>Year = {1999}  
+>}  
