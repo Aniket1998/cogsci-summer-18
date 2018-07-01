@@ -1,6 +1,5 @@
 var parray = [];
 var interactions = null;
-var parray = []
 function Behavior(params) {
 	this.eagerness = params.eagerness;
 	this.arousal = params.arousal;
@@ -428,7 +427,12 @@ function Interaction(after_behavior) {
 		this.runLayer = function(dt) {
 			if (this.type === 'distance') {
 				if (this.target != null) {
-					var dist = self.loco.position.subtract(this.target).length;
+					var dist;
+					if (this.moving == false) {
+						dist =  self.loco.position.subtract(this.target).length;	
+					} else {
+						dist = self.loco.position.subtract(this.target.position).length;
+					}
 					if (dist <= this.mindist) {
 						self.updateLayer();
 						return new Point(0,0);
@@ -451,7 +455,7 @@ function Interaction(after_behavior) {
 				if (this.moving == false) {
 					seekForce = self.loco.steeringSeek(this.target).multiply(b1 * this.seek_context);
 				} else {
-					seekForce = self.loco.steeringPursuit(this.target.loco,this.predictTime).multiply(b1 * this.seek_context);
+					seekForce = self.loco.steeringPursuit(this.target,this.predictTime).multiply(b1 * this.seek_context);
 				}
 				netForce = netForce.add(seekForce);
 			}
@@ -461,7 +465,7 @@ function Interaction(after_behavior) {
 				if (this.moving == false) {
 					fleeForce = self.loco.steeringFlee(this.target).multiply(b2 * this.flee_context);
 				} else {
-					fleeForce = self.loco.steeringEvasion(this.target.loco,this.predictTime).multiply(b2 * this.flee_context);
+					fleeForce = self.loco.steeringEvasion(this.target,this.predictTime).multiply(b2 * this.flee_context);
 				}
 				netForce = netForce.add(fleeForce);
 			}
