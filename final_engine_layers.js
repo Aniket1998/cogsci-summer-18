@@ -386,13 +386,14 @@ params = {
 
 }
 */
-function Interaction(after_behavior) {
+function Interaction(after_behavior,priority) {
 	var self = this;
 	this.loco = null;
 	this.person = null;
 	this.layers = [];
 	this.currentLayer = 0;
 	this.after_behavior = after_behavior;
+	this.priority = priority;
 
 	this.setPerson = function(person) {
 		this.person = person;
@@ -536,8 +537,57 @@ function Person(pid,params) {
 		this.loco.behavior = behavior;
 		this.behavior = behavior;
 	}
-
+	
 	this.action_select = function(event) {
+		if (interactions == null) {
+			return this.longterm_goal;
+		} else {
+			var actions = [];
+			for (var i = interactions[this.pid-1].length - 1; i >= 0; i--) {
+				var act = interactions[this.pid-1][i];
+				if (act != null && act.interaction.active()) {
+					actions.push(act);
+				} else if(act != null && act.interaction.active() == false) {
+					interactions[this.pid-1][i] = null;
+				}
+			}
+			var min = 0;
+			if (actions[min] == null) {
+				return this.longterm_goal;
+			}
+
+			var interactionDist = this.behavior.minInteractionDistance();
+			var dist;
+			for (var i = 1; i < actions.length; i++) {
+				dist = this.loco.position.subtract(actions[i].getpoint()).length;
+				if (actions[i].interaction.priority > actions[min].interaction.priority && dist <= interactionDist && actions[i].active()) {
+					min = i;
+				} else if (actions[i].interaction.priority == actions[min].interaction.priority && dist <= interactionDist && dist < this.loco.position.subtract(actions[min].getpoint()).length  && actions[i].active()) {
+					min = i;
+				}
+			}
+			if (actions[min] == null) {
+				return this.longterm_goal;
+			}
+			dist = this.loco.position.subtract(actions[min].getpoint()).length;
+			if (dist > interactionDist) {
+				return this.longterm_goal;
+			} 
+			if (actions[min].interaction.priority > this.longterm_goal.priority && actions[min].interaction.active()) {
+				actions[min].interaction.setPerson(this);
+				var layer = actions[min].interaction.currentLayer;
+				var behavior = actions[min].interaction.layers[layer].behavior;
+				//console.log(behavior);
+				this.setBehavior(behavior);
+				this.loco.velocity = new Point(0,0);
+				actions[min].interaction.setPerson(this);
+				return actions[min].interaction;
+			} else {
+				return this.longterm_goal;
+			}
+		}
+
+	/*this.action_select = function(event) {
 		if (interactions == null) {
 			if (this.pid == 1) {
 				//console.log("Using longterm goal because interactions is null");
@@ -584,7 +634,7 @@ function Person(pid,params) {
 				}
 				return this.longterm_goal;
 			}
-		}
+		}*/
 	}
 
 	this.run = function(event) {
