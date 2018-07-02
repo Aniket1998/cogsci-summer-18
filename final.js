@@ -6,10 +6,6 @@ function Behavior(params) {
 	this.focus = params.focus;
 
 	this.vibrate = function(basis,mean,count) {
-		// if(basis.length == 0) {
-		// 	var ran = new Point.random();
-		// 	basis = ran;
-		// }
 		if (this.arousal > 0 && ((2 * count) % 3)) {
 			var	vibrationvec = basis.multiply(Math.cos(mean.length) * this.vibrationAmplitude());
 			return vibrationvec;
@@ -23,11 +19,12 @@ function Behavior(params) {
 	}
 
 	this.wanderSpeed = function(dt) {
-		return 50 * Math.pow((10 - this.focus),2) * dt;
+		//console.log("DT is "+dt);
+		return 0.5 * Math.pow((10 - this.focus),2) * (60*dt);
 	}
 
 	this.wanderMagnitude = function() {
-		return 200;
+		return 100;
 	}
 
 	this.visionAngle = function() {
@@ -152,6 +149,8 @@ function Locomotion(params) {
 
 	this.steeringWander = function(dt) {
 		var wanderRate = this.behavior.wanderSpeed(dt);
+		if(this.velocity.length < 1)
+			wanderRate = wanderRate * this.velocity.length;
 		var wanderStrength = this.behavior.wanderMagnitude();
 		var displacement = random_vector(wanderRate);
 		var wander = this.basisParallel.multiply(wanderStrength);
