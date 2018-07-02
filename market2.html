@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Market</title>
+	<script type="text/javascript" src="paper.js"></script>
+	<script type="text/javascript" src="final_engine_layers.js"></script>
+	<script type="text/javascript">
+		paper.install(window);
+		window.onload = function() {
+			paper.setup('canvas');
+			
+			var road1 = new Path.Rectangle({
+    			point: [0, 400],
+			    size: [960, 10],
+    			fillColor: 'black'
+			});
+
+			var road2 = new Path.Rectangle({
+    			point: [0, 200],
+			    size: [960, 10],
+    			fillColor: 'black'
+			});
+
+			var home1 = new Path.Rectangle({		// Person 1 's home
+				point: new Point(910, 275),
+				size: new Size(50,50),
+				fillColor: 'brown'
+			})
+			var home1Loc = new Point(935,300);
+
+			var home2 = new Path.Rectangle({		// bar
+				point: new Point(210, 425),
+				size: new Size(50,50),
+				fillColor: 'green'
+			})
+			var home2Loc = new Point(210, 400);
+
+			var home3 = new Path.Rectangle({		// Person 3 's home
+				point: new Point(560, 100),
+				size: new Size(50,50),
+				fillColor: 'red'
+			})
+			var home3Loc = new Point(585,125);
+
+			var behavior1 = new Behavior({			// Person 1 going to home - Normal
+				eagerness : 8,
+				arousal : 0,
+				focus : 10
+			});
+			var behavior2 = new Behavior({			// Person 2 going to get drunk - Chill
+				eagerness : 6,
+				arousal : 0,
+				focus : 2
+			});
+			var behavior3 = new Behavior({			// Seductress coming to beckon Person 1 - UMM..
+				eagerness : 3,
+				arousal : 0,
+				focus : 10
+			});
+			var behavior4 = new Behavior({			// Person 1-2 fight
+				eagerness : 10,
+				arousal : 10,
+				focus : 10
+			});
+			var behavior5 = new Behavior({			// Person 2 drunk return
+				eagerness : 5,
+				arousal : 0,
+				focus : 1
+			});
+			var behavior6 = new Behavior({			// Person 2 drunk dance
+				eagerness : 0,
+				arousal : 5,
+				focus : 1
+			});
+			
+			var loco1 = new Locomotion({			// Person 1
+				behavior : behavior1,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 100,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'brown'
+				}),
+				point : view.center.add(new Point(-480,-180))
+			});
+
+			var loco2 = new Locomotion({			// Person 2
+				behavior : behavior2,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 100,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'blue'
+				}),
+				point : new Point(650,500)
+			});
+
+			var loco3 = new Locomotion({			// Seductress
+				behavior : behavior3,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 100,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'red'
+				}),
+				point : home3Loc
+			});
+			
+			var longterm_goals1 = new Interaction(behavior1,10);		// going to 'home'
+			longterm_goals1.addLayer({
+				behavior : behavior1,
+				time: 3.5 * 60
+			});
+			longterm_goals1.addLayer({
+				behavior : behavior1,
+				target : home1Loc, 
+				seek_context : 1,
+				avoid_context : 1,
+				wander_context : 1,
+				mindist : 5
+			});
+			
+			var longterm_goals2 = new Interaction(behavior5,10);		// going to bar and back
+			longterm_goals2.addLayer({
+				behavior : behavior3,
+				time: 1.5 * 60
+			});
+			longterm_goals2.addLayer({
+				behavior : behavior2,
+				target : home2Loc,
+				seek_context : 1,
+				avoid_context : 1,
+				wander_context : 1,
+				mindist : 30
+			});
+			longterm_goals2.addLayer({
+				behavior : behavior2,
+				time : 4 * 60
+			});
+			longterm_goals2.addLayer({
+				behavior : behavior5,
+				target : new Point(650,500),
+				seek_context : 1,
+				avoid_context : 1,
+				wander_context : 1,
+				mindist : 5
+			});
+			longterm_goals2.addLayer({
+				behavior : behavior6,
+				time : 4 * 60
+			});
+			 
+			var longterm_goals3 = new Interaction(behavior3,10);		// standing around house
+			longterm_goals3.addLayer({
+				behavior : behavior3,
+				target: home3Loc.add(new Point(0,100)),
+				seek_context : 1,
+				mindist: 5
+			});
+			longterm_goals3.addLayer({
+				behavior : behavior3,
+				time : 7 * 60
+			});
+			longterm_goals3.addLayer({
+				behavior : behavior3,
+				target: home3Loc,
+				seek_context : 1,
+				mindist: 0
+			});
+			
+			var interaction12 = new Interaction(behavior4,1);
+			interaction12.addLayer({
+				behavior : behavior2,
+				time : 2 * 60
+			});
+			
+			var interaction21 = new Interaction(behavior4,1);
+			interaction21.addLayer({
+				behavior : behavior2,
+				time : 2 * 60
+			});
+			
+			var interaction13 = new Interaction(behavior3,100);
+			interaction13.addLayer({
+				behavior : behavior3,
+				time : 1 * 60,
+			});
+			interaction13.addLayer({
+				behavior : behavior1,
+				target : home3Loc.add(new Point(0,100)),
+				seek_context : 1,
+				mindist : 40
+			});
+						
+			var person1 = new Person(1,{
+				loco : loco1,
+				longterm_goal : longterm_goals1
+			});
+			var person2 = new Person(2,{
+				loco : loco2,
+				longterm_goal : longterm_goals2
+			});
+			var person3 = new Person(3,{
+				loco : loco3,
+				longterm_goal : longterm_goals3
+			});
+						
+			parray.push(person1.loco);
+			parray.push(person2.loco);
+			parray.push(person3.loco);
+
+			interactions = new Array(3);
+			for (var i = interactions.length - 1; i >= 0; i--) {
+				interactions[i] = new Array(3);
+				for (var j = interactions[i].length - 1; j >= 0; j--) {
+					interactions[i][j] = null;
+				}
+			}
+
+			interactions[0][1] = new LocalInteraction(interaction12,null,person2.loco);
+			interactions[1][0] = new LocalInteraction(interaction21,null,person1.loco);
+			interactions[0][2] = new LocalInteraction(interaction13,null,person1.loco);			
+		//	interactions[2][0] = new LocalInteraction(interaction31,null,person1.loco);
+			
+			view.onFrame = function(event) {
+				person1.run(event);
+				person2.run(event);
+				person3.run(event);
+				//console.log(man.longterm_goal.status);		
+			}
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="960" height="960"></canvas>
+</body>
+</html>

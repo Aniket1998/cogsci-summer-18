@@ -6,6 +6,10 @@ function Behavior(params) {
 	this.focus = params.focus;
 
 	this.vibrate = function(basis,mean,count) {
+		if(basis.length == 0) {
+			var ran = new Point.random();
+			basis = ran;
+		}
 		if (this.arousal > 0 && ((2 * count) % 3)) {
 			var	vibrationvec = basis.multiply(Math.cos(mean.length) * this.vibrationAmplitude());
 			return vibrationvec;
@@ -19,15 +23,15 @@ function Behavior(params) {
 	}
 
 	this.wanderSpeed = function(dt) {
-		return (25* dt);
+		return (40 * (10 - this.focus) * dt);
 	}
 
 	this.wanderMagnitude = function() {
-		return 20 * this.focus;
+		return 15 * this.eagerness;
 	}
 
 	this.visionAngle = function() {
-		return 100;
+		return 15 * this.focus;
 	}
 
 	this.minDistance = function() {
@@ -39,7 +43,7 @@ function Behavior(params) {
 	}
 
 	this.pspace = function() {
-		return 45;
+		return 30;
 	}
 
 	this.minInteractionDistance = function() {
@@ -76,7 +80,7 @@ function Behavior(params) {
 	}
 
 	this.getWanderCoefficient = function() {
-		return 5 * (10 - this.focus);
+		return 8 * (10 - this.focus);
 	}
 
 }
@@ -122,7 +126,7 @@ function Locomotion(params) {
 
 		this.mean.x = this.position.x;
 		this.mean.y = this.position.y;
-		this.shape.position = this.mean.add(this.behavior.vibrate(this.getBasisPerpendicular(),this.mean,count));
+		this.shape.position = this.mean.add(this.behavior.vibrate(this.velocity,this.mean,count));
 	}
 
 	this.getBasisPerpendicular = function() {
@@ -285,7 +289,7 @@ function Locomotion(params) {
 			for(var i=0; i<parray.length; i++) {
 				if(parray[i]!=this){
 					if(this.checkInCone(parray[i])) {
-						var dist = this.position.subtract(parray[i].shape.position);
+						var dist = this.shape.position.subtract(parray[i].shape.position);
 						if(dist.length < minSeparation) {
 							var vy = this.basisPerpendicular;
 							var projn = dist.dot(vy);
@@ -310,6 +314,7 @@ function Locomotion(params) {
 					var mindist = this.predictNearestApproachPosition(parray[i], time);
 					
 					if(mindist < pspace) {
+						console.log("Three close");
 						mintime = time;
 						threat = true;
 						index = i;
@@ -409,10 +414,14 @@ function Interaction(after_behavior,priority) {
 			this.type = 'time';
 			this.time = params.time;
 		}
-		this.avoid_context = params.avoid_context;
-		this.seek_context = params.seek_context;
-		this.flee_context = params.flee_context;
-		this.wander_context = params.wander_context;
+		if('avoid_context' in params)
+			this.avoid_context = params.avoid_context;
+		if('seek_context' in params)
+			this.seek_context = params.seek_context;
+		if('flee_context' in params)
+			this.flee_context = params.flee_context;
+		if('wander_context' in params)	
+			this.wander_context = params.wander_context;
 		if ('target' in params) {
 			this.target = params.target;
 			if ('moving' in params) {
@@ -493,6 +502,7 @@ function Interaction(after_behavior,priority) {
 		if (this.active()) {
 			this.person.setBehavior(this.layers[this.currentLayer].behavior);
 		} else if (this.currentLayer == this.layers.length) {
+			console.log("layers over "+this.currentLayer)
 			if (this.after_behavior != null) {
 				this.person.setBehavior(this.after_behavior);
 			}
@@ -542,6 +552,7 @@ function Person(pid,params) {
 		if (interactions == null) {
 			return this.longterm_goal;
 		} else {
+			//console.log("At least checking");
 			var actions = [];
 			for (var i = interactions[this.pid-1].length - 1; i >= 0; i--) {
 				var act = interactions[this.pid-1][i];
@@ -571,6 +582,7 @@ function Person(pid,params) {
 			}
 			dist = this.loco.position.subtract(actions[min].getpoint()).length;
 			if (dist > interactionDist) {
+				//console.log("Too far");
 				return this.longterm_goal;
 			} 
 			if (actions[min].interaction.priority > this.longterm_goal.priority && actions[min].interaction.active()) {
@@ -581,6 +593,7 @@ function Person(pid,params) {
 				this.setBehavior(behavior);
 				this.loco.velocity = new Point(0,0);
 				actions[min].interaction.setPerson(this);
+				//console.log("Success");
 				return actions[min].interaction;
 			} else {
 				return this.longterm_goal;
