@@ -100,8 +100,8 @@ function Locomotion(params) {
 	this._wander_side = 0;
 	this._wander_up = 0;
 
-	this.basisParallel = new Point(1,0); 
-	this.basisPerpendicular = new Point(0,-1);
+	this.basisParallel = this.velocity.normalize(); 
+	this.basisPerpendicular = this.basisParallel.rotate(90);
 
 	this._adjustForce = function(force,dt) {
 		var maxAdjSpeed = this.maxSpeed * 0.2;
