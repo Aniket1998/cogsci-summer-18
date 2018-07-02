@@ -23,11 +23,11 @@ function Behavior(params) {
 	}
 
 	this.wanderSpeed = function(dt) {
-		return (40 * (10 - this.focus) * dt);
+		return 0.5 * Math.pow((10 - this.focus),2) * (60*dt);
 	}
 
 	this.wanderMagnitude = function() {
-		return 15 * this.eagerness;
+		return 100;
 	}
 
 	this.visionAngle = function() {
@@ -151,6 +151,8 @@ function Locomotion(params) {
 
 	this.steeringWander = function(dt) {
 		var wanderRate = this.behavior.wanderSpeed(dt);
+		if(this.velocity.length < 1)
+			wanderRate = wanderRate * this.velocity.length;
 		var wanderStrength = this.behavior.wanderMagnitude();
 		var displacement = random_vector(wanderRate);
 		var wander = this.basisParallel.multiply(wanderStrength);
@@ -638,9 +640,9 @@ function Person(pid,params) {
 			var dist;
 			for (var i = 1; i < actions.length; i++) {
 				dist = this.loco.position.subtract(actions[i].getpoint()).length;
-				if (actions[i]!=this && actions[i].interaction.priority > actions[min].interaction.priority && dist <= interactionDist && actions[i].active()) {
+				if (actions[i]!=this && actions[i].interaction.priority > actions[min].interaction.priority && dist <= interactionDist && actions[i].interaction.active()) {
 					min = i;
-				} else if (actions[i]!=this && actions[i].interaction.priority == actions[min].interaction.priority && dist <= interactionDist && dist < this.loco.position.subtract(actions[min].getpoint()).length  && actions[i].active()) {
+				} else if (actions[i]!=this && actions[i].interaction.priority == actions[min].interaction.priority && dist <= interactionDist && dist < this.loco.position.subtract(actions[min].getpoint()).length  && actions[i].interaction.active()) {
 					min = i;
 				}
 			}

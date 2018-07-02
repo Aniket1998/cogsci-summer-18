@@ -574,7 +574,7 @@ function Person(pid,params) {
 				dist = this.loco.position.subtract(actions[i].getpoint()).length;
 				if (actions[i].interaction.priority > actions[min].interaction.priority && dist <= interactionDist && actions[i].interaction.active()) {
 					min = i;
-				} else if (actions[i].interaction.priority == actions[min].interaction.priority && dist <= interactionDist && dist < this.loco.position.subtract(actions[min].getpoint()).length  && actions[i].active()) {
+				} else if (actions[i].interaction.priority == actions[min].interaction.priority && dist <= interactionDist && dist < this.loco.position.subtract(actions[min].getpoint()).length  && actions[i].interaction.active()) {
 					min = i;
 				}
 			}
