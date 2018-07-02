@@ -439,6 +439,20 @@ function Locomotion(params) {
 		return steering;
 	}
 
+	this.getAveragePoint(mindist,maxdist,maxcos) {
+		var pt = new Point(0,0);
+		var boids = 0;
+		for (var i = parray.length - 1; i >= 0; i--) {
+			if(parray[i] !== this && this.inBoidNeighborhood(parray[i],mindist,maxdist,maxcos)) {
+				pt = pt.add(parray[i].position);
+				boids++;
+			}
+		}
+		if (boids > 0) {
+			pt = pt.divide(boids);
+		}
+		return steering;
+	}
 }
 //Appproach Time
 //Interaction Time
