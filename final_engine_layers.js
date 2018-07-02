@@ -552,7 +552,7 @@ function Person(pid,params) {
 		if (interactions == null) {
 			return this.longterm_goal;
 		} else {
-			//console.log("At least checking");
+			console.log("At least checking");
 			var actions = [];
 			for (var i = interactions[this.pid-1].length - 1; i >= 0; i--) {
 				var act = interactions[this.pid-1][i];
@@ -562,6 +562,7 @@ function Person(pid,params) {
 					interactions[this.pid-1][i] = null;
 				}
 			}
+
 			var min = 0;
 			if (actions[min] == null) {
 				return this.longterm_goal;
@@ -571,9 +572,9 @@ function Person(pid,params) {
 			var dist;
 			for (var i = 1; i < actions.length; i++) {
 				dist = this.loco.position.subtract(actions[i].getpoint()).length;
-				if (actions[i].interaction.priority > actions[min].interaction.priority && dist <= interactionDist && actions[i].active()) {
+				if (actions[i]!=this && actions[i].interaction.priority > actions[min].interaction.priority && dist <= interactionDist && actions[i].active()) {
 					min = i;
-				} else if (actions[i].interaction.priority == actions[min].interaction.priority && dist <= interactionDist && dist < this.loco.position.subtract(actions[min].getpoint()).length  && actions[i].active()) {
+				} else if (actions[i]!=this && actions[i].interaction.priority == actions[min].interaction.priority && dist <= interactionDist && dist < this.loco.position.subtract(actions[min].getpoint()).length  && actions[i].active()) {
 					min = i;
 				}
 			}
@@ -581,19 +582,21 @@ function Person(pid,params) {
 				return this.longterm_goal;
 			}
 			dist = this.loco.position.subtract(actions[min].getpoint()).length;
+			var checkr = actions[min].getpoint();
+			if(this.pid == 1) console.log(checkr+" dist "+this.loco.position + " "+ dist);
 			if (dist > interactionDist) {
-				//console.log("Too far");
 				return this.longterm_goal;
 			} 
+
 			if (actions[min].interaction.priority > this.longterm_goal.priority && actions[min].interaction.active()) {
 				actions[min].interaction.setPerson(this);
 				var layer = actions[min].interaction.currentLayer;
 				var behavior = actions[min].interaction.layers[layer].behavior;
 				//console.log(behavior);
 				this.setBehavior(behavior);
-				this.loco.velocity = new Point(0,0);
+				//this.loco.velocity = new Point(0,0);
 				actions[min].interaction.setPerson(this);
-				//console.log("Success");
+				console.log("SUcc")
 				return actions[min].interaction;
 			} else {
 				return this.longterm_goal;

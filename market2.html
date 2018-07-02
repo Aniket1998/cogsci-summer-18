@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Market</title>
+	<title>Market2</title>
 	<script type="text/javascript" src="paper.js"></script>
 	<script type="text/javascript" src="final_engine_layers.js"></script>
 	<script type="text/javascript">
@@ -118,6 +118,21 @@
 				}),
 				point : home3Loc
 			});
+
+			var loco4 = new Locomotion({			// Bartender
+				behavior : behavior3,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 100,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'black'
+				}),
+				point : home2Loc.add(new Point(25,100))
+			});
 			
 			var longterm_goals1 = new Interaction(behavior1,10);		// going to 'home'
 			longterm_goals1.addLayer({
@@ -180,11 +195,21 @@
 				seek_context : 1,
 				mindist: 0
 			});
-			
+
+			var longterm_goals4 = new Interaction(behavior1,10);		// standing at bar
+			longterm_goals4.addLayer({
+				behavior : behavior1,
+				time: 30 * 60
+			});
+						
 			var interaction12 = new Interaction(behavior4,1);
 			interaction12.addLayer({
 				behavior : behavior2,
-				time : 2 * 60
+				time : 1 * 60
+			});
+			interaction12.addLayer({
+				behavior : behavior2,
+				target: 
 			});
 			
 			var interaction21 = new Interaction(behavior4,1);
@@ -193,16 +218,32 @@
 				time : 2 * 60
 			});
 			
-			var interaction13 = new Interaction(behavior3,100);
+			var interaction13 = new Interaction(behavior1,11);
 			interaction13.addLayer({
-				behavior : behavior3,
+				behavior : behavior1,
 				time : 1 * 60,
 			});
 			interaction13.addLayer({
 				behavior : behavior1,
 				target : home3Loc.add(new Point(0,100)),
 				seek_context : 1,
-				mindist : 40
+				mindist : 30
+			});
+			interaction13.addLayer({
+				behavior : behavior3,
+				target : home3Loc,
+				seek_context : 1,
+				mindist : 2.5
+			});
+			interaction13.addLayer({
+				behavior : behavior3,
+				time : 20 * 60
+			});
+
+			var interaction31 = new Interaction(behavior3,11);
+			interaction31.addLayer({
+				behavior : behavior1,
+				time : 1 * 60,
 			});
 						
 			var person1 = new Person(1,{
@@ -216,6 +257,11 @@
 			var person3 = new Person(3,{
 				loco : loco3,
 				longterm_goal : longterm_goals3
+			});
+			var interaction41 = new Interaction(behavior4,1);
+			interaction21.addLayer({
+				behavior : behavior2,
+				time : 2 * 60
 			});
 						
 			parray.push(person1.loco);
@@ -232,8 +278,8 @@
 
 			interactions[0][1] = new LocalInteraction(interaction12,null,person2.loco);
 			interactions[1][0] = new LocalInteraction(interaction21,null,person1.loco);
-			interactions[0][2] = new LocalInteraction(interaction13,null,person1.loco);			
-		//	interactions[2][0] = new LocalInteraction(interaction31,null,person1.loco);
+			interactions[0][2] = new LocalInteraction(interaction13,null,person3.loco);			
+		  	interactions[2][0] = new LocalInteraction(interaction31,null,person1.loco);
 			
 			view.onFrame = function(event) {
 				person1.run(event);
