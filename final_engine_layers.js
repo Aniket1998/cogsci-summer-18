@@ -371,6 +371,72 @@ function Locomotion(params) {
 		}
 	}
 
+	//Make externally sure that boid is never equal to this
+	this.inBoidNeighborhood = function(boid,mindist,maxdist,maxcos) {
+		if (boid == this) {
+			return false;
+		}
+		var offset = boid.position.subtract(this.position);
+		var dist = offset.length;
+		//offset = offset.normalize();
+		if (dist < mindist) {
+			return true;
+		} 
+		if (dist > maxdist) {
+			return false;
+		}
+		offset = offset.normalize();
+		forwardness = this.basisParallel.dot(offset);
+		return forwardness > maxcos;
+	}
+
+	this.steeringSeparation = function(mindist,maxdist,maxcos) {
+		var steering = new Point(0,0);
+		var offset,distsq;
+		for (var i = parray.length - 1; i >= 0; i--) {
+			if(parray[i] !== this && this.inBoidNeighborhood(parray[i],mindist,maxdist,maxcos)) {
+				offset = this.position.subtract(parray[i].position);
+				distsq = offset.dot(offset);
+				steering = steering.add(offset.divide(distsq));
+			}
+		}
+		return steering.normalize();
+	}
+
+	this.steeringAlignment = function(mindist,maxdist,maxcos) {
+		var steering = new Point(0,0);
+		var boids = 0;
+		for (var i = parray.length - 1; i >= 0; i--) {
+			if(parray[i] !== this && this.inBoidNeighborhood(parray[i],mindist,maxdist,maxcos)) {
+				steering = steering.add(parray[i].basisParallel);
+				boids++;
+			}
+		}
+		if (boids > 0) {
+			steering = steering.divide(boids);
+			steering = steering.subtract(this.basisParallel);
+			steering = steering.normalize();
+		}
+		return steering;
+	}
+
+	this.steeringCohesion = function(mindist,maxdist,maxcos) {
+		var steering = new Point(0,0);
+		var boids = 0;
+		for (var i = parray.length - 1; i >= 0; i--) {
+			if(parray[i] !== this && this.inBoidNeighborhood(parray[i],mindist,maxdist,maxcos)) {
+				steering = steering.add(parray[i].position);
+				boids++;
+			}
+		}
+		if (boids > 0) {
+			steering = steering.divide(boids);
+			steering = steering.subtract(this.position);
+			steering = steering.normalize();
+		}
+		return steering;
+	}
+
 }
 //Appproach Time
 //Interaction Time
