@@ -312,20 +312,20 @@ function Locomotion(params) {
 			var index = 0;
 			for(var i=0; i<parray.length; i++) {
 				if(parray[i]!=this){
-				if(this.checkInCone(parray[i])) {
-				time = this.predictNearestApproachTime(parray[i]);
-				if(time >= 0 && time < mintime) {
-					var mindist = this.predictNearestApproachPosition(parray[i], time);
+					if(this.checkInCone(parray[i])) {
+						time = this.predictNearestApproachTime(parray[i]);
+						if(time >= 0 && time < mintime) {
+							var mindist = this.predictNearestApproachPosition(parray[i], time);
 					
-					if(mindist < pspace) {
-						console.log("Three close");
-						mintime = time;
-						threat = true;
-						index = i;
+							if(mindist < pspace) {
+								console.log("Three close");
+								mintime = time;
+								threat = true;
+								index = i;
+							}
+						}
 					}
 				}
-				}
-			}
 			} 
 			if(threat) {
 				var obstacle = parray[index];
@@ -454,25 +454,7 @@ function Locomotion(params) {
 		return pt;
 	}
 }
-//Appproach Time
-//Interaction Time
-//Termination Time
 
-//Interaction can also serve the purpose of a longterm goal
-/*
-params = {
-	approach : {
-		behavior : new Behavior() 
-		target : Point.random(),
-		steer_context : 
-		wander_context :
-		avoid_context :
-		flee_context :
-		time : 
-	} and similar for interaction
-
-}
-*/
 function Interaction(after_behavior,priority) {
 	var self = this;
 	this.loco = null;
@@ -618,6 +600,7 @@ function LocalInteraction(interaction,point,loco) {
 		}
 	}
 }
+
 function Person(pid,params) {
 	this.loco = params.loco;
 	this.behavior = this.loco.behavior;
@@ -684,55 +667,6 @@ function Person(pid,params) {
 				return this.longterm_goal;
 			}
 		}
-
-	/*this.action_select = function(event) {
-		if (interactions == null) {
-			if (this.pid == 1) {
-				//console.log("Using longterm goal because interactions is null");
-			}
-			return this.longterm_goal;
-		} else {
-			var actions = [];
-			for (var i = interactions[this.pid-1].length - 1; i >= 0; i--) {
-				var act = interactions[this.pid-1][i];
-				if (act != null && act.interaction.active()) {
-					actions.push(act);
-				} else if(act != null && act.interaction.active() == false) {
-					interactions[this.pid-1][i] = null;
-				}
-			}
-			var min = 0;
-			if (actions[min] == null) {
-				if (this.pid == 1) {
-					//console.log("Using longterm goal because actions[min] is null");
-				}
-				return this.longterm_goal;
-			}
-			var mindist = this.loco.position.subtract(actions[min].getpoint()).length;
-			for (var i = 1;i < actions.length;i++) {
-				var dist = this.loco.position.subtract(actions[i].getpoint()).length;
-				if (dist < mindist) {
-					min = i;
-					mindist = dist;
-				}
-			}
-			if (actions[min] != null && actions[min].interaction.active() && mindist <= this.behavior.minInteractionDistance()) {
-				actions[min].interaction.setPerson(this);
-				var layer = actions[min].interaction.currentLayer;
-				var behavior = actions[min].interaction.layers[layer].behavior;
-				//console.log(behavior);
-				this.setBehavior(behavior);
-				this.loco.velocity = new Point(0,0);
-				actions[min].interaction.setPerson(this);
-				console.log("Following short term interaction " + actions[min].interaction.currentLayer);
-				return actions[min].interaction;
-			} else {
-				if (this.pid == 1) {
-					//console.log("Using longterm goal because");
-				}
-				return this.longterm_goal;
-			}
-		}*/
 	}
 
 	this.run = function(event) {
@@ -744,151 +678,7 @@ function Person(pid,params) {
 		}
 	}
 }
-/*function Interaction(params) {
-	this.loco = null;
-	this.person = null;
-	this.params = params;
-	this.status = 0;
 
-	this.sections = ['approach','interaction','termination'];
-
-	this.setPerson = function(person) {
-		this.person = person;
-		this.loco = this.person.loco;
-	}
-	
-	this.run = function(dt) {
-		if (this.status < 3) {
-			var force = this.getSteer(this.sections[this.status],dt);
-			return force;
-		} else {
-			console.log("Action is complete already. Returning undefined force to cause error");
-		}
-	}
-
-	this.getSteer = function(section,dt) {
-		if (section === 'approach') {
-			var target = this.params[section].target;
-			if (target != null) {
-				var dist = (target.subtract(this.person.loco.position)).length;
-				if(dist < this.params[section].mindist) {
-					this.status++;
-					this.loco.velocity = new Point(0,0);
-					if (this.status < 3) {
-						this.person.setBehavior(this.params[this.sections[this.status]].behavior);
-					} else if (this.status == 3) {
-						this.person.setBehavior(this.params.after_behavior);
-					}
-					return new Point(0,0);
-				}
-			} else {
-				this.status++;
-				this.loco.velocity = new Point(0,0);
-				if (this.status < 3) {
-					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
-				} else if (this.status == 3) {
-					this.person.setBehavior(this.params.after_behavior);
-				}
-				return new Point(0,0)
-			}
-		} else {
-			if (this.params[section].time == 0) {
-				this.status++;
-				this.loco.velocity = new Point(0,0);
-				if (this.status < 3) {
-					this.person.setBehavior(this.params[this.sections[this.status]].behavior);
-				} else if (this.status == 3) {
-					this.person.setBehavior(this.params.after_behavior);
-				}
-				return new Point(0,0);
-			}
-			this.params[section].time--;
-		}
-		var netForce = new Point(0,0);
-		if (this.params[section].target != null) {
-			var c1 = this.params[section].steer_context;
-			var b1 = this.person.behavior.getSeekCoefficient();
-			netForce = netForce.add(this.loco.steeringSeek(this.params[section].target).multiply(c1 * b1));
-			var c4 = this.params[section].flee_context;
-			var b4 = this.person.behavior.getFleeCoefficient();
-			netForce = netForce.add(this.loco.steeringFlee(this.params[section].target).multiply(c4 * b4));
-		}
-		var c2 = this.params[section].avoid_context;
-		var b2 = this.person.behavior.getAvoidCoefficient();
-		if (parray != null) {
-			var f = this.loco.steerToAvoidCollisions().multiply(c2 * b2);
-			netForce = netForce.add(f);
-		}
-		var c3 = this.params[section].wander_context;
-		var b3 = this.person.behavior.getWanderCoefficient();
-		netForce = netForce.add(this.loco.steeringWander(dt).multiply(c3 * b3));
-		return netForce;
-	}
-}*/
-//Only testing a single long term interaction right now
-/*function Person(pid,params) {
-	this.loco = new Locomotion(params.locomotion_params);
-	this.behavior = this.loco.behavior;
-	this.longterm_goal = new Interaction(params.longterm_goal,null);
-	this.longterm_goal.setPerson(this);
-	this.pid = pid;
-
-	this.setBehavior = function(behavior) {
-		this.loco.behavior = behavior;
-		this.behavior = behavior;
-	}
-
-	this.action_select = function(event) {
-		if (interactions == null) {
-			return this.longterm_goal;
-		} else {
-			var ids = [];
-			var actions = [];
-			for (var i = interactions[this.pid-1].length - 1; i >= 0; i--) {
-				var act = interactions[this.pid-1][i];
-				if (act != null && act.interaction.status < 3) {
-					ids.push(i);
-					actions.push(act);
-				} else if(act != null && act.interaction.status >= 3) {
-					interactions[this.pid-1][i] = null;
-				}
-			}
-			var min = 0;
-			if (actions[min] == null) {
-				return this.longterm_goal;
-			}
-			var mindist = this.loco.position.subtract(actions[min].getpoint()).length;
-			for (var i = 1;i < actions.length;i++) {
-				var dist = this.loco.position.subtract(actions[i].getpoint()).length;
-				if (dist < mindist) {
-					min = i;
-					mindist = dist;
-				}
-			}
-			if (actions[min] != null && actions[min].interaction.status < 3 && mindist <= this.behavior.minInteractionDistance()) {
-				actions[min].interaction.setPerson(this);
-				var status = actions[min].interaction.status;
-				var phase = actions[min].interaction.sections[status];
-				var behavior = actions[min].interaction.params[phase].behavior;
-				console.log(behavior);
-				this.setBehavior(behavior);
-				actions[min].interaction.setPerson(this);
-				return actions[min].interaction;
-			} else {
-				return this.longterm_goal;
-			}
-		}
-	}
-
-	this.run = function(event) {
-		var goal = this.action_select(event);
-		if (this.longterm_goal.status < 3) {
-			var force = goal.run(event.delta);
-			console.log(force);
-			this.loco.steer(force,event.delta,event.count);
-		}
-	}
-}*/
 
 function random_vector(mag) {
 	var randomx = Math.random();
