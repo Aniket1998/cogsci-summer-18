@@ -12,7 +12,7 @@
 
 			var behavior1 = new Behavior({			
 				eagerness : 8,
-				arousal : 8,
+				arousal : 10,
 				focus : 10
 			});
 			
@@ -28,13 +28,13 @@
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : Point.random().multiply(view.size)			// randomly initialised position
+				point : view.center.add(new Point(-400,-350))			// randomly initialised position
 			});
 			
 			var longterm_goals1 = new Interaction(behavior1,1);	
 			longterm_goals1.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(0,-50)), 		// randomly initialised target
+				target : view.center.add(new Point(100,-75)), 		// randomly initialised target
 				seek_context : 1,
 				avoid_context : 0,
 				wander_context : 0,
