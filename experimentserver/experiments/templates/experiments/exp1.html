@@ -31,7 +31,7 @@ function Behavior(params) {
 	}
 
 	this.vibrationAmplitude = function() {
-		return this.arousal * 3;
+		return this.arousal * 3.5;
 	}
 
 	this.wanderSpeed = function(dt) {
@@ -138,7 +138,7 @@ function Locomotion(params) {
 
 		this.mean.x = this.position.x;
 		this.mean.y = this.position.y;
-		this.shape.position = this.mean.add(this.behavior.vibrate(this.velocity,this.mean,count));
+		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.add(this.basisParallel.multiply(0.25)),this.mean,count));
 	}
 
 	this.getBasisPerpendicular = function() {
@@ -788,7 +788,7 @@ function intervalComparison(x,lower,upper) {
 
 			var behavior1 = new Behavior({			
 				eagerness : 8,
-				arousal : 0,
+				arousal : 8,
 				focus : 10
 			});
 			
@@ -804,7 +804,7 @@ function intervalComparison(x,lower,upper) {
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : Point.random().multiply(view.size)			
+				point : view.center.add(new Point(-450,-100))			
 			});
 			
 			var longterm_goals1 = new Interaction(behavior1,1);	
