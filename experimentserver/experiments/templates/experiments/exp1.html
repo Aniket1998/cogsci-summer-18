@@ -844,8 +844,16 @@ function intervalComparison(x,lower,upper) {
 	</div>
 	<canvas id="experiment" width="2000" height="400"></canvas>
 	<div class="container text-center">
-			<h3>{{ question }}</h3>
-			<form action="/exp/submit/" method="post" class="form-horizontal">
+			<h4>{{ question }}</h4> <br>
+			<div class="row">
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Not at all</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Maybe</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Dominant emotion</div>
+			</div>
+			<form action="/exp2/" method="post" class="form-horizontal">
 			{% csrf_token %}
 			<div class="form-group text-center">
 				<table class="table table-condensed">

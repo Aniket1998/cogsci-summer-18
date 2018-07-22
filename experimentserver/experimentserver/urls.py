@@ -21,7 +21,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.front_view),
     #path('',views.home_view),
-    path('exp/',views.exp_view),
+    path('exp1/',views.exp1_view),
+    path('exp2/',views.exp2_view),
+    path('exp3/',views.exp3_view),
     path('exp/submit/',views.submit_view),
     #path('exp/<int:id>/data/',views.data_view)
 ]
