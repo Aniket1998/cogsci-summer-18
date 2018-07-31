@@ -4,8 +4,9 @@
 	{% load static %}
 	<meta charset="utf-8">
 	<title>{{ title }}</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
     <script type="text/javascript">
     	var parray = [];
@@ -780,10 +781,17 @@ function intervalComparison(x,lower,upper) {
 	return 0;
 }
     </script>
-    <script type="text/javascript">
+    
+    	<script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('experiment');
+
+			var activated = true;
+			var scene = 1;
+			var time1;
+			var time2;
+			var time3 = 200;
 
 			var behavior1 = new Behavior({			// Person 1 
 				eagerness : 5,
@@ -791,9 +799,9 @@ function intervalComparison(x,lower,upper) {
 				focus : 10
 			});
 			var behavior2 = new Behavior({			// Person 2 
-				eagerness : 10,
-				arousal : 8,
-				focus : 10
+				eagerness : 1,
+				arousal : 1,
+				focus : 5
 			});
 			
 			var loco1 = new Locomotion({			// Person 1
@@ -808,11 +816,8 @@ function intervalComparison(x,lower,upper) {
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : Point.random().multiply(view.size)
+				point : view.center.add(new Point(300,-100))
 			});
-
-			var opp = loco1.shape.position.subtract(view.center.add(new Point(0,-50)));
-			fin = (view.center.add(new Point(0,-50))).subtract(opp);
 
 			var loco2 = new Locomotion({			// Person 2
 				behavior : behavior1,
@@ -826,28 +831,25 @@ function intervalComparison(x,lower,upper) {
 					radius : 15,
 					fillColor : 'blue'
 				}),
-				point : fin
+				point : view.center.add(new Point(-300,-100))
 			});
+
+			var tar = view.center.add(new Point(0,-100));
 			
 			var longterm_goals1 = new Interaction(behavior1,10);		
-				time: 4 * 60
 			longterm_goals1.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(0,-50)), 
+				target : view.center.add(new Point(-300,-100)), 
 				seek_context : 1,
-				avoid_context : 0,
-				wander_context : 0,
-				mindist : 5
+				mindist : 25
 			});
 			
 			var longterm_goals2 = new Interaction(behavior1,10);		
 			longterm_goals2.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(0,-50)),
+				target : view.center.add(new Point(300,-100)),
 				seek_context : 1,
-				avoid_context : 0,
-				wander_context : 0,
-				mindist : 5
+				mindist : 25
 			});
 
 			var person1 = new Person(1,{
@@ -858,46 +860,26 @@ function intervalComparison(x,lower,upper) {
 				loco : loco2,
 				longterm_goal : longterm_goals2
 			});
-
-			var interaction12 = new Interaction(behavior1,100);			// look, pause, hit thrice
-			// interaction12.addLayer({
-			// 	behavior : behavior2,
-			// 	time : 2 * 60
-			// });
-			interaction12.addLayer({
-				behavior : behavior2,
-				target : view.center.add(new Point(0,-50)),
-				// moving : true,
-				// predictTime : 100000000,
-				seek_context : 1,
-				time : 5 * 60
-			});
-			// interaction12.addLayer({
-			// 	behavior : behavior2,
-			// 	time : 4 * 60
-			// });
-
-			var interaction21 = new Interaction(behavior1,100);					// look, pause, hit thrice
-			// interaction21.addLayer({
-			// 	behavior : behavior2,
-			// 	time : 2 * 60
-			// });
-			interaction21.addLayer({
-				behavior : behavior2,
-				target : view.center.add(new Point(0,-50)),
-				// moving : true,
-				// predictTime : 100000000,
-				seek_context : 1,
-				time : 5 * 60
-			});	
-			// interaction21.addLayer({
-			// 	behavior : behavior2,
-			// 	time : 4 * 60
-			// });	
 						
 			parray.push(person1.loco);
 			parray.push(person2.loco);
-			
+
+			var interaction12 = new Interaction(behavior1,100);				
+			interaction12.addLayer({
+				behavior : behavior2,
+				target : tar.add(10,0),
+				seek_context : 1,
+				time : 7 * 60
+			});	
+
+			var interaction21 = new Interaction(behavior1,100);				
+			interaction21.addLayer({
+				behavior : behavior2,
+				target : tar.add(-10,0),
+				seek_context : 1,
+				time : 7 * 60
+			});	
+
 			interactions = new Array(2);
 			for (var i = interactions.length - 1; i >= 0; i--) {
 				interactions[i] = new Array(2);
@@ -908,20 +890,145 @@ function intervalComparison(x,lower,upper) {
 
 			interactions[0][1] = new LocalInteraction(interaction12,null,person2.loco);
 			interactions[1][0] = new LocalInteraction(interaction21,null,person1.loco);
-			
+
+            $('#pop1').hide();
+            $('#pop2').hide();
+            $('#pop3').hide();
+
+         //    $("#button1").click( function()
+         //   		{
+         //   			scene = 2;
+	        //      	activated = true;
+	        //      	$('#pop1').hide();
+	        //      	time1 = 400;
+         //   		}
+        	// );
+
+        	// $("#button2").click( function()
+         //   		{
+         //   			scene = 3;
+	        //      	activated = true;
+	        //      	$('#pop2').hide();
+	        //      	time2 = 375;
+         //   		}
+        	// );
+
+        	// $("#button3").click( function()
+         //   		{
+         //   			scene = 0;
+	        //      	activated = true;
+	        //      	$('#pop3').hide();
+         //   		}
+        	// );
+
+        	$('#form1').on('submit', function(e) {
+    			e.preventDefault();
+		    	// e.stopPropagation();
+
+	            $.ajax({
+	            	type: 'POST',
+	            	url: '/form2_1/',    //alt : http://localhost:8000
+	            	data:{
+	            		expid: $('#expid').val(),
+	            		name: $('#name').val(),
+	            		roll: $('#roll').val(),
+	            		age: $('#age').val(),
+	            		gender: $('#gender').val(),
+	            		happy1: $('#happy1').val(),			//make id and do by id
+	            		sad1: $('#sad1').val(),
+	            		fearful1: $('#fearful1').val(),
+	            		angry1: $('#angry1').val(),
+	            		surprised1: $('#surprised1').val(),
+	            	},
+	            	success: function(data){
+	            		console.log("E1 done");
+	            		scene = 2;
+	         	   		activated = true;
+	            		$('#pop1').hide();
+	            		time1 = 400;
+	            	},
+	            	error: function(xhr,status,error){
+	            		alert(error);
+	            	}
+	            })
+
+		    });
+
+		    $('#form2').on('submit', function(e) {
+    			e.preventDefault();
+		    	// e.stopPropagation();
+
+	             $.ajax({
+	            	type: 'POST',
+	            	url: '/form2_2/',    //alt : http://localhost:8000
+	            	data:{
+	            		happy: $('#happy2').val(),			//make id and do by id
+	            		sad: $('#sad2').val(),
+	            		fearful: $('#fearful2').val(),
+	            		angry: $('#angry2').val(),
+	            		surprised: $('#surprised2').val(),
+	            	},
+	            	success: function(data){
+	            		console.log("E2 done");
+	            		scene = 3;
+	             		activated = true;
+	             		$('#pop2').hide();
+	             		time2 = 375;
+	            	},
+	            	error: function(xhr,status,error){
+	            		alert(error);
+	            	}
+	            })
+		    });
+
+		    // $('#form3').on('submit', function(e) {
+    		// 	e.preventDefault();
+		    // 	e.stopPropagation();
+
+		    // 	scene = 0;
+	     //         	activated = true;
+	     //         	$('#pop3').hide();
+
+
+		    // });
+
 			view.onFrame = function(event) {
-				person1.run(event);
-				person2.run(event);		
+				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 105 && scene == 1){
+					activated = false;
+					$(document).ready(function(){
+					       $('#pop1').show();
+					});
+				}
+				if(scene==2 && time1-- < 0){
+					activated = false;
+					$(document).ready(function(){
+					       $('#pop2').show();
+					});
+				}
+
+				if(scene==3 && time2-- < 0){
+					activated = false;
+					$(document).ready(function(){
+					       $('#pop3').show();
+					});
+				}
+
+
+				if(activated){
+					person1.run(event);
+					person2.run(event);		
+				}
 			}
 		}
 	</script>
+
 </head>
 <body>
 	<div class="text-center">
 		<h2>{{ title }}</h2>
 	</div>
 	<canvas id="experiment" width="2000" height="400"></canvas>
-	<div class="container text-center">
+	<!-- <div class="container text-center">
 			<h3>{{ question }}</h3>
 			<form action="/exp3/" method="post" class="form-horizontal">
 			{% csrf_token %}
@@ -1003,6 +1110,269 @@ function intervalComparison(x,lower,upper) {
 					<button type="submit" class="btn btn-default">Submit</button>
 				</div>
 	</div>
+	</form> -->
+
+	<div id="pop1">
+	<div class="container text-center">
+			<h3>{{ question }}</h3>
+			<div class="row">
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Not at all</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Maybe</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Dominant emotion</div>
+			</div>
+			<form action="/exp2/" method="post" class="form-horizontal" id="form1">
+			{% csrf_token %}
+			<div class="form-group text-center">
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td>Happy</td>
+							<td><input type="radio" name="happy" value="1" id="happy1"></td>
+							<td><input type="radio" name="happy" value="2" id="happy1"></td>
+							<td><input type="radio" name="happy" value="3" id="happy1"></td>
+							<td><input type="radio" name="happy" value="4" id="happy1"></td>
+							<td><input type="radio" name="happy" value="5" id="happy1"></td>
+							<td><input type="radio" name="happy" value="6" id="happy1"></td>
+							<td><input type="radio" name="happy" value="7" id="happy1"></td>
+						</tr>
+						<tr>
+							<td>Sad</td>
+							<td><input type="radio" name="sad" value="1" id="sad1"></td>
+							<td><input type="radio" name="sad" value="2" id="sad1"></td>
+							<td><input type="radio" name="sad" value="3" id="sad1"></td>
+							<td><input type="radio" name="sad" value="4" id="sad1"></td>
+							<td><input type="radio" name="sad" value="5" id="sad1"></td>
+							<td><input type="radio" name="sad" value="6" id="sad1"></td>
+							<td><input type="radio" name="sad" value="7" id="sad1"></td>
+							
+						</tr>
+						<tr>
+							<td>Fearful</td>
+							<td><input type="radio" name="fearful" value="1" id="fearful1"></td>
+							<td><input type="radio" name="fearful" value="2" id="fearful1"></td>
+							<td><input type="radio" name="fearful" value="3" id="fearful1"></td>
+							<td><input type="radio" name="fearful" value="4" id="fearful1"></td>
+							<td><input type="radio" name="fearful" value="5" id="fearful1"></td>
+							<td><input type="radio" name="fearful" value="6" id="fearful1"></td>
+							<td><input type="radio" name="fearful" value="7" id="fearful1"></td>
+							
+						</tr>
+						<tr>
+							<td>Angry</td>
+							<td><input type="radio" name="angry" value="1" id="angry1"></td>
+							<td><input type="radio" name="angry" value="2" id="angry1"></td>
+							<td><input type="radio" name="angry" value="3" id="angry1"></td>
+							<td><input type="radio" name="angry" value="4" id="angry1"></td>
+							<td><input type="radio" name="angry" value="5" id="angry1"></td>
+							<td><input type="radio" name="angry" value="6" id="angry1"></td>
+							<td><input type="radio" name="angry" value="7" id="angry1"></td>						
+						</tr>
+						<tr>
+							<td>Surprised</td>
+							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
+							
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<input type="hidden" name="expid" value="{{ expid }}" id ="expid">
+			<input type="hidden" name="Name" value="{{ name }}" id="name">
+			<input type="hidden" name="RollNo" value="{{ roll }}" id="roll">
+			<input type="hidden" name="Age" value="{{ age }}" id="age">
+			<input type="hidden" name="Gender" value="{{ gender }}" id="gender">
+			</div>
+			<div class="form-group text-center">
+				<div>
+					<button type="submit" class="btn btn-default" id="button1">Submit</button>
+				</div>
+	</div>
 	</form>
+	</div>
+
+<div id="pop2">
+	<div class="container text-center">
+			<h3>{{ question }}</h3>
+			<div class="row">
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Not at all</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Maybe</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Dominant emotion</div>
+			</div>
+			<form action="/exp2/" method="post" class="form-horizontal" id="form2">
+			{% csrf_token %}
+			<div class="form-group text-center">
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td>Happy</td>
+							<td><input type="radio" name="happy" value="1" id="happy2"></td>
+							<td><input type="radio" name="happy" value="2" id="happy2"></td>
+							<td><input type="radio" name="happy" value="3" id="happy2"></td>
+							<td><input type="radio" name="happy" value="4" id="happy2"></td>
+							<td><input type="radio" name="happy" value="5" id="happy2"></td>
+							<td><input type="radio" name="happy" value="6" id="happy2"></td>
+							<td><input type="radio" name="happy" value="7" id="happy2"></td>
+						</tr>
+						<tr>
+							<td>Sad</td>
+							<td><input type="radio" name="sad" value="1" id="sad2"></td>
+							<td><input type="radio" name="sad" value="2" id="sad2"></td>
+							<td><input type="radio" name="sad" value="3" id="sad2"></td>
+							<td><input type="radio" name="sad" value="4" id="sad2"></td>
+							<td><input type="radio" name="sad" value="5" id="sad2"></td>
+							<td><input type="radio" name="sad" value="6" id="sad2"></td>
+							<td><input type="radio" name="sad" value="7" id="sad2"></td>
+						</tr>
+						<tr>
+							<td>Fearful</td>
+							<td><input type="radio" name="fearful" value="1" id="fearful2"></td>
+							<td><input type="radio" name="fearful" value="2" id="fearful2"></td>
+							<td><input type="radio" name="fearful" value="3" id="fearful2"></td>
+							<td><input type="radio" name="fearful" value="4" id="fearful2"></td>
+							<td><input type="radio" name="fearful" value="5" id="fearful2"></td>
+							<td><input type="radio" name="fearful" value="6" id="fearful2"></td>
+							<td><input type="radio" name="fearful" value="7" id="fearful2"></td>
+						</tr>
+						<tr>
+							<td>Angry</td>
+							<td><input type="radio" name="angry" value="1" id="angry2"></td>
+							<td><input type="radio" name="angry" value="2" id="angry2"></td>
+							<td><input type="radio" name="angry" value="3" id="angry2"></td>
+							<td><input type="radio" name="angry" value="4" id="angry2"></td>
+							<td><input type="radio" name="angry" value="5" id="angry2"></td>
+							<td><input type="radio" name="angry" value="6" id="angry2"></td>
+							<td><input type="radio" name="angry" value="7" id="angry2"></td>
+						</tr>
+						<tr>
+							<td>Surprised</td>
+							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<input type="hidden" name="expid" value="{{ expid }}">
+			<input type="hidden" name="Name" value="{{ name }}">
+			<input type="hidden" name="RollNo" value="{{ roll }}">
+			<input type="hidden" name="Age" value="{{ age }}">
+			<input type="hidden" name="Gender" value="{{ gender }}">
+			</div>
+	<div class="form-group text-center">
+				<div>
+					<button type="submit" class="btn btn-default" id="button2">Submit</button>
+				</div>
+	</div>
+	</form>
+	</div>
+
+	<div id="pop3">
+	<div class="container text-center">
+			<h3>{{ question }}</h3>
+			<div class="row">
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Not at all</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Maybe</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Dominant emotion</div>
+			</div>
+			<form action="/exp3/" method="post" class="form-horizontal" id="form3">
+			{% csrf_token %}
+			<div class="form-group text-center">
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td>Happy</td>
+							<td><input type="radio" name="happy3" value="1"></td>
+							<td><input type="radio" name="happy3" value="2"></td>
+							<td><input type="radio" name="happy3" value="3"></td>
+							<td><input type="radio" name="happy3" value="4"></td>
+							<td><input type="radio" name="happy3" value="5"></td>
+							<td><input type="radio" name="happy3" value="6"></td>
+							<td><input type="radio" name="happy3" value="7"></td>
+							<td><input type="radio" name="happy3" value="8"></td>
+							<td><input type="radio" name="happy3" value="9"></td>
+						</tr>
+						<tr>
+							<td>Sad</td>
+							<td><input type="radio" name="sad3" value="1"></td>
+							<td><input type="radio" name="sad3" value="2"></td>
+							<td><input type="radio" name="sad3" value="3"></td>
+							<td><input type="radio" name="sad3" value="4"></td>
+							<td><input type="radio" name="sad3" value="5"></td>
+							<td><input type="radio" name="sad3" value="6"></td>
+							<td><input type="radio" name="sad3" value="7"></td>
+							<td><input type="radio" name="sad3" value="8"></td>
+							<td><input type="radio" name="sad3" value="9"></td>
+						</tr>
+						<tr>
+							<td>Fearful</td>
+							<td><input type="radio" name="fearful3" value="1"></td>
+							<td><input type="radio" name="fearful3" value="2"></td>
+							<td><input type="radio" name="fearful3" value="3"></td>
+							<td><input type="radio" name="fearful3" value="4"></td>
+							<td><input type="radio" name="fearful3" value="5"></td>
+							<td><input type="radio" name="fearful3" value="6"></td>
+							<td><input type="radio" name="fearful3" value="7"></td>
+							<td><input type="radio" name="fearful3" value="8"></td>
+							<td><input type="radio" name="fearful3" value="9"></td>
+						</tr>
+						<tr>
+							<td>Angry</td>
+							<td><input type="radio" name="angry3" value="1"></td>
+							<td><input type="radio" name="angry3" value="2"></td>
+							<td><input type="radio" name="angry3" value="3"></td>
+							<td><input type="radio" name="angry3" value="4"></td>
+							<td><input type="radio" name="angry3" value="5"></td>
+							<td><input type="radio" name="angry3" value="6"></td>
+							<td><input type="radio" name="angry3" value="7"></td>
+							<td><input type="radio" name="angry3" value="8"></td>
+							<td><input type="radio" name="angry3" value="9"></td>
+						</tr>
+						<tr>
+							<td>Surprised</td>
+							<td><input type="radio" name="surprised3" value="1"></td>
+							<td><input type="radio" name="surprised3" value="2"></td>
+							<td><input type="radio" name="surprised3" value="3"></td>
+							<td><input type="radio" name="surprised3" value="4"></td>
+							<td><input type="radio" name="surprised3" value="5"></td>
+							<td><input type="radio" name="surprised3" value="6"></td>
+							<td><input type="radio" name="surprised3" value="7"></td>
+							<td><input type="radio" name="surprised3" value="8"></td>
+							<td><input type="radio" name="surprised3" value="9"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<input type="hidden" name="expid" value="{{ expid }}">
+			<input type="hidden" name="Name" value="{{ name }}">
+			<input type="hidden" name="RollNo" value="{{ roll }}">
+			<input type="hidden" name="Age" value="{{ age }}">
+			<input type="hidden" name="Gender" value="{{ gender }}">
+			</div>
+	<div class="form-group text-center">
+				<div>
+					<button type="submit" class="btn btn-default" id="button3">Submit</button>
+				</div>
+	</div>
+	</form>
+	</div>
+
 </body>
 </html>
