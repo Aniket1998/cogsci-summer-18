@@ -11,30 +11,24 @@ def front_view(request):
 
 @csrf_exempt
 def form2_1(request):
-	exp = get_object_or_404(Experiment,pk="2")
-	if request.method == 'POST':
-		print(request.POST['happy1'])
-		# exp.response_set.create(name = request.POST['name'],roll = request.POST['roll'],gender = request.POST['gender'],
-		# age = request.POST['age'],happy = request.POST['happy1'],sad = request.POST['sad1'],fearful = request.POST['fearful1'],
-		# angry = request.POST['angry1'],surprised = request.POST['surprised1'])
+	#exp = get_object_or_404(Experiment,pk="2")
+	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
+	if request.method == 'POST' and request.is_ajax():
+		exp.response_set.create(name = request.POST['name'],roll = request.POST['roll'],gender = request.POST['gender'],
+		age = request.POST['age'],happy1 = request.POST['happy1'],sad1 = request.POST['sad1'],fearful1 = request.POST['fearful1'],
+		angry1 = request.POST['angry1'],surprised1 = request.POST['surprised1'])
+
 	return JsonResponse({'status': 'ok'})
 
 @csrf_exempt
 def form2_2(request):
-	exp = get_object_or_404(Experiment,pk="2")
-	if request.method == 'POST':
-		exp.response_set.create(happy = request.POST['happy'],sad = request.POST['sad'],fearful = request.POST['fearful'],
-		angry = request.POST['angry'],surprised = request.POST['surprised'])
-	# return JsonResponse({'status': 'ok'})
+	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
+	if request.method == 'POST' and request.is_ajax():
+		exp.response_set.create(name = request.POST['name'],roll = request.POST['roll'],gender = request.POST['gender'],
+		age = request.POST['age'],happy2 = request.POST['happy2'],sad2 = request.POST['sad2'],fearful2 = request.POST['fearful2'],
+		angry2 = request.POST['angry2'],surprised2 = request.POST['surprised2'])
+
 	return JsonResponse({'status': 'ok'})
-
-
-# def form2_3(request):
-# 	exp = get_object_or_404(Experiment,pk="2")
-# 	if request.method == 'POST':
-# 		exp.response_set.create(name = request.POST['Name'],roll = request.POST['RollNo'],gender = request.POST['Gender'],
-# 		age = request.POST['Age'],happy3 = request.POST['happy'],sad3 = request.POST['sad'],fearful3 = request.POST['fearful'],
-# 		angry3 = request.POST['angry'],surprised3 = request.POST['surprised'])
 		
 def exp1_view(request):
 	exp = get_object_or_404(Experiment,pk="1")
@@ -53,8 +47,8 @@ def exp1_view(request):
 def exp2_view(request):
 	exp = get_object_or_404(Experiment,pk="1")
 	exp.response_set.create(name = request.POST['Name'],roll = request.POST['RollNo'],gender = request.POST['Gender'],
-		age = request.POST['Age'],happy = request.POST['happy'],sad = request.POST['sad'],fearful = request.POST['fearful'],
-		angry = request.POST['angry'],surprised = request.POST['surprised'])
+		age = request.POST['Age'],happy1 = request.POST['happy'],sad1 = request.POST['sad'],fearful1 = request.POST['fearful'],
+		angry1 = request.POST['angry'],surprised1 = request.POST['surprised'])
 	exp = get_object_or_404(Experiment,pk="2")
 
 	context = {
@@ -71,10 +65,29 @@ def exp2_view(request):
 def exp3_view(request):
 	exp = get_object_or_404(Experiment,pk="2")
 	exp.response_set.create(name = request.POST['Name'],roll = request.POST['RollNo'],gender = request.POST['Gender'],
-		age = request.POST['Age'],happy = request.POST['happy3'],sad = request.POST['sad3'],fearful = request.POST['fearful3'],
-		angry = request.POST['angry3'],surprised = request.POST['surprised3'])
+		age = request.POST['Age'],happy3 = request.POST['happy3'],sad3 = request.POST['sad3'],fearful3 = request.POST['fearful3'],
+		angry3 = request.POST['angry3'],surprised3 = request.POST['surprised3'])
 
 	exp = get_object_or_404(Experiment,pk="3")
+
+	context = {
+		'expid' : exp.pk,
+		'title' : exp.title,
+		'question' : exp.question,
+		'name' : request.POST['Name'],
+		'roll' : request.POST['RollNo'],
+		'age' : request.POST['Age'],
+		'gender' : request.POST['Gender']
+	}
+	return render(request,'experiments/exp' + str(exp.pk) + '.html',context)
+
+def exp4_view(request):
+	exp = get_object_or_404(Experiment,pk="3")
+	exp.response_set.create(name = request.POST['Name'],roll = request.POST['RollNo'],gender = request.POST['Gender'],
+		age = request.POST['Age'],happy2 = request.POST['happy2'],sad2 = request.POST['sad2'],fearful2 = request.POST['fearful2'],
+		angry2 = request.POST['angry2'],surprised2 = request.POST['surprised2'])
+
+	exp = get_object_or_404(Experiment,pk="4")
 
 	context = {
 		'expid' : exp.pk,
@@ -90,6 +103,7 @@ def exp3_view(request):
 def submit_view(request):
 	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
 	exp.response_set.create(name = request.POST['Name'],roll = request.POST['RollNo'],gender = request.POST['Gender'],
-		age = request.POST['Age'],happy = request.POST['happy'],sad = request.POST['sad'],fearful = request.POST['fearful'],
-		angry = request.POST['angry'],surprised = request.POST['surprised'])
+		age = request.POST['Age'],happy2 = request.POST['happy2'],sad2 = request.POST['sad2'],fearful2 = request.POST['fearful2'],
+		angry2 = request.POST['angry2'],surprised2 = request.POST['surprised2'])
+
 	return HttpResponse('Thanks for participating!')

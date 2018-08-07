@@ -4,6 +4,7 @@
 	{% load static %}
 	<meta charset="utf-8">
 	<title>{{ title }}</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
@@ -816,7 +817,7 @@ function intervalComparison(x,lower,upper) {
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : view.center.add(new Point(300,-100))
+				point : view.center.add(new Point(100,-100))
 			});
 
 			var loco2 = new Locomotion({			// Person 2
@@ -831,7 +832,7 @@ function intervalComparison(x,lower,upper) {
 					radius : 15,
 					fillColor : 'blue'
 				}),
-				point : view.center.add(new Point(-300,-100))
+				point : view.center.add(new Point(-500,-100))
 			});
 
 			var tar = view.center.add(new Point(0,-100));
@@ -934,14 +935,14 @@ function intervalComparison(x,lower,upper) {
 	            		roll: $('#roll').val(),
 	            		age: $('#age').val(),
 	            		gender: $('#gender').val(),
-	            		happy1: $('#happy1').val(),			//make id and do by id
-	            		sad1: $('#sad1').val(),
-	            		fearful1: $('#fearful1').val(),
-	            		angry1: $('#angry1').val(),
-	            		surprised1: $('#surprised1').val(),
+	            		happy1: $("input[name='happy1']:checked").val(),
+	            		sad1: $("input[name='sad1']:checked").val(),
+	            		fearful1: $("input[name='fearful1']:checked").val(),
+	            		angry1: $("input[name='angry1']:checked").val(),
+	            		surprised1: $("input[name='surprised1']:checked").val(),
 	            	},
 	            	success: function(data){
-	            		console.log("E1 done");
+	            		//alert($('#happy1').val()+"is the root of all evil");
 	            		scene = 2;
 	         	   		activated = true;
 	            		$('#pop1').hide();
@@ -962,11 +963,16 @@ function intervalComparison(x,lower,upper) {
 	            	type: 'POST',
 	            	url: '/form2_2/',    //alt : http://localhost:8000
 	            	data:{
-	            		happy: $('#happy2').val(),			//make id and do by id
-	            		sad: $('#sad2').val(),
-	            		fearful: $('#fearful2').val(),
-	            		angry: $('#angry2').val(),
-	            		surprised: $('#surprised2').val(),
+	            		expid: $('#expid').val(),
+	            		name: $('#name').val(),
+	            		roll: $('#roll').val(),
+	            		age: $('#age').val(),
+	            		gender: $('#gender').val(),
+	            		happy2: $("input[name='happy2']:checked").val(),
+	            		sad2: $("input[name='sad2']:checked").val(),
+	            		fearful2: $("input[name='fearful2']:checked").val(),
+	            		angry2: $("input[name='angry2']:checked").val(),
+	            		surprised2: $("input[name='surprised2']:checked").val(),
 	            	},
 	            	success: function(data){
 	            		console.log("E2 done");
@@ -980,17 +986,6 @@ function intervalComparison(x,lower,upper) {
 	            	}
 	            })
 		    });
-
-		    // $('#form3').on('submit', function(e) {
-    		// 	e.preventDefault();
-		    // 	e.stopPropagation();
-
-		    // 	scene = 0;
-	     //         	activated = true;
-	     //         	$('#pop3').hide();
-
-
-		    // });
 
 			view.onFrame = function(event) {
 				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 105 && scene == 1){
@@ -1028,89 +1023,6 @@ function intervalComparison(x,lower,upper) {
 		<h2>{{ title }}</h2>
 	</div>
 	<canvas id="experiment" width="2000" height="400"></canvas>
-	<!-- <div class="container text-center">
-			<h3>{{ question }}</h3>
-			<form action="/exp3/" method="post" class="form-horizontal">
-			{% csrf_token %}
-			<div class="form-group text-center">
-				<table class="table table-condensed">
-					<tbody>
-						<tr>
-							<td>Happy</td>
-							<td><input type="radio" name="happy" value="1"></td>
-							<td><input type="radio" name="happy" value="2"></td>
-							<td><input type="radio" name="happy" value="3"></td>
-							<td><input type="radio" name="happy" value="4"></td>
-							<td><input type="radio" name="happy" value="5"></td>
-							<td><input type="radio" name="happy" value="6"></td>
-							<td><input type="radio" name="happy" value="7"></td>
-							<td><input type="radio" name="happy" value="8"></td>
-							<td><input type="radio" name="happy" value="9"></td>
-						</tr>
-						<tr>
-							<td>Sad</td>
-							<td><input type="radio" name="sad" value="1"></td>
-							<td><input type="radio" name="sad" value="2"></td>
-							<td><input type="radio" name="sad" value="3"></td>
-							<td><input type="radio" name="sad" value="4"></td>
-							<td><input type="radio" name="sad" value="5"></td>
-							<td><input type="radio" name="sad" value="6"></td>
-							<td><input type="radio" name="sad" value="7"></td>
-							<td><input type="radio" name="sad" value="8"></td>
-							<td><input type="radio" name="sad" value="9"></td>
-						</tr>
-						<tr>
-							<td>Fearful</td>
-							<td><input type="radio" name="fearful" value="1"></td>
-							<td><input type="radio" name="fearful" value="2"></td>
-							<td><input type="radio" name="fearful" value="3"></td>
-							<td><input type="radio" name="fearful" value="4"></td>
-							<td><input type="radio" name="fearful" value="5"></td>
-							<td><input type="radio" name="fearful" value="6"></td>
-							<td><input type="radio" name="fearful" value="7"></td>
-							<td><input type="radio" name="fearful" value="8"></td>
-							<td><input type="radio" name="fearful" value="9"></td>
-						</tr>
-						<tr>
-							<td>Angry</td>
-							<td><input type="radio" name="angry" value="1"></td>
-							<td><input type="radio" name="angry" value="2"></td>
-							<td><input type="radio" name="angry" value="3"></td>
-							<td><input type="radio" name="angry" value="4"></td>
-							<td><input type="radio" name="angry" value="5"></td>
-							<td><input type="radio" name="angry" value="6"></td>
-							<td><input type="radio" name="angry" value="7"></td>
-							<td><input type="radio" name="angry" value="8"></td>
-							<td><input type="radio" name="angry" value="9"></td>
-						</tr>
-						<tr>
-							<td>Surprised</td>
-							<td><input type="radio" name="surprised" value="1"></td>
-							<td><input type="radio" name="surprised" value="2"></td>
-							<td><input type="radio" name="surprised" value="3"></td>
-							<td><input type="radio" name="surprised" value="4"></td>
-							<td><input type="radio" name="surprised" value="5"></td>
-							<td><input type="radio" name="surprised" value="6"></td>
-							<td><input type="radio" name="surprised" value="7"></td>
-							<td><input type="radio" name="surprised" value="8"></td>
-							<td><input type="radio" name="surprised" value="9"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<input type="hidden" name="expid" value="{{ expid }}">
-			<input type="hidden" name="Name" value="{{ name }}">
-			<input type="hidden" name="RollNo" value="{{ roll }}">
-			<input type="hidden" name="Age" value="{{ age }}">
-			<input type="hidden" name="Gender" value="{{ gender }}">
-			</div>
-	</div>
-	<div class="form-group text-center">
-				<div>
-					<button type="submit" class="btn btn-default">Submit</button>
-				</div>
-	</div>
-	</form> -->
 
 	<div id="pop1">
 	<div class="container text-center">
@@ -1130,55 +1042,55 @@ function intervalComparison(x,lower,upper) {
 					<tbody>
 						<tr>
 							<td>Happy</td>
-							<td><input type="radio" name="happy" value="1" id="happy1"></td>
-							<td><input type="radio" name="happy" value="2" id="happy1"></td>
-							<td><input type="radio" name="happy" value="3" id="happy1"></td>
-							<td><input type="radio" name="happy" value="4" id="happy1"></td>
-							<td><input type="radio" name="happy" value="5" id="happy1"></td>
-							<td><input type="radio" name="happy" value="6" id="happy1"></td>
-							<td><input type="radio" name="happy" value="7" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="1" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="2" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="3" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="4" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="5" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="6" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="7" id="happy1"></td>
 						</tr>
 						<tr>
 							<td>Sad</td>
-							<td><input type="radio" name="sad" value="1" id="sad1"></td>
-							<td><input type="radio" name="sad" value="2" id="sad1"></td>
-							<td><input type="radio" name="sad" value="3" id="sad1"></td>
-							<td><input type="radio" name="sad" value="4" id="sad1"></td>
-							<td><input type="radio" name="sad" value="5" id="sad1"></td>
-							<td><input type="radio" name="sad" value="6" id="sad1"></td>
-							<td><input type="radio" name="sad" value="7" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="1" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="2" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="3" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="4" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="5" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="6" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="7" id="sad1"></td>
 							
 						</tr>
 						<tr>
 							<td>Fearful</td>
-							<td><input type="radio" name="fearful" value="1" id="fearful1"></td>
-							<td><input type="radio" name="fearful" value="2" id="fearful1"></td>
-							<td><input type="radio" name="fearful" value="3" id="fearful1"></td>
-							<td><input type="radio" name="fearful" value="4" id="fearful1"></td>
-							<td><input type="radio" name="fearful" value="5" id="fearful1"></td>
-							<td><input type="radio" name="fearful" value="6" id="fearful1"></td>
-							<td><input type="radio" name="fearful" value="7" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="1" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="2" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="3" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="4" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="5" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="6" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="7" id="fearful1"></td>
 							
 						</tr>
 						<tr>
 							<td>Angry</td>
-							<td><input type="radio" name="angry" value="1" id="angry1"></td>
-							<td><input type="radio" name="angry" value="2" id="angry1"></td>
-							<td><input type="radio" name="angry" value="3" id="angry1"></td>
-							<td><input type="radio" name="angry" value="4" id="angry1"></td>
-							<td><input type="radio" name="angry" value="5" id="angry1"></td>
-							<td><input type="radio" name="angry" value="6" id="angry1"></td>
-							<td><input type="radio" name="angry" value="7" id="angry1"></td>						
+							<td><input type="radio" name="angry1" value="1" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="2" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="3" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="4" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="5" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="6" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="7" id="angry1"></td>						
 						</tr>
 						<tr>
 							<td>Surprised</td>
-							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="2" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="3" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="4" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="5" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="6" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="7" id="surprised1"></td>
 							
 						</tr>
 					</tbody>
@@ -1216,53 +1128,53 @@ function intervalComparison(x,lower,upper) {
 					<tbody>
 						<tr>
 							<td>Happy</td>
-							<td><input type="radio" name="happy" value="1" id="happy2"></td>
-							<td><input type="radio" name="happy" value="2" id="happy2"></td>
-							<td><input type="radio" name="happy" value="3" id="happy2"></td>
-							<td><input type="radio" name="happy" value="4" id="happy2"></td>
-							<td><input type="radio" name="happy" value="5" id="happy2"></td>
-							<td><input type="radio" name="happy" value="6" id="happy2"></td>
-							<td><input type="radio" name="happy" value="7" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="1" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="2" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="3" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="4" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="5" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="6" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="7" id="happy2"></td>
 						</tr>
 						<tr>
 							<td>Sad</td>
-							<td><input type="radio" name="sad" value="1" id="sad2"></td>
-							<td><input type="radio" name="sad" value="2" id="sad2"></td>
-							<td><input type="radio" name="sad" value="3" id="sad2"></td>
-							<td><input type="radio" name="sad" value="4" id="sad2"></td>
-							<td><input type="radio" name="sad" value="5" id="sad2"></td>
-							<td><input type="radio" name="sad" value="6" id="sad2"></td>
-							<td><input type="radio" name="sad" value="7" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="1" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="2" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="3" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="4" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="5" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="6" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="7" id="sad2"></td>
 						</tr>
 						<tr>
 							<td>Fearful</td>
-							<td><input type="radio" name="fearful" value="1" id="fearful2"></td>
-							<td><input type="radio" name="fearful" value="2" id="fearful2"></td>
-							<td><input type="radio" name="fearful" value="3" id="fearful2"></td>
-							<td><input type="radio" name="fearful" value="4" id="fearful2"></td>
-							<td><input type="radio" name="fearful" value="5" id="fearful2"></td>
-							<td><input type="radio" name="fearful" value="6" id="fearful2"></td>
-							<td><input type="radio" name="fearful" value="7" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="1" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="2" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="3" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="4" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="5" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="6" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="7" id="fearful2"></td>
 						</tr>
 						<tr>
 							<td>Angry</td>
-							<td><input type="radio" name="angry" value="1" id="angry2"></td>
-							<td><input type="radio" name="angry" value="2" id="angry2"></td>
-							<td><input type="radio" name="angry" value="3" id="angry2"></td>
-							<td><input type="radio" name="angry" value="4" id="angry2"></td>
-							<td><input type="radio" name="angry" value="5" id="angry2"></td>
-							<td><input type="radio" name="angry" value="6" id="angry2"></td>
-							<td><input type="radio" name="angry" value="7" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="1" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="2" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="3" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="4" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="5" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="6" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="7" id="angry2"></td>
 						</tr>
 						<tr>
 							<td>Surprised</td>
-							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
-							<td><input type="radio" name="surprised" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="2" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="3" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="4" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="5" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="6" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="7" id="surprised2"></td>
 						</tr>
 					</tbody>
 				</table>

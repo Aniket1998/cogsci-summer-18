@@ -122,7 +122,11 @@ function Locomotion(params) {
 
 		this.mean.x = this.position.x;
 		this.mean.y = this.position.y;
-		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisParallel.add(this.basisPerpendicular.multiply(0.10)),this.mean,count));
+
+		var par = this.behavior.focus;
+		var perp = 10 - this.behavior.focus;
+
+		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisParallel.multiply(par/10).add(this.basisPerpendicular.multiply(perp/10)),this.mean,count));
 	}
 
 	this.getBasisPerpendicular = function() {

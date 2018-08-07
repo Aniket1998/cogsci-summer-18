@@ -4,23 +4,27 @@
 	{% load static %}
 	<meta charset="utf-8">
 	<title>{{ title }}</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
     <script type="text/javascript">
-    	var parray = [];
-var interactions = null;
-function Behavior(params) {
+
+   	var parray = [];
+	var interactions = null;
+	function Behavior(params) {
+	
 	this.eagerness = params.eagerness;
 	this.arousal = params.arousal;
 	this.focus = params.focus;
+
 	this.vibrate = function(basis,mean,count) {
-		// if(basis.length <= 1) {
-		// 	var ran = new Point.random();
-		// 	basis = ran;
-		// } else {
-		// 	basis = basis.normalize();
-		// }
+		if(basis.length <= 1) {
+			var ran = new Point.random();
+			basis = ran;
+		} else {
+			basis = basis.normalize();
+		}
 		if (this.arousal > 0 && ((2 * count) % 3)) {
 			var	vibrationvec = basis.multiply(Math.random() * this.vibrationAmplitude());
 			return vibrationvec;
@@ -28,33 +32,43 @@ function Behavior(params) {
 			return new Point(0,0);
 		}
 	}
+
 	this.vibrationAmplitude = function() {
 		return this.arousal * 3.5;
 	}
+
 	this.wanderSpeed = function(dt) {
 		return 0.5 * Math.pow((10 - this.focus),2) * (60*dt);
 	}
+
 	this.wanderMagnitude = function() {
 		return 100;
 	}
+
 	this.visionAngle = function() {
 		return 15 * this.focus;
 	}
+
 	this.minDistance = function() {
 		return 30;
 	}
+
 	this.threat = function() {
 		return false;
 	}
+
 	this.pspace = function() {
 		return 30;
 	}
+
 	this.minInteractionDistance = function() {
 		return 150;
 	}
+
 	this.minTimeUntilCollision = function() {
 		return 40;
 	}
+
 	this.getSeekCoefficient = function() {
 		var seekCoeff;
 		if(this.eagerness > 0){			
@@ -64,6 +78,8 @@ function Behavior(params) {
 		}
 		return seekCoeff;
 	}
+
+
 	this.getFleeCoefficient = function()  {
 		var fleeCoeff;
 		if(this.eagerness > 0){
@@ -73,15 +89,20 @@ function Behavior(params) {
 		}
 		return fleeCoeff;
 	}
+
 	this.getAvoidCoefficient = function() {
 		return 0.03 * this.focus;
 	}
+
 	this.getWanderCoefficient = function() {
 		return 8 * (10 - this.focus);
 	}
+
 }
+
 function Locomotion(params) {
 	this.behavior = params.behavior;
+
 	this.shape = params.shape;
 	this.mass = params.mass;
 	this.velocity = params.velocity;
@@ -93,8 +114,10 @@ function Locomotion(params) {
 	this.mean = new Point(this.position.x,this.position.y);
 	this._wander_side = 0;
 	this._wander_up = 0;
+
 	this.basisParallel = this.velocity.normalize(); 
 	this.basisPerpendicular = this.basisParallel.rotate(90);
+
 	this._adjustForce = function(force,dt) {
 		var maxAdjSpeed = this.maxSpeed * 0.2;
 		if (this.velocity.length > maxAdjSpeed || force.length == 0) {
@@ -105,19 +128,20 @@ function Locomotion(params) {
 			return limit_max_deviation(force,cosine,this.basisParallel);
 		}
 	}
+
 	this.steer = function(force,dt,count) {
 		var acc = force.divide(this.mass);
+
 		this.velocity = clip_length(this.velocity.add(acc.multiply(dt)),this.maxSpeed);
 		this.speed = this.velocity.length;
 		this.position = this.position.add(this.velocity.multiply(dt));
+
 		this.basisParallel = this.velocity.normalize();
 		this.basisPerpendicular = this.basisParallel.rotate(90);
+
 		this.mean.x = this.position.x;
 		this.mean.y = this.position.y;
-		var par = this.behavior.focus;
-		var perp = 10 - this.behavior.focus;
-
-		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
+		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.add(this.basisParallel.multiply(0.25)),this.mean,count));
 	}
 
 	this.getBasisPerpendicular = function() {
@@ -127,6 +151,7 @@ function Locomotion(params) {
 			return this.basisPerpendicular;
 		}
 	}
+
 	this.getBasisParallel = function() {
 		if (this.basisParallel.length < 1) {
 			return new Point(1,0);
@@ -134,9 +159,11 @@ function Locomotion(params) {
 			return this.basisParallel;
 		}
 	}
+
 	this.futurePosition = function(time) {
 		return this.position.add(this.velocity.multiply(time));
 	}
+
 	this.steeringWander = function(dt) {
 		var wanderRate = this.behavior.wanderSpeed(dt);
 		if(this.velocity.length < 1)
@@ -147,14 +174,18 @@ function Locomotion(params) {
 		wander = wander.add(displacement);
 		return wander;
 	}
+
 	this.steeringSeek = function(target) {
 		var desire = target.subtract(this.position);
 		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
+
 	this.steeringFlee = function(target) {
 		var desire = this.position.subtract(this.target);
 		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
+
+
 	this.predictNearestApproachTime = function(other) {		
 		var relative = other.velocity.subtract(this.velocity);
 		var relativeSpeed = relative.length;
@@ -166,6 +197,7 @@ function Locomotion(params) {
 		var projection = tanget.dot(pos);
 		return projection/relativeSpeed;
 	}
+
 	this.predictNearestApproachPosition = function(other,time) {
 		var mytravel = this.velocity.multiply(time);
 		var othertravel = other.velocity.multiply(time);
@@ -173,6 +205,7 @@ function Locomotion(params) {
 		var otherfinal = other.shape.position.add(othertravel);
 		return vector_distance(myfinal, otherfinal);
 	}
+
 	this.predictsloworfast = function(other,time) {
 		var mytravel = this.velocity.multiply(time);
 		var othertravel = other.velocity.multiply(time);
@@ -181,6 +214,7 @@ function Locomotion(params) {
 		fast = ((this.velocity.dot(myfinal.subtract(otherfinal)))>=0) ? 1:-1;
 		return fast;
 	}
+
 	this.checkInCone = function(object) {
 		var degToRad = 3.14/180;
 		var halfangle = this.behavior.visionAngle() * degToRad; // PARAMETERISE
@@ -190,6 +224,7 @@ function Locomotion(params) {
 		var ang = line.dot(direction);
 		return (ang > cus);
 	}
+
 	this.steeringEvasion = function(other,maxpred) {
 		var offset = this.position.subtract(other.position);
 		var distance = offset.length;
@@ -201,6 +236,7 @@ function Locomotion(params) {
 		var target = other.futurePosition(predtime);
 		return this.steeringFlee(target);
 	}
+
 	this.steeringPursuit = function(other,maxpred) {
 		var offset = other.position.subtract(this.position);
 		var distance = offset.length;
@@ -263,6 +299,7 @@ function Locomotion(params) {
     	var target = other.futurePosition(etl);
     	return this.steeringSeek(target);
 	}
+
 	this.steerToAvoidCollisions = function() {
 		if(parray.length) {
 			var minSeparation = this.behavior.minDistance(); //PARAMETERISE
@@ -279,9 +316,11 @@ function Locomotion(params) {
 					}
 				}
 			}
+
 			var threat = this.behavior.threat();
 			var pspace = this.behavior.pspace();
 			var mintimeuntilcollision = this.behavior.minTimeUntilCollision();			//tune these
+
 			var time, mintime = mintimeuntilcollision;
 			var index = 0;
 			for(var i=0; i<parray.length; i++) {
@@ -338,6 +377,7 @@ function Locomotion(params) {
         		}
         		var fast = this.predictsloworfast(obstacle,mintime);
                	return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.normalize().multiply(fast*this.maxForce))).normalize().multiply(10*this.maxForce);
+
 			} else {
 				return new Point(0,0);
 			}
@@ -345,6 +385,7 @@ function Locomotion(params) {
 			return new Point(0,0);
 		}
 	}
+
 	//Make externally sure that boid is never equal to this
 	this.inBoidNeighborhood = function(boid,mindist,maxdist,maxcos) {
 		if (boid == this) {
@@ -363,6 +404,7 @@ function Locomotion(params) {
 		forwardness = this.basisParallel.dot(offset);
 		return forwardness > maxcos;
 	}
+
 	this.steeringSeparation = function(mindist,maxdist,maxcos) {
 		var steering = new Point(0,0);
 		var offset,distsq;
@@ -375,6 +417,7 @@ function Locomotion(params) {
 		}
 		return steering.normalize();
 	}
+
 	this.steeringAlignment = function(mindist,maxdist,maxcos) {
 		var steering = new Point(0,0);
 		var boids = 0;
@@ -391,6 +434,7 @@ function Locomotion(params) {
 		}
 		return steering;
 	}
+
 	this.steeringCohesion = function(mindist,maxdist,maxcos) {
 		var steering = new Point(0,0);
 		var boids = 0;
@@ -407,6 +451,7 @@ function Locomotion(params) {
 		}
 		return steering;
 	}
+
 	this.getAveragePoint = function(mindist,maxdist,maxcos) {
 		var pt = new Point(0,0);
 		var boids = 0;
@@ -422,6 +467,7 @@ function Locomotion(params) {
 		return pt;
 	}
 }
+
 function Interaction(after_behavior,priority) {
 	var self = this;
 	this.loco = null;
@@ -430,10 +476,12 @@ function Interaction(after_behavior,priority) {
 	this.currentLayer = 0;
 	this.after_behavior = after_behavior;
 	this.priority = priority;
+
 	this.setPerson = function(person) {
 		this.person = person;
 		this.loco = person.loco;
 	}
+
 	this.Layer = function(params) {
 		this.behavior = params.behavior;
 		if ('mindist' in params) {
@@ -462,6 +510,7 @@ function Interaction(after_behavior,priority) {
 		} else {
 			this.target = null;
 		}
+
 		this.runLayer = function(dt) {
 			if (this.type === 'distance') {
 				if (this.target != null) {
@@ -520,6 +569,7 @@ function Interaction(after_behavior,priority) {
 			return netForce;
 		}
 	}
+
 	this.updateLayer = function() {
 		this.currentLayer++;
 		if (this.person.pid == 1) {
@@ -535,18 +585,22 @@ function Interaction(after_behavior,priority) {
 			}
 		}
 	}
+
 	this.addLayer = function(params) {
 		this.layers.push(new this.Layer(params));
 	}
+
 	this.active = function() {
 		return (this.currentLayer < this.layers.length);
 	}
+
 	this.run = function(dt) {
 		if (this.active()) {
 			return ((this.layers[this.currentLayer]).runLayer(dt));
 		}
 	}
 } 
+
 function LocalInteraction(interaction,point,loco) {
 	this.interaction = interaction;
 	this.point = point;
@@ -559,12 +613,14 @@ function LocalInteraction(interaction,point,loco) {
 		}
 	}
 }
+
 function Person(pid,params) {
 	this.loco = params.loco;
 	this.behavior = this.loco.behavior;
 	this.longterm_goal = params.longterm_goal;
 	this.longterm_goal.setPerson(this);
 	this.pid = pid;
+
 	this.setBehavior = function(behavior) {
 		this.loco.behavior = behavior;
 		this.behavior = behavior;
@@ -584,10 +640,12 @@ function Person(pid,params) {
 					interactions[this.pid-1][i] = null;
 				}
 			}
+
 			var min = 0;
 			if (actions[min] == null) {
 				return this.longterm_goal;
 			}
+
 			var interactionDist = this.behavior.minInteractionDistance();
 			var dist;
 			for (var i = 1; i < actions.length; i++) {
@@ -607,6 +665,7 @@ function Person(pid,params) {
 			if (dist > interactionDist) {
 				return this.longterm_goal;
 			} 
+
 			if (actions[min].interaction.priority > this.longterm_goal.priority && actions[min].interaction.active()) {
 				actions[min].interaction.setPerson(this);
 				var layer = actions[min].interaction.currentLayer;
@@ -622,6 +681,7 @@ function Person(pid,params) {
 			}
 		}
 	}
+
 	this.run = function(event) {
 		var goal = this.action_select(event);
 		if (goal.active()) {
@@ -631,6 +691,8 @@ function Person(pid,params) {
 		}
 	}
 }
+
+
 function random_vector(mag) {
 	var randomx = Math.random();
 	var randomy = Math.random();
@@ -641,10 +703,12 @@ function random_vector(mag) {
 	rand_vec = rand_vec.normalize();
 	return rand_vec.multiply(mag);	
 }
+
 function vector_distance(vec1,vec2) {
 	var res = vec1.subtract(vec2);
 	return res.length;
 }
+
 function scalar_random_walk(initial,walkspeed,min,max) {
 	var next = initial + rand_range(-1*walkspeed,walkspeed);
 	if (next < min) {
@@ -655,6 +719,7 @@ function scalar_random_walk(initial,walkspeed,min,max) {
 	}
 	return next;
 }
+
 //Utility functions for various math ops
 function limit_max_deviation(force,conecos,basis) {
 	if (force.length == 0) {
@@ -671,17 +736,21 @@ function limit_max_deviation(force,conecos,basis) {
 	var c1 = unitperp.multiply(perpDist);
 	return c0.add(c1).multiply(force.length);
 }
+
 function scalar_interpolation(x1,x2,t) {
 	return x1 + ((x2 - x1) * t);
 }
+
 function vector_interpolation(v1,v2,t) {
 	var dif = v2.subtract(v1);
 	dif = dif.multiply(t);
 	return v1.add(dif);
 }
+
 function blend_vec(t,newvec,smooth) {
 	return vector_interpolation(smooth,newvec,clip_value(t,0,1))
 }
+
 function clip_value(val,min,max) {
 	if (val < min) {
 		return min;
@@ -691,9 +760,11 @@ function clip_value(val,min,max) {
 		return val;
 	}
 }
+
 function  rand_range(min,max) {
 	return min + Math.random() * (max - min);
 }
+
 function clip_length(vec,len) {
 	if (vec.length > len) {
 		return vec.normalize().multiply(len);
@@ -701,6 +772,7 @@ function clip_length(vec,len) {
 		return vec;
 	}
 }
+
 function intervalComparison(x,lower,upper) {
 	if (x < lower) {
 		return -1;
@@ -711,85 +783,202 @@ function intervalComparison(x,lower,upper) {
 	return 0;
 }
     </script>
+    
     <script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
-			console.log("Seems loaded");
-			paper.setup('experiment');
-			var behavior1 = new Behavior({			
-				eagerness : 1,
-				arousal : 10,
-				focus : 0
+			paper.setup('canvas');
+			var activated = true;
+			var scene = 1;
+			var time1;
+			var time2;
+			var time3 = 200;
+
+			var behavior1 = new Behavior({			// Person 1 
+				eagerness : 10,
+				arousal : 7,
+				focus : 1
+			});
+			var behavior2 = new Behavior({			// Person 2 
+				eagerness : 10,
+				arousal : 7,
+				focus : 1
 			});
 			
-			var loco1 = new Locomotion({			
+			var loco1 = new Locomotion({			// Person 1
 				behavior : behavior1,
 				velocity : new Point(0,0),
 				mass : 1,
 				boundingRadius : 25,
 				maxForce : 400,
-				maxSpeed : 250,
+				maxSpeed : 100,
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : view.center.add(new Point(-450,-100))			
+				point : view.center.add(new Point(35,-100))
+			});
+
+			var loco2 = new Locomotion({			// Person 2
+				behavior : behavior2,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 100,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'blue'
+				}),
+				point : view.center.add(new Point(-35,-100))
+			});
+
+			var tar = view.center.add(new Point(0,-100));
+			
+			var longterm_goals1 = new Interaction(behavior1,10);		
+			longterm_goals1.addLayer({
+				behavior : behavior1,
+				target : tar.add(new Point(20,0)), 
+				seek_context : 1,
+				avoid_context : 1,
+				time : 15 * 60
 			});
 			
-			var longterm_goals1 = new Interaction(behavior1,1);	
-			longterm_goals1.addLayer({
+			var longterm_goals2 = new Interaction(behavior1,10);		
+			longterm_goals2.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(-300,-75)), 		
+				target : tar.add(new Point(-20,0)),
 				seek_context : 1,
-				avoid_context : 0,
-				wander_context : 0,
-				mindist : 50
+				avoid_context : 1,
+				time : 15 * 60
 			});
-			longterm_goals1.addLayer({
-				behavior : behavior1,
-				target : view.center.add(new Point(-150, 25)), 		
-				seek_context : 1,
-				avoid_context : 0,
-				wander_context : 0,
-				mindist : 50
-			});
-			longterm_goals1.addLayer({
-				behavior : behavior1,
-				target : view.center.add(new Point(0,-50)), 		
-				seek_context : 1,
-				avoid_context : 0,
-				wander_context : 0,
-				mindist : 50
-			});
+
 			var person1 = new Person(1,{
 				loco : loco1,
 				longterm_goal : longterm_goals1
 			});
+			var person2 = new Person(2,{
+				loco : loco2,
+				longterm_goal : longterm_goals2
+			});
 						
 			parray.push(person1.loco);
+			parray.push(person2.loco);
 			
-			interactions = new Array(1);
+			interactions = new Array(2);
 			for (var i = interactions.length - 1; i >= 0; i--) {
-				interactions[i] = new Array(1);
+				interactions[i] = new Array(2);
 				for (var j = interactions[i].length - 1; j >= 0; j--) {
 					interactions[i][j] = null;
 				}
 			}
-			
+
+			interactions[0][1] = new LocalInteraction(interaction12,null,person2.loco);
+			interactions[1][0] = new LocalInteraction(interaction21,null,person1.loco);
+
+            $('#pop1').hide();
+            $('#pop2').hide();
+            $('#pop3').hide();
+
+        	$('#form1').on('submit', function(e) {
+    			e.preventDefault();
+		    	e.stopPropagation();
+
+	            $.ajax({
+	            	type: 'POST',
+	            	url: '/form2_1/',    //alt : http://localhost:8000
+	            	data:{
+	            		expid: $('#expid').val(),
+	            		name: $('#name').val(),
+	            		roll: $('#roll').val(),
+	            		age: $('#age').val(),
+	            		gender: $('#gender').val(),
+	            		happy1: $("input[name='happy1']:checked").val(),
+	            		sad1: $("input[name='sad1']:checked").val(),
+	            		fearful1: $("input[name='fearful1']:checked").val(),
+	            		angry1: $("input[name='angry1']:checked").val(),
+	            		surprised1: $("input[name='surprised1']:checked").val(),
+	            	},
+	            	success: function(data){
+	            		alert($('#happy1').val()+"is the root of all evil");
+	            		scene = 2;
+	         	   		activated = true;
+	            		$('#pop1').hide();
+	            		time1 = 400;
+	            	},
+	            	error: function(xhr,status,error){
+	            		alert(error);
+	            	}
+	            })
+
+		    });
+
+		    $('#form2').on('submit', function(e) {
+    			e.preventDefault();
+		    	e.stopPropagation();
+
+	             $.ajax({
+	            	type: 'POST',
+	            	url: '/form2_2/',    //alt : http://localhost:8000
+	            	data:{
+	            		expid: $('#expid').val(),
+	            		name: $('#name').val(),
+	            		roll: $('#roll').val(),
+	            		age: $('#age').val(),
+	            		gender: $('#gender').val(),
+	            		happy2: $("input[name='happy2']:checked").val(),
+	            		sad2: $("input[name='sad2']:checked").val(),
+	            		fearful2: $("input[name='fearful2']:checked").val(),
+	            		angry2: $("input[name='angry2']:checked").val(),
+	            		surprised2: $("input[name='surprised2']:checked").val(),
+	            	},
+	            	success: function(data){
+	            		console.log("E2 done");
+	            		scene = 3;
+	             		activated = true;
+	             		$('#pop2').hide();
+	            	},
+	            	error: function(xhr,status,error){
+	            		alert(error);
+	            	}
+	            })
+		    });
+
 			view.onFrame = function(event) {
-				person1.run(event);		
+
+				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 10 && scene == 1){
+					activated = false;
+					$(document).ready(function(){
+					       $('#pop1').show();
+					});
+				}
+				if(scene==2 && (person2.loco.shape.position.x > 1400 && person1.loco.shape.position.x > 1400)){
+					activated = false;
+					$(document).ready(function(){
+					       $('#pop2').show();
+					});
+				}
+				
+				if(activated){
+					person1.run(event);
+					person2.run(event);		
+				}
 			}
 		}
 	</script>
+
 </head>
 <body>
 	<div class="text-center">
 		<h2>{{ title }}</h2>
 	</div>
 	<canvas id="experiment" width="2000" height="400"></canvas>
+	
+	<div id="pop1">
 	<div class="container text-center">
-			<h4>{{ question }}</h4> <br>
+			<h3>{{ question }}</h3>
 			<div class="row">
 	  			<div class="col-xs-3"></div>
 	  			<div class="col-xs-1">Not at all</div>
@@ -798,70 +987,146 @@ function intervalComparison(x,lower,upper) {
 	  			<div class="col-xs-3"></div>
 	  			<div class="col-xs-1">Dominant emotion</div>
 			</div>
-			<form action="/exp2/" method="post" class="form-horizontal">
+			<form action="/exp2/" method="post" class="form-horizontal" id="form1">
 			{% csrf_token %}
 			<div class="form-group text-center">
 				<table class="table table-condensed">
 					<tbody>
 						<tr>
 							<td>Happy</td>
-							<td><input type="radio" name="happy" value="1"></td>
-							<td><input type="radio" name="happy" value="2"></td>
-							<td><input type="radio" name="happy" value="3"></td>
-							<td><input type="radio" name="happy" value="4"></td>
-							<td><input type="radio" name="happy" value="5"></td>
-							<td><input type="radio" name="happy" value="6"></td>
-							<td><input type="radio" name="happy" value="7"></td>
-							<td><input type="radio" name="happy" value="8"></td>
-							<td><input type="radio" name="happy" value="9"></td>
+							<td><input type="radio" name="happy1" value="1" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="2" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="3" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="4" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="5" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="6" id="happy1"></td>
+							<td><input type="radio" name="happy1" value="7" id="happy1"></td>
 						</tr>
 						<tr>
 							<td>Sad</td>
-							<td><input type="radio" name="sad" value="1"></td>
-							<td><input type="radio" name="sad" value="2"></td>
-							<td><input type="radio" name="sad" value="3"></td>
-							<td><input type="radio" name="sad" value="4"></td>
-							<td><input type="radio" name="sad" value="5"></td>
-							<td><input type="radio" name="sad" value="6"></td>
-							<td><input type="radio" name="sad" value="7"></td>
-							<td><input type="radio" name="sad" value="8"></td>
-							<td><input type="radio" name="sad" value="9"></td>
+							<td><input type="radio" name="sad1" value="1" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="2" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="3" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="4" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="5" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="6" id="sad1"></td>
+							<td><input type="radio" name="sad1" value="7" id="sad1"></td>
+							
 						</tr>
 						<tr>
 							<td>Fearful</td>
-							<td><input type="radio" name="fearful" value="1"></td>
-							<td><input type="radio" name="fearful" value="2"></td>
-							<td><input type="radio" name="fearful" value="3"></td>
-							<td><input type="radio" name="fearful" value="4"></td>
-							<td><input type="radio" name="fearful" value="5"></td>
-							<td><input type="radio" name="fearful" value="6"></td>
-							<td><input type="radio" name="fearful" value="7"></td>
-							<td><input type="radio" name="fearful" value="8"></td>
-							<td><input type="radio" name="fearful" value="9"></td>
+							<td><input type="radio" name="fearful1" value="1" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="2" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="3" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="4" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="5" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="6" id="fearful1"></td>
+							<td><input type="radio" name="fearful1" value="7" id="fearful1"></td>
+							
 						</tr>
 						<tr>
 							<td>Angry</td>
-							<td><input type="radio" name="angry" value="1"></td>
-							<td><input type="radio" name="angry" value="2"></td>
-							<td><input type="radio" name="angry" value="3"></td>
-							<td><input type="radio" name="angry" value="4"></td>
-							<td><input type="radio" name="angry" value="5"></td>
-							<td><input type="radio" name="angry" value="6"></td>
-							<td><input type="radio" name="angry" value="7"></td>
-							<td><input type="radio" name="angry" value="8"></td>
-							<td><input type="radio" name="angry" value="9"></td>
+							<td><input type="radio" name="angry1" value="1" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="2" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="3" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="4" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="5" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="6" id="angry1"></td>
+							<td><input type="radio" name="angry1" value="7" id="angry1"></td>						
 						</tr>
 						<tr>
 							<td>Surprised</td>
-							<td><input type="radio" name="surprised" value="1"></td>
-							<td><input type="radio" name="surprised" value="2"></td>
-							<td><input type="radio" name="surprised" value="3"></td>
-							<td><input type="radio" name="surprised" value="4"></td>
-							<td><input type="radio" name="surprised" value="5"></td>
-							<td><input type="radio" name="surprised" value="6"></td>
-							<td><input type="radio" name="surprised" value="7"></td>
-							<td><input type="radio" name="surprised" value="8"></td>
-							<td><input type="radio" name="surprised" value="9"></td>
+							<td><input type="radio" name="surprised1" value="1" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="2" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="3" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="4" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="5" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="6" id="surprised1"></td>
+							<td><input type="radio" name="surprised1" value="7" id="surprised1"></td>
+							
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<input type="hidden" name="expid" value="{{ expid }}" id ="expid">
+			<input type="hidden" name="Name" value="{{ name }}" id="name">
+			<input type="hidden" name="RollNo" value="{{ roll }}" id="roll">
+			<input type="hidden" name="Age" value="{{ age }}" id="age">
+			<input type="hidden" name="Gender" value="{{ gender }}" id="gender">
+			</div>
+			<div class="form-group text-center">
+				<div>
+					<button type="submit" class="btn btn-default" id="button1">Submit</button>
+				</div>
+	</div>
+	</form>
+	</div>
+
+<div id="pop2">
+	<div class="container text-center">
+			<h3>{{ question }}</h3>
+			<div class="row">
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Not at all</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Maybe</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Dominant emotion</div>
+			</div>
+			<form action="/exp2/" method="post" class="form-horizontal" id="form2">
+			{% csrf_token %}
+			<div class="form-group text-center">
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td>Happy</td>
+							<td><input type="radio" name="happy2" value="1" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="2" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="3" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="4" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="5" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="6" id="happy2"></td>
+							<td><input type="radio" name="happy2" value="7" id="happy2"></td>
+						</tr>
+						<tr>
+							<td>Sad</td>
+							<td><input type="radio" name="sad2" value="1" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="2" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="3" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="4" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="5" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="6" id="sad2"></td>
+							<td><input type="radio" name="sad2" value="7" id="sad2"></td>
+						</tr>
+						<tr>
+							<td>Fearful</td>
+							<td><input type="radio" name="fearful2" value="1" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="2" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="3" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="4" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="5" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="6" id="fearful2"></td>
+							<td><input type="radio" name="fearful2" value="7" id="fearful2"></td>
+						</tr>
+						<tr>
+							<td>Angry</td>
+							<td><input type="radio" name="angry2" value="1" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="2" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="3" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="4" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="5" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="6" id="angry2"></td>
+							<td><input type="radio" name="angry2" value="7" id="angry2"></td>
+						</tr>
+						<tr>
+							<td>Surprised</td>
+							<td><input type="radio" name="surprised2" value="1" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="2" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="3" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="4" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="5" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="6" id="surprised2"></td>
+							<td><input type="radio" name="surprised2" value="7" id="surprised2"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -872,12 +1137,107 @@ function intervalComparison(x,lower,upper) {
 			<input type="hidden" name="Age" value="{{ age }}">
 			<input type="hidden" name="Gender" value="{{ gender }}">
 			</div>
-	</div>
 	<div class="form-group text-center">
 				<div>
-					<button type="submit" class="btn btn-default">Submit</button>
+					<button type="submit" class="btn btn-default" id="button2">Submit</button>
 				</div>
 	</div>
 	</form>
+	</div>
+
+	<div id="pop3">
+	<div class="container text-center">
+			<h3>{{ question }}</h3>
+			<div class="row">
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Not at all</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Maybe</div>
+	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-1">Dominant emotion</div>
+			</div>
+			<form action="/exp3/" method="post" class="form-horizontal" id="form3">
+			{% csrf_token %}
+			<div class="form-group text-center">
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td>Happy</td>
+							<td><input type="radio" name="happy3" value="1"></td>
+							<td><input type="radio" name="happy3" value="2"></td>
+							<td><input type="radio" name="happy3" value="3"></td>
+							<td><input type="radio" name="happy3" value="4"></td>
+							<td><input type="radio" name="happy3" value="5"></td>
+							<td><input type="radio" name="happy3" value="6"></td>
+							<td><input type="radio" name="happy3" value="7"></td>
+							<td><input type="radio" name="happy3" value="8"></td>
+							<td><input type="radio" name="happy3" value="9"></td>
+						</tr>
+						<tr>
+							<td>Sad</td>
+							<td><input type="radio" name="sad3" value="1"></td>
+							<td><input type="radio" name="sad3" value="2"></td>
+							<td><input type="radio" name="sad3" value="3"></td>
+							<td><input type="radio" name="sad3" value="4"></td>
+							<td><input type="radio" name="sad3" value="5"></td>
+							<td><input type="radio" name="sad3" value="6"></td>
+							<td><input type="radio" name="sad3" value="7"></td>
+							<td><input type="radio" name="sad3" value="8"></td>
+							<td><input type="radio" name="sad3" value="9"></td>
+						</tr>
+						<tr>
+							<td>Fearful</td>
+							<td><input type="radio" name="fearful3" value="1"></td>
+							<td><input type="radio" name="fearful3" value="2"></td>
+							<td><input type="radio" name="fearful3" value="3"></td>
+							<td><input type="radio" name="fearful3" value="4"></td>
+							<td><input type="radio" name="fearful3" value="5"></td>
+							<td><input type="radio" name="fearful3" value="6"></td>
+							<td><input type="radio" name="fearful3" value="7"></td>
+							<td><input type="radio" name="fearful3" value="8"></td>
+							<td><input type="radio" name="fearful3" value="9"></td>
+						</tr>
+						<tr>
+							<td>Angry</td>
+							<td><input type="radio" name="angry3" value="1"></td>
+							<td><input type="radio" name="angry3" value="2"></td>
+							<td><input type="radio" name="angry3" value="3"></td>
+							<td><input type="radio" name="angry3" value="4"></td>
+							<td><input type="radio" name="angry3" value="5"></td>
+							<td><input type="radio" name="angry3" value="6"></td>
+							<td><input type="radio" name="angry3" value="7"></td>
+							<td><input type="radio" name="angry3" value="8"></td>
+							<td><input type="radio" name="angry3" value="9"></td>
+						</tr>
+						<tr>
+							<td>Surprised</td>
+							<td><input type="radio" name="surprised3" value="1"></td>
+							<td><input type="radio" name="surprised3" value="2"></td>
+							<td><input type="radio" name="surprised3" value="3"></td>
+							<td><input type="radio" name="surprised3" value="4"></td>
+							<td><input type="radio" name="surprised3" value="5"></td>
+							<td><input type="radio" name="surprised3" value="6"></td>
+							<td><input type="radio" name="surprised3" value="7"></td>
+							<td><input type="radio" name="surprised3" value="8"></td>
+							<td><input type="radio" name="surprised3" value="9"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<input type="hidden" name="expid" value="{{ expid }}">
+			<input type="hidden" name="Name" value="{{ name }}">
+			<input type="hidden" name="RollNo" value="{{ roll }}">
+			<input type="hidden" name="Age" value="{{ age }}">
+			<input type="hidden" name="Gender" value="{{ gender }}">
+			</div>
+	<div class="form-group text-center">
+				<div>
+					<button type="submit" class="btn btn-default" id="button3">Submit</button>
+				</div>
+	</div>
+	</form>
+	</div>
+
 </body>
 </html>
+			
