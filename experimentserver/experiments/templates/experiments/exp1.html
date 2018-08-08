@@ -32,7 +32,10 @@ function Behavior(params) {
 		return this.arousal * 3.5;
 	}
 	this.wanderSpeed = function(dt) {
-		return 0.5 * Math.pow((10 - this.focus),2) * (60*dt);
+		// return 0.5 * Math.pow((10 - this.focus),1.3) * (60*dt);
+		console.log("FOC "+this.focus);
+
+		return 10 - this.focus;
 	}
 	this.wanderMagnitude = function() {
 		return 100;
@@ -117,7 +120,8 @@ function Locomotion(params) {
 		var par = this.behavior.focus;
 		var perp = 10 - this.behavior.focus;
 
-		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
+		var temp = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
+		this.shape.position = temp.add(this.steeringWander(dt,count));
 	}
 
 	this.getBasisPerpendicular = function() {
@@ -137,14 +141,14 @@ function Locomotion(params) {
 	this.futurePosition = function(time) {
 		return this.position.add(this.velocity.multiply(time));
 	}
-	this.steeringWander = function(dt) {
+	this.steeringWander = function(dt,count) {
 		var wanderRate = this.behavior.wanderSpeed(dt);
-		if(this.velocity.length < 1)
-			wanderRate = wanderRate * this.velocity.length;
-		var wanderStrength = this.behavior.wanderMagnitude();
-		var displacement = random_vector(wanderRate);
-		var wander = this.basisParallel.multiply(wanderStrength);
-		wander = wander.add(displacement);
+		// if(this.velocity.length < 1)
+		// 	wanderRate = wanderRate * this.velocity.length;
+		// var wanderStrength = this.behavior.wanderMagnitude();
+		// var displacement = random_vector(wanderRate);
+		var wander = this.basisPerpendicular.multiply(Math.cos(count/4)*wanderRate*2);
+		console.log("Wandering by "+wander);
 		return wander;
 	}
 	this.steeringSeek = function(target) {
@@ -462,7 +466,7 @@ function Interaction(after_behavior,priority) {
 		} else {
 			this.target = null;
 		}
-		this.runLayer = function(dt) {
+		this.runLayer = function(dt, count) {
 			if (this.type === 'distance') {
 				if (this.target != null) {
 					var dist;
@@ -514,7 +518,7 @@ function Interaction(after_behavior,priority) {
 			}
 			if (this.wander_context != null && this.wander_context != 0) {
 				var b4 = self.person.behavior.getWanderCoefficient();
-				var wanderForce = self.loco.steeringWander(dt).multiply(b4 * this.wander_context);
+				var wanderForce = self.loco.steeringWander(dt,count).multiply(0 * this.wander_context);
 				netForce = netForce.add(wanderForce);
 			}
 			return netForce;
@@ -541,9 +545,9 @@ function Interaction(after_behavior,priority) {
 	this.active = function() {
 		return (this.currentLayer < this.layers.length);
 	}
-	this.run = function(dt) {
+	this.run = function(dt, count) {
 		if (this.active()) {
-			return ((this.layers[this.currentLayer]).runLayer(dt));
+			return ((this.layers[this.currentLayer]).runLayer(dt, count));
 		}
 	}
 } 
@@ -625,7 +629,7 @@ function Person(pid,params) {
 	this.run = function(event) {
 		var goal = this.action_select(event);
 		if (goal.active()) {
-			var force = goal.run(event.delta);
+			var force = goal.run(event.delta, event.count);
 			//console.log(force);
 			this.loco.steer(force,event.delta,event.count);
 		}
@@ -711,15 +715,22 @@ function intervalComparison(x,lower,upper) {
 	return 0;
 }
     </script>
-    <script type="text/javascript">
+
+       <script type="text/javascript">
 		paper.install(window);
 		window.onload = function() {
 			console.log("Seems loaded");
 			paper.setup('experiment');
 			var behavior1 = new Behavior({			
 				eagerness : 1,
-				arousal : 10,
-				focus : 0
+				arousal : 0,
+				focus : 1
+			});
+
+			var behavior2 = new Behavior({			
+				eagerness : 10,
+				arousal : 0,
+				focus : 10
 			});
 			
 			var loco1 = new Locomotion({			
@@ -728,46 +739,114 @@ function intervalComparison(x,lower,upper) {
 				mass : 1,
 				boundingRadius : 25,
 				maxForce : 400,
-				maxSpeed : 250,
+				maxSpeed : 175,
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : view.center.add(new Point(-450,-100))			
+				point : view.center.add(new Point(-650,-100))			
 			});
 			
+			var loco2 = new Locomotion({			// Person 2
+				behavior : behavior2,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 400,
+				maxSpeed : 200,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 15,
+					fillColor : 'blue'
+				}),
+				point : view.center.add(new Point(-500,-100))
+			});
+
 			var longterm_goals1 = new Interaction(behavior1,1);	
-			longterm_goals1.addLayer({
-				behavior : behavior1,
-				target : view.center.add(new Point(-300,-75)), 		
-				seek_context : 1,
-				avoid_context : 0,
-				wander_context : 0,
-				mindist : 50
-			});
-			longterm_goals1.addLayer({
-				behavior : behavior1,
-				target : view.center.add(new Point(-150, 25)), 		
-				seek_context : 1,
-				avoid_context : 0,
-				wander_context : 0,
-				mindist : 50
-			});
-			longterm_goals1.addLayer({
-				behavior : behavior1,
-				target : view.center.add(new Point(0,-50)), 		
-				seek_context : 1,
-				avoid_context : 0,
-				wander_context : 0,
-				mindist : 50
-			});
+			var longterm_goals2 = new Interaction(behavior2,1);	
+
 			var person1 = new Person(1,{
 				loco : loco1,
 				longterm_goal : longterm_goals1
 			});
+
+			var person2 = new Person(1,{
+				loco : loco2,
+				longterm_goal : longterm_goals2
+			});
+
+			longterm_goals1.addLayer({
+				behavior : behavior1,
+				//target : new Point(1000,30),
+				target : person2.loco,
+				moving : true,
+				predictTime : 100000000,	
+				seek_context : 1,
+				avoid_context : 0,
+				wander_context : 1,
+				time : 10 * 60
+			});
+
+			// longterm_goals2.addLayer({
+			// 	behavior : behavior2,
+			// 	target : Point.random().multiply(view.size),
+			// 	// target : person1.loco,
+			// 	// moving : true,
+			// 	// predictTime : 100000000,	
+			// 	flee_context : 1,
+			// 	avoid_context : 0,
+			// 	wander_context : 1,
+			// 	time : 1 * 60
+			// });	
+			longterm_goals2.addLayer({
+				behavior : behavior2,
+				target : view.center.add(new Point(-500,-100)).add(new Point(150,75)),
+				// target : person1.loco,
+				// moving : true,
+				// predictTime : 100000000,	
+				seek_context : 1,
+				avoid_context : 0,
+				wander_context : 1,
+				mindist : 50
+			});	
+			longterm_goals2.addLayer({
+				behavior : behavior2,
+				target : view.center.add(new Point(-500,-100)).add(new Point(350,-50)),
+				// target : person1.loco,
+				// moving : true,
+				// predictTime : 100000000,	
+				seek_context : 1,
+				avoid_context : 1,
+				wander_context : 1,
+				mindist : 50
+			});	
+			longterm_goals2.addLayer({
+				behavior : behavior2,
+				target : view.center.add(new Point(-500,-100)).add(new Point(500,-50)),
+				// target : person1.loco,
+				// moving : true,
+				// predictTime : 100000000,	
+				seek_context : 1,
+				avoid_context : 1,
+				wander_context : 1,
+				mindist : 50
+			});	
+			longterm_goals2.addLayer({
+				behavior : behavior2,
+				target : view.center.add(new Point(-500,-100)).add(new Point(650,-50)),
+				// target : person1.loco,
+				// moving : true,
+				// predictTime : 100000000,	
+				seek_context : 1,
+				avoid_context : 0,
+				wander_context : 1,
+				mindist : 50
+			});	
+						
 						
 			parray.push(person1.loco);
+			parray.push(person2.loco);
 			
 			interactions = new Array(1);
 			for (var i = interactions.length - 1; i >= 0; i--) {
@@ -778,10 +857,15 @@ function intervalComparison(x,lower,upper) {
 			}
 			
 			view.onFrame = function(event) {
-				person1.run(event);		
+				console.log(Point.random());
+				if(person1.loco.position.x - person2.loco.position.x < 3){
+					person1.run(event);		
+					person2.run(event);		
+				}
 			}
 		}
 	</script>
+
 </head>
 <body>
 	<div class="text-center">

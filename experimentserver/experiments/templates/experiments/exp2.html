@@ -140,7 +140,10 @@ function Locomotion(params) {
 
 		this.mean.x = this.position.x;
 		this.mean.y = this.position.y;
-		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.add(this.basisParallel.multiply(0.25)),this.mean,count));
+		var par = this.behavior.focus;
+		var perp = 10 - this.behavior.focus;
+
+		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
 	}
 
 	this.getBasisPerpendicular = function() {
@@ -792,7 +795,6 @@ function intervalComparison(x,lower,upper) {
 			var scene = 1;
 			var time1;
 			var time2;
-			var time3 = 200;
 
 			var behavior1 = new Behavior({			// Person 1 
 				eagerness : 5,
@@ -835,7 +837,7 @@ function intervalComparison(x,lower,upper) {
 				point : view.center.add(new Point(-500,-100))
 			});
 
-			var tar = view.center.add(new Point(0,-100));
+			var tar = view.center.add(new Point(-200,-100));
 			
 			var longterm_goals1 = new Interaction(behavior1,10);		
 			longterm_goals1.addLayer({

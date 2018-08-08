@@ -17,13 +17,14 @@ def form2_1(request):
 		exp.response_set.create(name = request.POST['name'],roll = request.POST['roll'],gender = request.POST['gender'],
 		age = request.POST['age'],happy1 = request.POST['happy1'],sad1 = request.POST['sad1'],fearful1 = request.POST['fearful1'],
 		angry1 = request.POST['angry1'],surprised1 = request.POST['surprised1'])
-
 	return JsonResponse({'status': 'ok'})
 
 @csrf_exempt
 def form2_2(request):
 	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
 	if request.method == 'POST' and request.is_ajax():
+		# set = exp.response_set.filter(happy2_startswith=='-1');
+		# set.surprised2 = request.POST['surprised2'];
 		exp.response_set.create(name = request.POST['name'],roll = request.POST['roll'],gender = request.POST['gender'],
 		age = request.POST['age'],happy2 = request.POST['happy2'],sad2 = request.POST['sad2'],fearful2 = request.POST['fearful2'],
 		angry2 = request.POST['angry2'],surprised2 = request.POST['surprised2'])

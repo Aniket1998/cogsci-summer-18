@@ -847,7 +847,7 @@ function intervalComparison(x,lower,upper) {
 			
 			var longterm_goals1 = new Interaction(behavior1,10);		
 			longterm_goals1.addLayer({
-				behavior : behavior1,
+				behavior : behavior3,
 				target : tar, 
 				seek_context : 1,
 				mindist : 25
@@ -873,7 +873,7 @@ function intervalComparison(x,lower,upper) {
 			var interaction12 = new Interaction(behavior3,100);					// look, pause, hit thrice
 			interaction12.addLayer({
 				behavior : behavior3,
-				target : view.center.add(new Point(-125,-50)),
+				target : view.center.add(new Point(-125,100)),
 				mindist : 35
 			});	
 					
@@ -975,9 +975,9 @@ function intervalComparison(x,lower,upper) {
 			view.onFrame = function(event) {
 				console.log(person1.loco.velocity+"HUL" + scene + "dist " + person1.loco.position)
 				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 45 && scene == 1){
-					activated = false;
+					activated = true;
 					$(document).ready(function(){
-					       $('#pop1').show();
+					       //$('#pop1').show();
 					});
 				}
 				if(scene==2 && person1.loco.shape.position.x < 530){

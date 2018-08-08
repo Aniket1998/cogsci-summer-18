@@ -140,7 +140,10 @@ function Locomotion(params) {
 
 		this.mean.x = this.position.x;
 		this.mean.y = this.position.y;
-		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.add(this.basisParallel.multiply(0.25)),this.mean,count));
+		var par = this.behavior.focus;
+		var perp = 10 - this.behavior.focus;
+
+		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
 	}
 
 	this.getBasisPerpendicular = function() {
@@ -792,7 +795,6 @@ function intervalComparison(x,lower,upper) {
 			var scene = 1;
 			var time1;
 			var time2;
-			var time3 = 200;
 
 			var behavior1 = new Behavior({			// Person 1 
 				eagerness : 5,
@@ -802,16 +804,21 @@ function intervalComparison(x,lower,upper) {
 			var behavior2 = new Behavior({			// Person 2 
 				eagerness : 8,
 				arousal : 10,
-				focus : 10
+				focus : 8
 			});
 			var behavior3 = new Behavior({			// Person 2 
 				eagerness : 10,
-				arousal : 2,
+				arousal : 5,
+				focus : 10
+			});
+			var behavior4 = new Behavior({			// Person 2 
+				eagerness : 10,
+				arousal : 1,
 				focus : 10
 			});
 			
 			var loco1 = new Locomotion({			// Person 1
-				behavior : behavior1,
+				behavior : behavior3,
 				velocity : new Point(0,0),
 				mass : 1,
 				boundingRadius : 25,
@@ -822,7 +829,7 @@ function intervalComparison(x,lower,upper) {
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : view.center.add(new Point(50,-100))
+				point : view.center.add(new Point(-50,-100))
 			});
 
 			var loco2 = new Locomotion({			// Person 2
@@ -840,11 +847,10 @@ function intervalComparison(x,lower,upper) {
 				point : view.center.add(new Point(-550,-100))
 			});
 			
-			var longterm_goals1 = new Interaction(behavior1,10);		
-				time: 4 * 60
+			var longterm_goals1 = new Interaction(behavior2,10);		
 			longterm_goals1.addLayer({
-				behavior : behavior1,
-				target : view.center.add(new Point(0,-50)), 
+				behavior : behavior3,
+				target : view.center.add(new Point(-500,-50)), 
 				seek_context : 1,
 				avoid_context : 0,
 				wander_context : 0,
@@ -894,7 +900,7 @@ function intervalComparison(x,lower,upper) {
 			// 	time : 2 * 60
 			// });
 			interaction21.addLayer({
-				behavior : behavior3,
+				behavior : behavior4,
 				target : person1.loco,
 				moving : true,
 				predictTime : 100000000,
