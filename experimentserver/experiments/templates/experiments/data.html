@@ -25,40 +25,41 @@ tr:nth-child(even) {
 }
 </style>
 <body>
+Hi, let's look at our responses.<br>
+<!-- {{ responses }}<br>
+ --><h3 style="text-align:center">{{ title }}</h3>
 {% if responses %}
-<h4>{{ title }}</h4>
-<h5>{{ question }}</h5>
-	{% for scene in scenes %}
-<h5>Scene {{ scene.0 }}</h5>
-<ul>
-<li>Focus : {{ scene.1 }}</li>
-<li>Eagerness : {{ scene.2 }}</li>
-<li>Arousal : {{ scene.3 }}</li>
-</ul>
-<table>
-	<tr>
-    <th>Roll No</th>
-    <th>Happy</th>
-    <th>Sad</th>
-    <th>Fearful</th>
-    <th>Angry</th>
-    <th>Surprised</th>
-  </tr>
+<h4 style="text-align:center">{{ question }}</h4>
+  {% for scene in scenes %}
+    <h5>Scene {{ scene.0 }}</h5>
+    <ul>
+    <li>Focus : {{ scene.1 }}</li>
+    <li>Eagerness : {{ scene.2 }}</li>
+    <li>Arousal : {{ scene.3 }}</li>
+    </ul>
 
-		{% for roll in responses.scene.0 %}
-  <tr>
-  	<th>{{ roll }}</th>
-  	<th>{{ emotion['happy'] }}</th>
-  	<th>{{ emotion['sad'] }}</th>
-  	<th>{{ emotion['fearful'] }}</th>
-  	<th>{{ emotion['angry'] }}</th>
-  	<th>{{ emotion['surprised'] }}</th>
-  </tr>
-  		{% endfor %}
-</table>
-    {% endfor %}
-{% else %}
-    <p>No responses are available.</p>
+    <table>
+        <tr>
+          <th>Roll No</th>
+          <th>Happy</th>
+          <th>Sad</th>
+          <th>Fearful</th>
+          <th>Angry</th>
+          <th>Surprised</th>
+        </tr>
+        {% for r in responses %}
+          <tr>
+          <th>{{ r.0 }}</th>
+          <th>{{ r.1 }}</th>
+          <th>{{ r.2 }}</th>
+          <th>{{ r.3 }}</th>
+          <th>{{ r.4 }}</th>
+          <th>{{ r.5 }}</th>
+          </tr>
+        {% endfor %}
+    </table>
+    <br>
+  {% endfor %}
 {% endif %}
 </body>
 </html>

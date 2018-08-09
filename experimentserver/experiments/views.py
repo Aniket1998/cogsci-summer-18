@@ -112,34 +112,28 @@ def submit_view(request):
 def data_view(request,id):
 	exp = get_object_or_404(Experiment,pk=id)
 	responses_qset = exp.response_set.all()
-	responses = [{},{},{}]
+	responses = []
 	for r in responses_qset:
-		roll = r.roll
-		responses[0][roll] = {
-			'happy' : r.happy1,
-			'sad' : r.sad1,
-			'fearful' : r.fearful1,
-			'angry' : r.angry1,
-			'surprised' : r.surprised1
-		}
-		responses[1][roll] = {
-			'happy' : r.happy2,
-			'sad' : r.sad2,
-			'fearful' : r.fearful2,
-			'angry' : r.angry2,
-			'surprised' : r.surprised2
-		}
-		responses[2][roll] = {
-			'happy' : r.happy3,
-			'sad' : r.sad3,
-			'fearful' : r.fearful3,
-			'angry' : r.angry3,
-			'surprised' : r.surprised3
-		}
+		#print(r)
+		responses.append([r.roll,r.happy1,r.sad1,r.fearful1,r.angry1,r.surprised1,r.happy2,r.sad2,r.fearful2,r.angry2,r.surprised2,r.happy3,r.sad3,r.fearful3,r.angry3,r.surprised3])
+		# responses[1][roll] = {
+		# 	'happy' : r.happy2,
+		# 	'sad' : r.sad2,
+		# 	'fearful' : r.fearful2,
+		# 	'angry' : r.angry2,
+		# 	'surprised' : r.surprised2
+		# }
+		# responses[2][roll] = {
+		# 	'happy' : r.happy3,
+		# 	'sad' : r.sad3,
+		# 	'fearful' : r.fearful3,
+		# 	'angry' : r.angry3,
+		# 	'surprised' : r.surprised3
+		# }
 
 	scenes = [(0,exp.focus1,exp.eagerness1,exp.arousal1),(1,exp.focus2,exp.eagerness2,exp.arousal2),(2,exp.focus3,exp.eagerness3,exp.arousal3)]
 	context = {
-		'title' : exp.title,
+	 	'title' : exp.title,
 		'question' : exp.question,
 		'scenes' : scenes,
 		'responses' : responses
