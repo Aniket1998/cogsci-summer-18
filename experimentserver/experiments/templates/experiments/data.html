@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %}
+<meta charset="utf-8">
+<title>{{ title }}</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+<body>
+{% if responses %}
+<h4>{{ title }}</h4>
+<h5>{{ question }}</h5>
+	{% for scene in scenes %}
+<h5>Scene {{ scene.0 }}</h5>
+<ul>
+<li>Focus : {{ scene.1 }}</li>
+<li>Eagerness : {{ scene.2 }}</li>
+<li>Arousal : {{ scene.3 }}</li>
+</ul>
+<table>
+	<tr>
+    <th>Roll No</th>
+    <th>Happy</th>
+    <th>Sad</th>
+    <th>Fearful</th>
+    <th>Angry</th>
+    <th>Surprised</th>
+  </tr>
+
+		{% for roll in responses.scene.0 %}
+  <tr>
+  	<th>{{ roll }}</th>
+  	<th>{{ emotion['happy'] }}</th>
+  	<th>{{ emotion['sad'] }}</th>
+  	<th>{{ emotion['fearful'] }}</th>
+  	<th>{{ emotion['angry'] }}</th>
+  	<th>{{ emotion['surprised'] }}</th>
+  </tr>
+  		{% endfor %}
+</table>
+    {% endfor %}
+{% else %}
+    <p>No responses are available.</p>
+{% endif %}
+</body>
+</html>

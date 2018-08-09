@@ -137,7 +137,7 @@ def data_view(request,id):
 			'surprised' : r.surprised3
 		}
 
-	scenes = [(exp.focus1,exp.eagerness1,exp.arousal1),(exp.focus2,exp.eagerness2,exp.arousal2),(exp.focus3,exp.eagerness3,exp.arousal3)]
+	scenes = [(0,exp.focus1,exp.eagerness1,exp.arousal1),(1,exp.focus2,exp.eagerness2,exp.arousal2),(2,exp.focus3,exp.eagerness3,exp.arousal3)]
 	context = {
 		'title' : exp.title,
 		'question' : exp.question,
