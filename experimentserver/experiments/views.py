@@ -108,3 +108,40 @@ def submit_view(request):
 		angry2 = request.POST['angry2'],surprised2 = request.POST['surprised2'])
 
 	return HttpResponse('Thanks for participating!')
+
+def data_view(request,id):
+	exp = get_object_or_404(Experiment,pk=id)
+	responses_qset = exp.response_set.all()
+	responses = [{},{},{}]
+	for r in responses_qset:
+		roll = r.roll
+		responses[0][roll] = {
+			'happy' : r.happy1,
+			'sad' : r.sad1,
+			'fearful' : r.fearful1,
+			'angry' : r.angry1,
+			'surprised' : r.surprised1
+		}
+		responses[1][roll] = {
+			'happy' : r.happy2,
+			'sad' : r.sad2,
+			'fearful' : r.fearful2,
+			'angry' : r.angry2,
+			'surprised' : r.surprised2
+		}
+		responses[2][roll] = {
+			'happy' : r.happy3,
+			'sad' : r.sad3,
+			'fearful' : r.fearful3,
+			'angry' : r.angry3,
+			'surprised' : r.surprised3
+		}
+
+	scenes = [(exp.focus1,exp.eagerness1,exp.arousal1),(exp.focus2,exp.eagerness2,exp.arousal2),(exp.focus3,exp.eagerness3,exp.arousal3)]
+	context = {
+		'title' : exp.title,
+		'question' : exp.question,
+		'scenes' : scenes,
+		'responses' : responses
+	}
+	return render(request,'experiments/data.html',context)

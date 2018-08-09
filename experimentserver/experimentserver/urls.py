@@ -29,5 +29,6 @@ urlpatterns = [
     path('exp3/',views.exp3_view),
     path('exp4/',views.exp4_view),
     path('exp/submit/',views.submit_view),
+    path('data/<int:id>/',views.data_view)
     #path('exp/<int:id>/data/',views.data_view)
 ]
