@@ -973,14 +973,15 @@ function intervalComparison(x,lower,upper) {
 		    // });
 
 			view.onFrame = function(event) {
-				console.log(person1.loco.velocity+"HUL" + scene + "dist " + person1.loco.position)
-				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 45 && scene == 1){
-					activated = true;
+				console.log(person2.loco.shape.position.subtract(person1.loco.position).length+"HUL " + scene + "dist " + person1.loco.position)
+				if(person2.loco.shape.position.subtract(person1.loco.position).length < 55 && scene == 1){
+					console.log("Scene 1 done!!!")
+					activated = false;
 					$(document).ready(function(){
-					       //$('#pop1').show();
+					       $('#pop1').show();
 					});
 				}
-				if(scene==2 && person1.loco.shape.position.x < 530){
+				if(scene==2 && person1.loco.position.x < 550){
 					activated = false;
 					$(document).ready(function(){
 					       $('#pop2').show();

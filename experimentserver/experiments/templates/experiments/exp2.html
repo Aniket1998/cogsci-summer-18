@@ -5,9 +5,7 @@
 	<meta charset="utf-8">
 	<title>{{ title }}</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" />
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
     <script type="text/javascript">
     	var parray = [];
@@ -16,14 +14,13 @@ function Behavior(params) {
 	this.eagerness = params.eagerness;
 	this.arousal = params.arousal;
 	this.focus = params.focus;
-
 	this.vibrate = function(basis,mean,count) {
-		if(basis.length <= 1) {
-			var ran = new Point.random();
-			basis = ran;
-		} else {
-			basis = basis.normalize();
-		}
+		// if(basis.length <= 1) {
+		// 	var ran = new Point.random();
+		// 	basis = ran;
+		// } else {
+		// 	basis = basis.normalize();
+		// }
 		if (this.arousal > 0 && ((2 * count) % 3)) {
 			var	vibrationvec = basis.multiply(Math.random() * this.vibrationAmplitude());
 			return vibrationvec;
@@ -31,43 +28,36 @@ function Behavior(params) {
 			return new Point(0,0);
 		}
 	}
-
 	this.vibrationAmplitude = function() {
 		return this.arousal * 3.5;
 	}
-
 	this.wanderSpeed = function(dt) {
-		return 0.5 * Math.pow((10 - this.focus),2) * (60*dt);
-	}
+		// return 0.5 * Math.pow((10 - this.focus),1.3) * (60*dt);
+		console.log("FOC "+this.focus);
 
+		return 10 - this.focus;
+	}
 	this.wanderMagnitude = function() {
 		return 100;
 	}
-
 	this.visionAngle = function() {
 		return 15 * this.focus;
 	}
-
 	this.minDistance = function() {
 		return 30;
 	}
-
 	this.threat = function() {
 		return false;
 	}
-
 	this.pspace = function() {
 		return 30;
 	}
-
 	this.minInteractionDistance = function() {
 		return 150;
 	}
-
 	this.minTimeUntilCollision = function() {
 		return 40;
 	}
-
 	this.getSeekCoefficient = function() {
 		var seekCoeff;
 		if(this.eagerness > 0){			
@@ -77,8 +67,6 @@ function Behavior(params) {
 		}
 		return seekCoeff;
 	}
-
-
 	this.getFleeCoefficient = function()  {
 		var fleeCoeff;
 		if(this.eagerness > 0){
@@ -88,20 +76,15 @@ function Behavior(params) {
 		}
 		return fleeCoeff;
 	}
-
 	this.getAvoidCoefficient = function() {
 		return 0.03 * this.focus;
 	}
-
 	this.getWanderCoefficient = function() {
 		return 8 * (10 - this.focus);
 	}
-
 }
-
 function Locomotion(params) {
 	this.behavior = params.behavior;
-
 	this.shape = params.shape;
 	this.mass = params.mass;
 	this.velocity = params.velocity;
@@ -113,10 +96,8 @@ function Locomotion(params) {
 	this.mean = new Point(this.position.x,this.position.y);
 	this._wander_side = 0;
 	this._wander_up = 0;
-
 	this.basisParallel = this.velocity.normalize(); 
 	this.basisPerpendicular = this.basisParallel.rotate(90);
-
 	this._adjustForce = function(force,dt) {
 		var maxAdjSpeed = this.maxSpeed * 0.2;
 		if (this.velocity.length > maxAdjSpeed || force.length == 0) {
@@ -127,23 +108,20 @@ function Locomotion(params) {
 			return limit_max_deviation(force,cosine,this.basisParallel);
 		}
 	}
-
 	this.steer = function(force,dt,count) {
 		var acc = force.divide(this.mass);
-
 		this.velocity = clip_length(this.velocity.add(acc.multiply(dt)),this.maxSpeed);
 		this.speed = this.velocity.length;
 		this.position = this.position.add(this.velocity.multiply(dt));
-
 		this.basisParallel = this.velocity.normalize();
 		this.basisPerpendicular = this.basisParallel.rotate(90);
-
 		this.mean.x = this.position.x;
 		this.mean.y = this.position.y;
 		var par = this.behavior.focus;
 		var perp = 10 - this.behavior.focus;
 
-		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
+		var temp = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
+		this.shape.position = temp.add(this.steeringWander(dt,count));
 	}
 
 	this.getBasisPerpendicular = function() {
@@ -153,7 +131,6 @@ function Locomotion(params) {
 			return this.basisPerpendicular;
 		}
 	}
-
 	this.getBasisParallel = function() {
 		if (this.basisParallel.length < 1) {
 			return new Point(1,0);
@@ -161,33 +138,27 @@ function Locomotion(params) {
 			return this.basisParallel;
 		}
 	}
-
 	this.futurePosition = function(time) {
 		return this.position.add(this.velocity.multiply(time));
 	}
-
-	this.steeringWander = function(dt) {
+	this.steeringWander = function(dt,count) {
 		var wanderRate = this.behavior.wanderSpeed(dt);
-		if(this.velocity.length < 1)
-			wanderRate = wanderRate * this.velocity.length;
-		var wanderStrength = this.behavior.wanderMagnitude();
-		var displacement = random_vector(wanderRate);
-		var wander = this.basisParallel.multiply(wanderStrength);
-		wander = wander.add(displacement);
+		// if(this.velocity.length < 1)
+		// 	wanderRate = wanderRate * this.velocity.length;
+		// var wanderStrength = this.behavior.wanderMagnitude();
+		// var displacement = random_vector(wanderRate);
+		var wander = this.basisPerpendicular.multiply(Math.cos(count/4)*wanderRate*2);
+		console.log("Wandering by "+wander);
 		return wander;
 	}
-
 	this.steeringSeek = function(target) {
 		var desire = target.subtract(this.position);
 		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
-
 	this.steeringFlee = function(target) {
 		var desire = this.position.subtract(this.target);
 		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
-
-
 	this.predictNearestApproachTime = function(other) {		
 		var relative = other.velocity.subtract(this.velocity);
 		var relativeSpeed = relative.length;
@@ -199,7 +170,6 @@ function Locomotion(params) {
 		var projection = tanget.dot(pos);
 		return projection/relativeSpeed;
 	}
-
 	this.predictNearestApproachPosition = function(other,time) {
 		var mytravel = this.velocity.multiply(time);
 		var othertravel = other.velocity.multiply(time);
@@ -207,7 +177,6 @@ function Locomotion(params) {
 		var otherfinal = other.shape.position.add(othertravel);
 		return vector_distance(myfinal, otherfinal);
 	}
-
 	this.predictsloworfast = function(other,time) {
 		var mytravel = this.velocity.multiply(time);
 		var othertravel = other.velocity.multiply(time);
@@ -216,7 +185,6 @@ function Locomotion(params) {
 		fast = ((this.velocity.dot(myfinal.subtract(otherfinal)))>=0) ? 1:-1;
 		return fast;
 	}
-
 	this.checkInCone = function(object) {
 		var degToRad = 3.14/180;
 		var halfangle = this.behavior.visionAngle() * degToRad; // PARAMETERISE
@@ -226,7 +194,6 @@ function Locomotion(params) {
 		var ang = line.dot(direction);
 		return (ang > cus);
 	}
-
 	this.steeringEvasion = function(other,maxpred) {
 		var offset = this.position.subtract(other.position);
 		var distance = offset.length;
@@ -238,7 +205,6 @@ function Locomotion(params) {
 		var target = other.futurePosition(predtime);
 		return this.steeringFlee(target);
 	}
-
 	this.steeringPursuit = function(other,maxpred) {
 		var offset = other.position.subtract(this.position);
 		var distance = offset.length;
@@ -301,7 +267,6 @@ function Locomotion(params) {
     	var target = other.futurePosition(etl);
     	return this.steeringSeek(target);
 	}
-
 	this.steerToAvoidCollisions = function() {
 		if(parray.length) {
 			var minSeparation = this.behavior.minDistance(); //PARAMETERISE
@@ -318,11 +283,9 @@ function Locomotion(params) {
 					}
 				}
 			}
-
 			var threat = this.behavior.threat();
 			var pspace = this.behavior.pspace();
 			var mintimeuntilcollision = this.behavior.minTimeUntilCollision();			//tune these
-
 			var time, mintime = mintimeuntilcollision;
 			var index = 0;
 			for(var i=0; i<parray.length; i++) {
@@ -379,7 +342,6 @@ function Locomotion(params) {
         		}
         		var fast = this.predictsloworfast(obstacle,mintime);
                	return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.normalize().multiply(fast*this.maxForce))).normalize().multiply(10*this.maxForce);
-
 			} else {
 				return new Point(0,0);
 			}
@@ -565,7 +527,7 @@ function Interaction(after_behavior,priority) {
 			}
 			if (this.wander_context != null && this.wander_context != 0) {
 				var b4 = self.person.behavior.getWanderCoefficient();
-				var wanderForce = self.loco.steeringWander(dt).multiply(b4 * this.wander_context);
+				var wanderForce = self.loco.steeringWander(dt).multiply(0 * this.wander_context);
 				netForce = netForce.add(wanderForce);
 			}
 			return netForce;
@@ -799,13 +761,14 @@ function intervalComparison(x,lower,upper) {
 			var behavior1 = new Behavior({			// Person 1 
 				eagerness : 5,
 				arousal : 0,
-				focus : 10
+				focus : 5
 			});
 			var behavior2 = new Behavior({			// Person 2 
 				eagerness : 1,
 				arousal : 1,
-				focus : 5
+				focus : 10
 			});
+			
 			
 			var loco1 = new Locomotion({			// Person 1
 				behavior : behavior1,

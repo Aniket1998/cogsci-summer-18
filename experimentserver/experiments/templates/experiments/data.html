@@ -28,14 +28,14 @@ tr:nth-child(even) {
 Hi, let's look at our responses.<br>
 <!-- {{ responses }}<br>
  --><h3 style="text-align:center">{{ title }}</h3>
-{% if responses %}
+{% if responses1 %}
 <h4 style="text-align:center">{{ question }}</h4>
-  {% for scene in scenes %}
-    <h5>Scene {{ scene.0 }}</h5>
+
+    <h5>Scene 1</h5>
     <ul>
-    <li>Focus : {{ scene.1 }}</li>
-    <li>Eagerness : {{ scene.2 }}</li>
-    <li>Arousal : {{ scene.3 }}</li>
+    <li>Focus : {{ sceneOne[1] }}</li>
+    <li>Eagerness : {{ sceneOne.2 }}</li>
+    <li>Arousal : {{ sceneOne.3 }}</li>
     </ul>
 
     <table>
@@ -47,7 +47,7 @@ Hi, let's look at our responses.<br>
           <th>Angry</th>
           <th>Surprised</th>
         </tr>
-        {% for r in responses %}
+        {% for r in responses1 %}
           <tr>
           <th>{{ r.0 }}</th>
           <th>{{ r.1 }}</th>
@@ -59,7 +59,65 @@ Hi, let's look at our responses.<br>
         {% endfor %}
     </table>
     <br>
-  {% endfor %}
+
+    <h5>Scene 2</h5>
+    <ul>
+    <li>Focus : {{ scene2.1 }}</li>
+    <li>Eagerness : {{ scene2.2 }}</li>
+    <li>Arousal : {{ scene2.3 }}</li>
+    </ul>
+
+    <table>
+        <tr>
+          <th>Roll No</th>
+          <th>Happy</th>
+          <th>Sad</th>
+          <th>Fearful</th>
+          <th>Angry</th>
+          <th>Surprised</th>
+        </tr>
+        {% for r in responses2 %}
+          <tr>
+          <th>{{ r.0 }}</th>
+          <th>{{ r.1 }}</th>
+          <th>{{ r.2 }}</th>
+          <th>{{ r.3 }}</th>
+          <th>{{ r.4 }}</th>
+          <th>{{ r.5 }}</th>
+          </tr>
+        {% endfor %}
+    </table>
+    <br>
+
+    <h5>Scene 3</h5>
+    <ul>
+    <li>Focus : {{ scene3.1 }}</li>
+    <li>Eagerness : {{ scene3.2 }}</li>
+    <li>Arousal : {{ scene3.3 }}</li>
+    </ul>
+
+    <table>
+        <tr>
+          <th>Roll No</th>
+          <th>Happy</th>
+          <th>Sad</th>
+          <th>Fearful</th>
+          <th>Angry</th>
+          <th>Surprised</th>
+        </tr>
+        {% for r in responses3 %}
+          <tr>
+          <th>{{ r.0 }}</th>
+          <th>{{ r.1 }}</th>
+          <th>{{ r.2 }}</th>
+          <th>{{ r.3 }}</th>
+          <th>{{ r.4 }}</th>
+          <th>{{ r.5 }}</th>
+          </tr>
+        {% endfor %}
+    </table>
+    <br>
+
 {% endif %}
 </body>
 </html>
