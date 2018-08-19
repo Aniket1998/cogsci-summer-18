@@ -865,10 +865,10 @@ function intervalComparison(x,lower,upper) {
 				maxSpeed : 200,
 				shape : new Path.Circle({
 					center : view.center,
-					radius : 15,
-					fillColor : 'red'
+					radius : 12,
+					fillColor : 'orange'
 				}),
-				point : view.center.add(new Point(-50,-170))
+				point : view.center.add(new Point(100,50))
 			});
 
 			var loco2 = new Locomotion({			// Person 2
@@ -880,10 +880,10 @@ function intervalComparison(x,lower,upper) {
 				maxSpeed : 200,
 				shape : new Path.Circle({
 					center : view.center,
-					radius : 15,
-					fillColor : 'blue'
+					radius : 12,
+					fillColor : 'purple'
 				}),
-				point : view.center.add(new Point(-550,-80))
+				point : view.center.add(new Point(-550,-125))
 			});
 			
 			var longterm_goals1 = new Interaction(behavior2,10);		
@@ -899,7 +899,7 @@ function intervalComparison(x,lower,upper) {
 			var longterm_goals2 = new Interaction(behavior1,10);		
 			longterm_goals2.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(0,-50)),
+				target : view.center.add(new Point(-300,90)),
 				seek_context : 1,
 				avoid_context : 0,
 				wander_context : 0,
@@ -1047,7 +1047,7 @@ function intervalComparison(x,lower,upper) {
 			view.onFrame = function(event) {
 
 				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 150 && scene == 1){
-					activated = false;
+					activated = true;
 		    	$("#scene").html("<h3><u>Paused</u></h3>");					
 					$(document).ready(function(){
 					       $('#pop1').show();

@@ -733,6 +733,45 @@ function intervalComparison(x,lower,upper) {
 				focus : 10
 			});
 			
+			var output = {
+				scene1 : {
+	            		expid: -1,
+	            		name: "N/A",
+	            		roll: -1,
+	            		age: -1,
+	            		gender: -1,
+	            		happy1: -1,
+	            		sad1: -1,
+	            		fearful1: -1,
+	            		angry1: -1,
+	            		surprised1: -1
+				},
+				scene2 : {
+						expid: -1,
+	            		name: "N/A",
+	            		roll: -1,
+	            		age: -1,
+	            		gender: -1,
+	            		happy2: -1,
+	            		sad2: -1,
+	            		fearful2: -1,
+	            		angry2: -1,
+	            		surprised2: -1
+				},
+				scene3 : {
+						expid: -1,
+	            		name: "N/A",
+	            		roll: -1,
+	            		age: -1,
+	            		gender: -1,
+	            		happy3: -1,
+	            		sad3: -1,
+	            		fearful3: -1,
+	            		angry3: -1,
+	            		surprised3: -1
+				}
+			};
+
 			var loco1 = new Locomotion({			
 				behavior : behavior1,
 				velocity : new Point(0,0),
@@ -783,7 +822,7 @@ function intervalComparison(x,lower,upper) {
 				moving : true,
 				predictTime : 100000000,	
 				seek_context : 1,
-				avoid_context : 0,
+				avoid_context : 1,
 				wander_context : 1,
 				time : 10 * 60
 			});
@@ -806,7 +845,7 @@ function intervalComparison(x,lower,upper) {
 				// moving : true,
 				// predictTime : 100000000,	
 				seek_context : 1,
-				avoid_context : 0,
+				avoid_context : 1,
 				wander_context : 1,
 				mindist : 50
 			});	
@@ -839,7 +878,7 @@ function intervalComparison(x,lower,upper) {
 				// moving : true,
 				// predictTime : 100000000,	
 				seek_context : 1,
-				avoid_context : 0,
+				avoid_context : 1,
 				wander_context : 1,
 				mindist : 50
 			});	
@@ -855,6 +894,26 @@ function intervalComparison(x,lower,upper) {
 					interactions[i][j] = null;
 				}
 			}
+
+			$('#form1').on('submit', function(e) {
+    			// e.preventDefault();
+		    	e.stopPropagation();
+		    	
+		    	output['scene1']['expid'] = $('#expid').val();
+	            output['scene1']['name'] = $('#name').val();
+	            output['scene1']['roll'] = $('#roll').val();
+	            output['scene1']['age']  = $('#age').val();
+	            output['scene1']['gender'] = $('#gender').val();
+	            output['scene1']['happy1'] = $("input[name='happy']:checked").val();
+	            output['scene1']['sad1'] = $("input[name='sad']:checked").val();
+	            output['scene1']['fearful1'] = $("input[name='fearful']:checked").val();
+	            output['scene1']['surprised1'] = $("input[name='surprised']:checked").val();
+	            output['scene1']['angry1'] = $("input[name='angry']:checked").val();
+	            // alert(JSON.stringify(output))
+				
+				$("#form1").append("<input type='hidden' name='data' value='"+JSON.stringify(output)+"'>")
+	         
+		    });
 			
 			view.onFrame = function(event) {
 				console.log(Point.random());
@@ -871,19 +930,21 @@ function intervalComparison(x,lower,upper) {
 	<div class="text-center">
 		<h2>{{ title }}</h2>
 	</div>
+	<div class="text-center" id="scene">
+		<h4>Scene 1/1</h4>
+	</div>
 	<canvas id="experiment" width="2000" height="400"></canvas>
 	<div class="container text-center">
 			<h4>{{ question }}</h4> <br>
 			<div class="row">
-	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-4"></div>
 	  			<div class="col-xs-1">Not at all</div>
 	  			<div class="col-xs-3"></div>
 	  			<div class="col-xs-1">Maybe</div>
-	  			<div class="col-xs-3"></div>
+	  			<div class="col-xs-2"></div>
 	  			<div class="col-xs-1">Dominant emotion</div>
 			</div>
-			<form action="/exp2/" method="post" class="form-horizontal">
-			{% csrf_token %}
+			
 			<div class="form-group text-center">
 				<table class="table table-condensed">
 					<tbody>
@@ -896,8 +957,6 @@ function intervalComparison(x,lower,upper) {
 							<td><input type="radio" name="happy" value="5"></td>
 							<td><input type="radio" name="happy" value="6"></td>
 							<td><input type="radio" name="happy" value="7"></td>
-							<td><input type="radio" name="happy" value="8"></td>
-							<td><input type="radio" name="happy" value="9"></td>
 						</tr>
 						<tr>
 							<td>Sad</td>
@@ -908,8 +967,6 @@ function intervalComparison(x,lower,upper) {
 							<td><input type="radio" name="sad" value="5"></td>
 							<td><input type="radio" name="sad" value="6"></td>
 							<td><input type="radio" name="sad" value="7"></td>
-							<td><input type="radio" name="sad" value="8"></td>
-							<td><input type="radio" name="sad" value="9"></td>
 						</tr>
 						<tr>
 							<td>Fearful</td>
@@ -920,8 +977,6 @@ function intervalComparison(x,lower,upper) {
 							<td><input type="radio" name="fearful" value="5"></td>
 							<td><input type="radio" name="fearful" value="6"></td>
 							<td><input type="radio" name="fearful" value="7"></td>
-							<td><input type="radio" name="fearful" value="8"></td>
-							<td><input type="radio" name="fearful" value="9"></td>
 						</tr>
 						<tr>
 							<td>Angry</td>
@@ -932,8 +987,6 @@ function intervalComparison(x,lower,upper) {
 							<td><input type="radio" name="angry" value="5"></td>
 							<td><input type="radio" name="angry" value="6"></td>
 							<td><input type="radio" name="angry" value="7"></td>
-							<td><input type="radio" name="angry" value="8"></td>
-							<td><input type="radio" name="angry" value="9"></td>
 						</tr>
 						<tr>
 							<td>Surprised</td>
@@ -944,19 +997,22 @@ function intervalComparison(x,lower,upper) {
 							<td><input type="radio" name="surprised" value="5"></td>
 							<td><input type="radio" name="surprised" value="6"></td>
 							<td><input type="radio" name="surprised" value="7"></td>
-							<td><input type="radio" name="surprised" value="8"></td>
-							<td><input type="radio" name="surprised" value="9"></td>
+							
 						</tr>
 					</tbody>
 				</table>
 			</div>
-			<input type="hidden" name="expid" value="{{ expid }}">
-			<input type="hidden" name="Name" value="{{ name }}">
-			<input type="hidden" name="RollNo" value="{{ roll }}">
-			<input type="hidden" name="Age" value="{{ age }}">
-			<input type="hidden" name="Gender" value="{{ gender }}">
+			<input type="hidden" name="expid" value="{{ expid }}" id="expid">
+			<input type="hidden" name="Name" value="{{ name }}" id="name">
+			<input type="hidden" name="RollNo" value="{{ roll }}" id="roll">
+			<input type="hidden" name="Age" value="{{ age }}" id="age">
+			<input type="hidden" name="Gender" value="{{ gender }}" id="gender">
 			</div>
 	</div>
+	
+	<form action="/exp2/" method="post" class="form-horizontal" id="form1">
+	{% csrf_token %}
+
 	<div class="form-group text-center">
 				<div>
 					<button type="submit" class="btn btn-default">Submit</button>

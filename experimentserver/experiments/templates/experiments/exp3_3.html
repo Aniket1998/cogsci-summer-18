@@ -866,7 +866,7 @@ function intervalComparison(x,lower,upper) {
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
-					fillColor : 'red'
+					fillColor : 'blue'
 				}),
 				point : view.center.add(new Point(-50,-170))
 			});
@@ -881,9 +881,9 @@ function intervalComparison(x,lower,upper) {
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
-					fillColor : 'blue'
+					fillColor : 'brown'
 				}),
-				point : view.center.add(new Point(-550,-80))
+				point : view.center.add(new Point(-550,-150))
 			});
 			
 			var longterm_goals1 = new Interaction(behavior2,10);		
@@ -899,7 +899,7 @@ function intervalComparison(x,lower,upper) {
 			var longterm_goals2 = new Interaction(behavior1,10);		
 			longterm_goals2.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(0,-50)),
+				target : view.center.add(new Point(-100,-50)),
 				seek_context : 1,
 				avoid_context : 0,
 				wander_context : 0,
@@ -940,10 +940,8 @@ function intervalComparison(x,lower,upper) {
 			// });
 			interaction21.addLayer({
 				behavior : behavior4,
-				target : person1.loco,
-				moving : true,
-				predictTime : 100000000,
-				flee_context : 1,
+				target : view.center.add(new Point(-550,100)),
+				seek_context : 1,
 				time : 35 * 60
 			});	
 			// interaction21.addLayer({
@@ -1047,13 +1045,13 @@ function intervalComparison(x,lower,upper) {
 			view.onFrame = function(event) {
 
 				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 150 && scene == 1){
-					activated = false;
+					activated = true;
 		    	$("#scene").html("<h3><u>Paused</u></h3>");					
 					$(document).ready(function(){
 					       $('#pop1').show();
 					});
 				}
-				if(scene==2 && (person2.loco.shape.position.x > 1400 && person1.loco.shape.position.x > 1400)){
+				if(scene==2 && (person2.loco.shape.position.subtract(person1.loco.shape.position).length < 25)){
 					activated = false;
 		    	$("#scene").html("<h3></u>Paused</u></h3>");					
 					$(document).ready(function(){
