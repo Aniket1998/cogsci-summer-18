@@ -5,15 +5,20 @@
 	<meta charset="utf-8">
 	<title>{{ title }}</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="http://dsambrano.com/demos/paper.js"></script>
     <script type="text/javascript">
-    	var parray = [];
-var interactions = null;
-function Behavior(params) {
+
+   	var parray = [];
+	var interactions = null;
+	function Behavior(params) {
+	
 	this.eagerness = params.eagerness;
 	this.arousal = params.arousal;
 	this.focus = params.focus;
+
 	this.vibrate = function(basis,mean,count) {
 		// if(basis.length <= 1) {
 		// 	var ran = new Point.random();
@@ -28,36 +33,43 @@ function Behavior(params) {
 			return new Point(0,0);
 		}
 	}
-	this.vibrationAmplitude = function() {
-		return this.arousal * 3.5;
-	}
-	this.wanderSpeed = function(dt) {
-		// return 0.5 * Math.pow((10 - this.focus),1.3) * (60*dt);
-		console.log("FOC "+this.focus);
 
-		return 10 - this.focus;
+	this.vibrationAmplitude = function() {
+		return this.arousal * 2.5;
 	}
+
+	this.wanderSpeed = function(dt) {
+		return 0.5 * Math.pow((10 - this.focus),2) * (60*dt);
+	}
+
 	this.wanderMagnitude = function() {
 		return 100;
 	}
+
 	this.visionAngle = function() {
 		return 15 * this.focus;
 	}
+
 	this.minDistance = function() {
-		return 30;
+		return 25;
 	}
+
 	this.threat = function() {
 		return false;
 	}
+
 	this.pspace = function() {
 		return 30;
 	}
+
 	this.minInteractionDistance = function() {
-		return 150;
+		return 125;
 	}
+
 	this.minTimeUntilCollision = function() {
 		return 40;
 	}
+
 	this.getSeekCoefficient = function() {
 		var seekCoeff;
 		if(this.eagerness > 0){			
@@ -67,6 +79,8 @@ function Behavior(params) {
 		}
 		return seekCoeff;
 	}
+
+
 	this.getFleeCoefficient = function()  {
 		var fleeCoeff;
 		if(this.eagerness > 0){
@@ -76,15 +90,20 @@ function Behavior(params) {
 		}
 		return fleeCoeff;
 	}
+
 	this.getAvoidCoefficient = function() {
 		return 0.03 * this.focus;
 	}
+
 	this.getWanderCoefficient = function() {
 		return 8 * (10 - this.focus);
 	}
+
 }
+
 function Locomotion(params) {
 	this.behavior = params.behavior;
+
 	this.shape = params.shape;
 	this.mass = params.mass;
 	this.velocity = params.velocity;
@@ -96,8 +115,10 @@ function Locomotion(params) {
 	this.mean = new Point(this.position.x,this.position.y);
 	this._wander_side = 0;
 	this._wander_up = 0;
+
 	this.basisParallel = this.velocity.normalize(); 
 	this.basisPerpendicular = this.basisParallel.rotate(90);
+
 	this._adjustForce = function(force,dt) {
 		var maxAdjSpeed = this.maxSpeed * 0.2;
 		if (this.velocity.length > maxAdjSpeed || force.length == 0) {
@@ -108,20 +129,24 @@ function Locomotion(params) {
 			return limit_max_deviation(force,cosine,this.basisParallel);
 		}
 	}
+
 	this.steer = function(force,dt,count) {
 		var acc = force.divide(this.mass);
+
 		this.velocity = clip_length(this.velocity.add(acc.multiply(dt)),this.maxSpeed);
 		this.speed = this.velocity.length;
 		this.position = this.position.add(this.velocity.multiply(dt));
+
 		this.basisParallel = this.velocity.normalize();
 		this.basisPerpendicular = this.basisParallel.rotate(90);
+
 		this.mean.x = this.position.x;
 		this.mean.y = this.position.y;
-		var par = 0;
-		var perp = 10;
 
-		var temp = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
-		this.shape.position = temp.add(this.steeringWander(dt,count));
+		var par = this.behavior.focus;
+		var perp = 10 - this.behavior.focus;
+
+		this.shape.position = this.mean.add(this.behavior.vibrate(this.basisPerpendicular.multiply(perp/10).add(this.basisParallel.multiply(par/10)),this.mean,count));
 	}
 
 	this.getBasisPerpendicular = function() {
@@ -131,6 +156,7 @@ function Locomotion(params) {
 			return this.basisPerpendicular;
 		}
 	}
+
 	this.getBasisParallel = function() {
 		if (this.basisParallel.length < 1) {
 			return new Point(1,0);
@@ -138,27 +164,33 @@ function Locomotion(params) {
 			return this.basisParallel;
 		}
 	}
+
 	this.futurePosition = function(time) {
 		return this.position.add(this.velocity.multiply(time));
 	}
-	this.steeringWander = function(dt,count) {
+
+	this.steeringWander = function(dt) {
 		var wanderRate = this.behavior.wanderSpeed(dt);
-		// if(this.velocity.length < 1)
-		// 	wanderRate = wanderRate * this.velocity.length;
-		// var wanderStrength = this.behavior.wanderMagnitude();
-		// var displacement = random_vector(wanderRate);
-		var wander = this.basisPerpendicular.multiply(Math.cos(count/2)*wanderRate);
-		console.log("Wandering by "+wander);
+		if(this.velocity.length < 1)
+			wanderRate = wanderRate * this.velocity.length;
+		var wanderStrength = this.behavior.wanderMagnitude();
+		var displacement = random_vector(wanderRate);
+		var wander = this.basisParallel.multiply(wanderStrength);
+		wander = wander.add(displacement);
 		return wander;
 	}
+
 	this.steeringSeek = function(target) {
 		var desire = target.subtract(this.position);
 		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
+
 	this.steeringFlee = function(target) {
 		var desire = this.position.subtract(this.target);
 		return (desire.subtract(this.velocity)).normalize().multiply(this.maxForce);
 	}
+
+
 	this.predictNearestApproachTime = function(other) {		
 		var relative = other.velocity.subtract(this.velocity);
 		var relativeSpeed = relative.length;
@@ -170,6 +202,7 @@ function Locomotion(params) {
 		var projection = tanget.dot(pos);
 		return projection/relativeSpeed;
 	}
+
 	this.predictNearestApproachPosition = function(other,time) {
 		var mytravel = this.velocity.multiply(time);
 		var othertravel = other.velocity.multiply(time);
@@ -177,6 +210,7 @@ function Locomotion(params) {
 		var otherfinal = other.shape.position.add(othertravel);
 		return vector_distance(myfinal, otherfinal);
 	}
+
 	this.predictsloworfast = function(other,time) {
 		var mytravel = this.velocity.multiply(time);
 		var othertravel = other.velocity.multiply(time);
@@ -185,6 +219,7 @@ function Locomotion(params) {
 		fast = ((this.velocity.dot(myfinal.subtract(otherfinal)))>=0) ? 1:-1;
 		return fast;
 	}
+
 	this.checkInCone = function(object) {
 		var degToRad = 3.14/180;
 		var halfangle = this.behavior.visionAngle() * degToRad; // PARAMETERISE
@@ -194,6 +229,7 @@ function Locomotion(params) {
 		var ang = line.dot(direction);
 		return (ang > cus);
 	}
+
 	this.steeringEvasion = function(other,maxpred) {
 		var offset = this.position.subtract(other.position);
 		var distance = offset.length;
@@ -205,6 +241,7 @@ function Locomotion(params) {
 		var target = other.futurePosition(predtime);
 		return this.steeringFlee(target);
 	}
+
 	this.steeringPursuit = function(other,maxpred) {
 		var offset = other.position.subtract(this.position);
 		var distance = offset.length;
@@ -267,6 +304,7 @@ function Locomotion(params) {
     	var target = other.futurePosition(etl);
     	return this.steeringSeek(target);
 	}
+
 	this.steerToAvoidCollisions = function() {
 		if(parray.length) {
 			var minSeparation = this.behavior.minDistance(); //PARAMETERISE
@@ -283,9 +321,11 @@ function Locomotion(params) {
 					}
 				}
 			}
+
 			var threat = this.behavior.threat();
 			var pspace = this.behavior.pspace();
 			var mintimeuntilcollision = this.behavior.minTimeUntilCollision();			//tune these
+
 			var time, mintime = mintimeuntilcollision;
 			var index = 0;
 			for(var i=0; i<parray.length; i++) {
@@ -342,6 +382,7 @@ function Locomotion(params) {
         		}
         		var fast = this.predictsloworfast(obstacle,mintime);
                	return(((my_side.multiply(steer)).multiply(5*this.maxForce)).add(this.velocity.normalize().multiply(fast*this.maxForce))).normalize().multiply(10*this.maxForce);
+
 			} else {
 				return new Point(0,0);
 			}
@@ -527,7 +568,7 @@ function Interaction(after_behavior,priority) {
 			}
 			if (this.wander_context != null && this.wander_context != 0) {
 				var b4 = self.person.behavior.getWanderCoefficient();
-				var wanderForce = self.loco.steeringWander(dt).multiply(0 * this.wander_context);
+				var wanderForce = self.loco.steeringWander(dt).multiply(b4 * this.wander_context);
 				netForce = netForce.add(wanderForce);
 			}
 			return netForce;
@@ -537,13 +578,13 @@ function Interaction(after_behavior,priority) {
 	this.updateLayer = function() {
 		this.currentLayer++;
 		if (this.person.pid == 1) {
-			console.log("Currentlayer is now " + this.currentLayer);
+			//console.log("Currentlayer is now " + this.currentLayer);
 		}
 		this.loco.velocity = new Point(0,0);
 		if (this.active()) {
 			this.person.setBehavior(this.layers[this.currentLayer].behavior);
 		} else if (this.currentLayer == this.layers.length) {
-			console.log("layers over "+this.currentLayer)
+			//console.log("layers over "+this.currentLayer)
 			if (this.after_behavior != null) {
 				this.person.setBehavior(this.after_behavior);
 			}
@@ -746,9 +787,10 @@ function intervalComparison(x,lower,upper) {
 	}
 	return 0;
 }
-    </script>
+</script>
     
-    	<script type="text/javascript">
+   	<script type="text/javascript">
+		
 		paper.install(window);
 		window.onload = function() {
 			paper.setup('experiment');
@@ -793,69 +835,71 @@ function intervalComparison(x,lower,upper) {
 			};
 			var activated = true;
 			var scene = 1;
-			var time1;
-			var time2;
-
-			var behavior1 = new Behavior({			// Person 1 
-				eagerness : 5,
-				arousal : 0,
-				focus : 1
-			});
-			var behavior2 = new Behavior({			// Person 2 
+			
+			var behavior1 = new Behavior({			// Person 1/2 normal
 				eagerness : 1,
-				arousal : 1,
+				arousal : 0,
+				focus : 10
+			});
+			var behavior2 = new Behavior({			// Person 2 bully
+				eagerness : 10,
+				arousal : 10,
+				focus : 8
+			});
+			var behavior3 = new Behavior({			// Person 1 sad
+				eagerness : -3,
+				arousal : 4,
 				focus : 10
 			});
 			
-			
-			var loco1 = new Locomotion({			// Person 1
+			var loco1 = new Locomotion({			
 				behavior : behavior1,
 				velocity : new Point(0,0),
 				mass : 1,
 				boundingRadius : 25,
 				maxForce : 400,
-				maxSpeed : 100,
-				shape : new Path.Circle({
-					center : view.center,
-					radius : 15,
-					fillColor : 'blue'
-				}),
-				point : view.center.add(new Point(-200,150))
-			});
-
-			var loco2 = new Locomotion({			// Person 2
-				behavior : behavior1,
-				velocity : new Point(0,0),
-				mass : 1,
-				boundingRadius : 25,
-				maxForce : 400,
-				maxSpeed : 100,
+				maxSpeed : 50,
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : view.center.add(new Point(-200,-160))
+				point : view.center.add(new Point(-200,-150))
 			});
 
-			var tar = view.center.add(new Point(-200,-5));
+			var loco2 = new Locomotion({			// Person 2
+				behavior : behavior2,
+				velocity : new Point(0,0),
+				mass : 1,
+				boundingRadius : 25,
+				maxForce : 1000,
+				maxSpeed : 100000,
+				shape : new Path.Circle({
+					center : view.center,
+					radius : 20,
+					fillColor : 'black'
+				}),
+				point : view.center.add(new Point(70,-80))
+			});
+
+			var tar = view.center.add(new Point(100,100));
 			
 			var longterm_goals1 = new Interaction(behavior1,10);		
 			longterm_goals1.addLayer({
-				behavior : behavior1,
-				target : view.center.add(new Point(-200,-160)), 
+				behavior : behavior3,
+				target : tar, 
 				seek_context : 1,
 				mindist : 25
 			});
 			
-			var longterm_goals2 = new Interaction(behavior1,10);		
+			var longterm_goals2 = new Interaction(behavior1,10);	
 			longterm_goals2.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(-200,150)),
+				target : view.center.add(new Point(70,-80)), 
 				seek_context : 1,
-				mindist : 25
-			});
-
+				time : 20 * 60
+			});	
+			
 			var person1 = new Person(1,{
 				loco : loco1,
 				longterm_goal : longterm_goals1
@@ -864,26 +908,32 @@ function intervalComparison(x,lower,upper) {
 				loco : loco2,
 				longterm_goal : longterm_goals2
 			});
-						
-			parray.push(person1.loco);
-			parray.push(person2.loco);
 
-			var interaction12 = new Interaction(behavior1,100);				
+			var interaction12 = new Interaction(behavior3,100);					// look, pause, hit thrice
 			interaction12.addLayer({
-				behavior : behavior2,
-				target : tar.add(10,0),
-				seek_context : 1,
-				time : 7 * 60
+				behavior : behavior3,
+				target : tar.add(new Point(-25,0)),
+				mindist : 35
 			});	
-
-			var interaction21 = new Interaction(behavior1,100);				
+					
+			var interaction21 = new Interaction(behavior1,100);					// look, pause, hit thrice
 			interaction21.addLayer({
 				behavior : behavior2,
-				target : tar.add(-10,0),
+				target : view.center.add(new Point(15,-5)),
+				// moving : true,
+				// predictTime : 100000000,
 				seek_context : 1,
-				time : 7 * 60
+				mindist : 35
+			});	
+			interaction21.addLayer({
+				behavior : behavior1,
+				time : 2 * 60
 			});	
 
+
+			parray.push(person1.loco);
+			parray.push(person2.loco);
+			
 			interactions = new Array(2);
 			for (var i = interactions.length - 1; i >= 0; i--) {
 				interactions[i] = new Array(2);
@@ -899,38 +949,11 @@ function intervalComparison(x,lower,upper) {
             $('#pop2').hide();
             $('#pop3').hide();
 
-         //    $("#button1").click( function()
-         //   		{
-         //   			scene = 2;
-	        //      	activated = true;
-	        //      	$('#pop1').hide();
-	        //      	time1 = 400;
-         //   		}
-        	// );
-
-        	// $("#button2").click( function()
-         //   		{
-         //   			scene = 3;
-	        //      	activated = true;
-	        //      	$('#pop2').hide();
-	        //      	time2 = 375;
-         //   		}
-        	// );
-
-        	// $("#button3").click( function()
-         //   		{
-         //   			scene = 0;
-	        //      	activated = true;
-	        //      	$('#pop3').hide();
-         //   		}
-        	// );
-
         	$('#form1').on('submit', function(e) {
     			e.preventDefault();
-		    	// e.stopPropagation();
-		    	$("#scene").html("<h4>Scene 2/3<\h4>");
-	            
-	            output['scene1']['expid'] = $('#expid').val();
+		    	e.stopPropagation();
+		    	$("#scene").html("<h4>Scene 2/2<\h4>");
+		    	output['scene1']['expid'] = $('#expid').val();
 	            output['scene1']['name'] = $('#name').val();
 	            output['scene1']['roll'] = $('#roll').val();
 	            output['scene1']['age']  = $('#age').val();
@@ -940,7 +963,6 @@ function intervalComparison(x,lower,upper) {
 	            output['scene1']['fearful1'] = $("input[name='fearful1']:checked").val();
 	            output['scene1']['surprised1'] = $("input[name='surprised1']:checked").val();
 	            output['scene1']['angry1'] = $("input[name='angry1']:checked").val();
-
 	            // $.ajax({
 	            // 	type: 'POST',
 	            // 	url: '/form2_1/',    //alt : http://localhost:8000
@@ -957,11 +979,9 @@ function intervalComparison(x,lower,upper) {
 	            // 		surprised1: $("input[name='surprised1']:checked").val(),
 	            // 	},
 	            // 	success: function(data){
-	            // 		//alert($('#happy1').val()+"is the root of all evil");
 	            		scene = 2;
 	         	   		activated = true;
 	            		$('#pop1').hide();
-	            		time1 = 250;
 	            // 	},
 	            // 	error: function(xhr,status,error){
 	            // 		alert(error);
@@ -971,11 +991,9 @@ function intervalComparison(x,lower,upper) {
 		    });
 
 		    $('#form2').on('submit', function(e) {
-    			e.preventDefault();
+    		// 	e.preventDefault();
 		    	e.stopPropagation();
-		    	$("#scene").html("<h4>Scene 3/3<\h4>");
-		    	
-		    	output['scene2']['expid'] = $('#expid').val();
+				output['scene2']['expid'] = $('#expid').val();
 	            output['scene2']['name'] = $('#name').val();
 	            output['scene2']['roll'] = $('#roll').val();
 	            output['scene2']['age']  = $('#age').val();
@@ -985,107 +1003,54 @@ function intervalComparison(x,lower,upper) {
 	            output['scene2']['fearful2'] = $("input[name='fearful2']:checked").val();
 	            output['scene2']['surprised2'] = $("input[name='surprised2']:checked").val();
 	            output['scene2']['angry2'] = $("input[name='angry2']:checked").val();
-
-	            //  $.ajax({
-	            // 	type: 'POST',
-	            // 	url: '/form2_2/',    //alt : http://localhost:8000
-	            // 	data:{
-	            // 		expid: $('#expid').val(),
-	            // 		name: $('#name').val(),
-	            // 		roll: $('#roll').val(),
-	            // 		age: $('#age').val(),
-	            // 		gender: $('#gender').val(),
-	            // 		happy2: $("input[name='happy2']:checked").val(),
-	            // 		sad2: $("input[name='sad2']:checked").val(),
-	            // 		fearful2: $("input[name='fearful2']:checked").val(),
-	            // 		angry2: $("input[name='angry2']:checked").val(),
-	            // 		surprised2: $("input[name='surprised2']:checked").val(),
-	            // 	},
-	            // 	success: function(data){
-	            // 		console.log("E2 done");
-	            		scene = 3;
-	             		activated = true;
-	             		$('#pop2').hide();
-	             		time2 = 375;
-	            // 	},
-	            // 	error: function(xhr,status,error){
-	            // 		alert(error);
-	            // 	}
-	            // })
-		    });
-
-		    $('#form3').on('submit', function(e) {
-    			// e.preventDefault();
-		    	e.stopPropagation();
-		    	
-		    	output['scene3']['expid'] = $('#expid').val();
-	            output['scene3']['name'] = $('#name').val();
-	            output['scene3']['roll'] = $('#roll').val();
-	            output['scene3']['age']  = $('#age').val();
-	            output['scene3']['gender'] = $('#gender').val();
-	            output['scene3']['happy3'] = $("input[name='happy3']:checked").val();
-	            output['scene3']['sad3'] = $("input[name='sad3']:checked").val();
-	            output['scene3']['fearful3'] = $("input[name='fearful3']:checked").val();
-	            output['scene3']['surprised3'] = $("input[name='surprised3']:checked").val();
-	            output['scene3']['angry3'] = $("input[name='angry3']:checked").val();
 	            // alert(JSON.stringify(output))
 				
-				$("#form3").append("<input type='hidden' name='data' value='"+JSON.stringify(output)+"'>")
-	            //  $.ajax({
-	            // 	type: 'POST',
-	            // 	url: '/form2_2/',    //alt : http://localhost:8000
-	            // 	data:{
-	            // 		expid: $('#expid').val(),
-	            // 		name: $('#name').val(),
-	            // 		roll: $('#roll').val(),
-	            // 		age: $('#age').val(),
-	            // 		gender: $('#gender').val(),
-	            // 		happy2: $("input[name='happy2']:checked").val(),
-	            // 		sad2: $("input[name='sad2']:checked").val(),
-	            // 		fearful2: $("input[name='fearful2']:checked").val(),
-	            // 		angry2: $("input[name='angry2']:checked").val(),
-	            // 		surprised2: $("input[name='surprised2']:checked").val(),
-	            // 	},
-	            // 	success: function(data){
-	            // 		console.log("E2 done");
+				$("#form2").append("<input type='hidden' name='data' value='"+JSON.stringify(output)+"'>")
+	     //         $.ajax({
+	     //        	type: 'POST',
+	     //        	url: '/form2_2/',    //alt : http://localhost:8000
+	     //        	data:{
+	     //        		expid: $('#expid').val(),
+	     //        		name: $('#name').val(),
+	     //        		roll: $('#roll').val(),
+	     //        		age: $('#age').val(),
+	     //        		gender: $('#gender').val(),
+	     //        		happy2: $("input[name='happy2']:checked").val(),
+	     //        		sad2: $("input[name='sad2']:checked").val(),
+	     //        		fearful2: $("input[name='fearful2']:checked").val(),
+	     //        		angry2: $("input[name='angry2']:checked").val(),
+	     //        		surprised2: $("input[name='surprised2']:checked").val(),
+	     //        	},
+	     //        	success: function(data){
+	     //        		console.log("E2 done");
 	            		scene = 3;
 	             		activated = true;
 	             		$('#pop2').hide();
-	             		time2 = 375;
-	            // 	},
-	            // 	error: function(xhr,status,error){
-	            // 		alert(error);
-	            // 	}
-	            // })
+	     //        	},
+	     //        	error: function(xhr,status,error){
+	     //        		alert(error);
+	     //        	}
+	     //        })
 		    });
 
 			view.onFrame = function(event) {
-				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 200 && scene == 1){
-					activated = true;
-					console.log("Main yahan1")
-		    		$("#scene").html("<h3><u>Paused</u></h3>");
+				console.log(person2.loco.shape.position.subtract(person1.loco.position).length+"HUL " + scene + "dist " + person1.loco.position)
+				if(person2.loco.shape.position.subtract(person1.loco.position).length < 55 && scene == 1){
+					console.log("Scene 1 done!!!")
+					activated = false;
+		    	$("#scene").html("<h3><u>Paused</u></h3>");										
 					$(document).ready(function(){
 					       $('#pop1').show();
 					});
 				}
-				if(scene==2 && time1-- < 0){
-					activated = true;
-					console.log("Main yahan2")					
-		    		$("#scene").html("<h3><u>Paused</u></h3>");
+				if(scene==2 && person1.loco.position.x < 550){
+					activated = false;
+		    	$("#scene").html("<h3></u>Paused</u></h3>");					
 					$(document).ready(function(){
 					       $('#pop2').show();
 					});
 				}
-
-				if(scene==3 && person2.loco.shape.position.subtract(person1.loco.shape.position).length > 675){
-					activated = false;
-		    		$("#scene").html("<h3><u>Paused</u></h3>");
-					$(document).ready(function(){
-					       $('#pop3').show();
-					});
-				}
-
-
+				
 				if(activated){
 					person1.run(event);
 					person2.run(event);		
@@ -1099,9 +1064,9 @@ function intervalComparison(x,lower,upper) {
 	<div class="text-center">
 		<h2>{{ title }}</h2>
 	</div>
-	<div class="text-center" id="scene"><h4>Scene 1/3</h4></div>
+	<div class="text-center" id="scene"><h4>Scene 1/2</h4></div>
 	<canvas id="experiment" width="2000" height="400"></canvas>
-
+	
 	<div id="pop1">
 	<div class="container text-center">
 			<h3>{{ question }}</h3>
@@ -1113,7 +1078,7 @@ function intervalComparison(x,lower,upper) {
 	  			<div class="col-xs-2"></div>
 	  			<div class="col-xs-1">Dominant emotion</div>
 			</div>
-			<form action="/exp2/" method="post" class="form-horizontal" id="form1">
+			<form action="/exp4/" method="post" class="form-horizontal" id="form1">
 			{% csrf_token %}
 			<div class="form-group text-center">
 				<table class="table table-condensed">
@@ -1174,12 +1139,11 @@ function intervalComparison(x,lower,upper) {
 					</tbody>
 				</table>
 			</div>
-			<input type="hidden" name="expid" value="{{ expid }}" id ="expid">			
+			<input type="hidden" name="expid" value="{{ expid }}" id ="expid">
 			<input type="hidden" name="Name" value="{{ name }}" id="name">
 			<input type="hidden" name="RollNo" value="{{ roll }}" id="roll">
 			<input type="hidden" name="Age" value="{{ age }}" id="age">
 			<input type="hidden" name="Gender" value="{{ gender }}" id="gender">
-
 			</div>
 			<div class="form-group text-center">
 				<div>
@@ -1200,8 +1164,7 @@ function intervalComparison(x,lower,upper) {
 	  			<div class="col-xs-3"></div>
 	  			<div class="col-xs-1">Dominant emotion</div>
 			</div>
-			<form action="/exp2/" method="post" class="form-horizontal" id="form2">
-			{% csrf_token %}
+			
 			<div class="form-group text-center">
 				<table class="table table-condensed">
 					<tbody>
@@ -1269,6 +1232,14 @@ function intervalComparison(x,lower,upper) {
 					<button type="submit" class="btn btn-default" id="button2">Submit</button>
 				</div>
 	</div>
+	<form action="/exp/submit/" method="post" class="form-horizontal" id="form2">
+	{% csrf_token %}
+
+		<div class="form-group text-center">
+			<div>
+				<button type="submit" class="btn btn-default" id="button3">Submit</button>
+			</div>
+		</div>
 	</form>
 	</div>
 
@@ -1283,6 +1254,8 @@ function intervalComparison(x,lower,upper) {
 	  			<div class="col-xs-3"></div>
 	  			<div class="col-xs-1">Dominant emotion</div>
 			</div>
+			<form action="/expNext/" method="post" class="form-horizontal" id="form3">
+			{% csrf_token %}
 			<div class="form-group text-center">
 				<table class="table table-condensed">
 					<tbody>
@@ -1344,20 +1317,17 @@ function intervalComparison(x,lower,upper) {
 			<input type="hidden" name="RollNo" value="{{ roll }}">
 			<input type="hidden" name="Age" value="{{ age }}">
 			<input type="hidden" name="Gender" value="{{ gender }}">
+			</div>
+	<div class="form-group text-center">
+				<div>
+					<button type="submit" class="btn btn-default" id="button3">Submit</button>
+				<input type="hidden" name="expid" value="{{ expid }}">
+					
+				</div>
 
-			</div>
-	<form action="/exp3/" method="post" class="form-horizontal" id="form3">
-	{% csrf_token %}
-		
-		<div class="form-group text-center">
-			<div>
-				<button type="submit" class="btn btn-default" id="button3">Submit</button>
-			</div>
-		</div>
+	</div>
 	</form>
 	</div>
-	
-	
 
 </body>
 </html>

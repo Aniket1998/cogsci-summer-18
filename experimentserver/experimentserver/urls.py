@@ -25,9 +25,9 @@ urlpatterns = [
     # path('form2_2/',views.form2_2),
     
     path('exp1/',views.exp1_view),
-    path('exp2/',views.exp2_view),
-    path('exp3/',views.exp3_view),
-    path('exp4/',views.exp4_view),
+    path('expNext/',views.expNext_view),
+    # path('exp3/',views.exp3_view),
+    # path('exp4/',views.exp4_view),
     path('exp/submit/',views.submit_view),
     path('data/<int:id>/',views.data_view)
     #path('exp/<int:id>/data/',views.data_view)

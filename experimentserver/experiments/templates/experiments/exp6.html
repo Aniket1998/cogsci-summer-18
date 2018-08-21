@@ -781,10 +781,10 @@ function intervalComparison(x,lower,upper) {
 				maxSpeed : 175,
 				shape : new Path.Circle({
 					center : view.center,
-					radius : 17,
-					fillColor : 'black'
+					radius : 15,
+					fillColor : 'purple'
 				}),
-				point : view.center.add(new Point(-50,-150))			
+				point : view.center.add(new Point(-500,-150))			
 			});
 			
 			var loco2 = new Locomotion({			// Person 2
@@ -796,10 +796,10 @@ function intervalComparison(x,lower,upper) {
 				maxSpeed : 200,
 				shape : new Path.Circle({
 					center : view.center,
-					radius : 17,
-					fillColor : 'orange'
+					radius : 15,
+					fillColor : 'green'
 				}),
-				point : view.center.add(new Point(-200,-100))
+				point : view.center.add(new Point(-350,-100))
 			});
 
 			var longterm_goals1 = new Interaction(behavior1,1);	
@@ -814,8 +814,6 @@ function intervalComparison(x,lower,upper) {
 				loco : loco2,
 				longterm_goal : longterm_goals2
 			});
-
-			var tar = view.center.add(new Point(-200,-100));
 
 			longterm_goals1.addLayer({
 				behavior : behavior1,
@@ -842,7 +840,7 @@ function intervalComparison(x,lower,upper) {
 			// });	
 			longterm_goals2.addLayer({
 				behavior : behavior2,
-				target : tar.add(new Point(-100,80)),
+				target : view.center.add(new Point(-100, 50)),
 				// target : person1.loco,
 				// moving : true,
 				// predictTime : 100000000,	
@@ -853,7 +851,7 @@ function intervalComparison(x,lower,upper) {
 			});	
 			longterm_goals2.addLayer({
 				behavior : behavior2,
-				target : tar.add(new Point(-200,-80)),
+				target : view.center.add(new Point(-500,-100)).add(new Point(350,-50)),
 				// target : person1.loco,
 				// moving : true,
 				// predictTime : 100000000,	
@@ -864,7 +862,7 @@ function intervalComparison(x,lower,upper) {
 			});	
 			longterm_goals2.addLayer({
 				behavior : behavior2,
-				target : tar.add(new Point(-300,80)),
+				target : view.center.add(new Point(-500,-100)).add(new Point(500,-50)),
 				// target : person1.loco,
 				// moving : true,
 				// predictTime : 100000000,	
@@ -875,7 +873,7 @@ function intervalComparison(x,lower,upper) {
 			});	
 			longterm_goals2.addLayer({
 				behavior : behavior2,
-				target : tar.add(new Point(-400,50)),
+				target : view.center.add(new Point(-500,-100)).add(new Point(650,-50)),
 				// target : person1.loco,
 				// moving : true,
 				// predictTime : 100000000,	
@@ -919,7 +917,7 @@ function intervalComparison(x,lower,upper) {
 			
 			view.onFrame = function(event) {
 				console.log(Point.random());
-				if(person1.loco.position.x - person2.loco.position.x > 3){
+				if(person1.loco.position.x - person2.loco.position.x < 3){
 					person1.run(event);		
 					person2.run(event);		
 				}
@@ -1012,12 +1010,14 @@ function intervalComparison(x,lower,upper) {
 			</div>
 	</div>
 	
-	<form action="/exp2/" method="post" class="form-horizontal" id="form1">
+	<form action="/expNext/" method="post" class="form-horizontal" id="form1">
 	{% csrf_token %}
 
 	<div class="form-group text-center">
 				<div>
 					<button type="submit" class="btn btn-default">Submit</button>
+				<input type="hidden" name="expid" value="{{ expid }}">
+					
 				</div>
 	</div>
 	</form>

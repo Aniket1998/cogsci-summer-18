@@ -1023,12 +1023,14 @@ function intervalComparison(x,lower,upper) {
 			</div>
 	</div>
 	
-	<form action="/exp2/" method="post" class="form-horizontal" id="form1">
+	<form action="/expNext/" method="post" class="form-horizontal" id="form1">
 	{% csrf_token %}
 
 	<div class="form-group text-center">
 				<div>
 					<button type="submit" class="btn btn-default">Submit</button>
+				<input type="hidden" name="expid" value="{{ expid }}">
+					
 				</div>
 	</div>
 	</form>

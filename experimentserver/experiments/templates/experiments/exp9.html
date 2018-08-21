@@ -721,8 +721,6 @@ function intervalComparison(x,lower,upper) {
 		window.onload = function() {
 			console.log("Seems loaded");
 			paper.setup('experiment');
-
-			var i;
 			var behavior1 = new Behavior({			
 				eagerness : 1,
 				arousal : 0,
@@ -783,10 +781,10 @@ function intervalComparison(x,lower,upper) {
 				maxSpeed : 175,
 				shape : new Path.Circle({
 					center : view.center,
-					radius : 15,
-					fillColor : 'red'
+					radius : 17,
+					fillColor : 'black'
 				}),
-				point : view.center.add(new Point(-650,-100))			
+				point : view.center.add(new Point(-50,-150))			
 			});
 			
 			var loco2 = new Locomotion({			// Person 2
@@ -798,10 +796,10 @@ function intervalComparison(x,lower,upper) {
 				maxSpeed : 200,
 				shape : new Path.Circle({
 					center : view.center,
-					radius : 15,
-					fillColor : 'blue'
+					radius : 17,
+					fillColor : 'orange'
 				}),
-				point : view.center.add(new Point(-500,-100))
+				point : view.center.add(new Point(-200,-100))
 			});
 
 			var longterm_goals1 = new Interaction(behavior1,1);	
@@ -817,6 +815,8 @@ function intervalComparison(x,lower,upper) {
 				longterm_goal : longterm_goals2
 			});
 
+			var tar = view.center.add(new Point(-200,-100));
+
 			longterm_goals1.addLayer({
 				behavior : behavior1,
 				//target : new Point(1000,30),
@@ -829,9 +829,23 @@ function intervalComparison(x,lower,upper) {
 				time : 10 * 60
 			});
 
+			// longterm_goals2.addLayer({
+			// 	behavior : behavior2,
+			// 	target : Point.random().multiply(view.size),
+			// 	// target : person1.loco,
+			// 	// moving : true,
+			// 	// predictTime : 100000000,	
+			// 	flee_context : 1,
+			// 	avoid_context : 0,
+			// 	wander_context : 1,
+			// 	time : 1 * 60
+			// });	
 			longterm_goals2.addLayer({
 				behavior : behavior2,
-				target : view.center.add(new Point(-500,-100)).add(new Point(150,75)),
+				target : tar.add(new Point(-100,80)),
+				// target : person1.loco,
+				// moving : true,
+				// predictTime : 100000000,	
 				seek_context : 1,
 				avoid_context : 1,
 				wander_context : 1,
@@ -839,7 +853,10 @@ function intervalComparison(x,lower,upper) {
 			});	
 			longterm_goals2.addLayer({
 				behavior : behavior2,
-				target : view.center.add(new Point(-500,-100)).add(new Point(350,-50)),
+				target : tar.add(new Point(-200,-80)),
+				// target : person1.loco,
+				// moving : true,
+				// predictTime : 100000000,	
 				seek_context : 1,
 				avoid_context : 1,
 				wander_context : 1,
@@ -847,7 +864,10 @@ function intervalComparison(x,lower,upper) {
 			});	
 			longterm_goals2.addLayer({
 				behavior : behavior2,
-				target : view.center.add(new Point(-500,-100)).add(new Point(500,-50)),
+				target : tar.add(new Point(-300,80)),
+				// target : person1.loco,
+				// moving : true,
+				// predictTime : 100000000,	
 				seek_context : 1,
 				avoid_context : 1,
 				wander_context : 1,
@@ -855,7 +875,10 @@ function intervalComparison(x,lower,upper) {
 			});	
 			longterm_goals2.addLayer({
 				behavior : behavior2,
-				target : view.center.add(new Point(-500,-100)).add(new Point(650,-50)),
+				target : tar.add(new Point(-400,50)),
+				// target : person1.loco,
+				// moving : true,
+				// predictTime : 100000000,	
 				seek_context : 1,
 				avoid_context : 1,
 				wander_context : 1,
@@ -873,10 +896,9 @@ function intervalComparison(x,lower,upper) {
 					interactions[i][j] = null;
 				}
 			}
-	   		$('#pop1').hide();
-	   		$('#timer').hide();
-	   		
+
 			$('#form1').on('submit', function(e) {
+    			// e.preventDefault();
 		    	e.stopPropagation();
 		    	
 		    	output['scene1']['expid'] = $('#expid').val();
@@ -890,31 +912,16 @@ function intervalComparison(x,lower,upper) {
 	            output['scene1']['surprised1'] = $("input[name='surprised']:checked").val();
 	            output['scene1']['angry1'] = $("input[name='angry']:checked").val();
 	            // alert(JSON.stringify(output))
-				i = 5;
-	   			$('#timer').hide();				
+				
 				$("#form1").append("<input type='hidden' name='data' value='"+JSON.stringify(output)+"'>")
 	         
 		    });
 			
-			var timeKeeper = 5 * 60;
-		    i = 4;
-
 			view.onFrame = function(event) {
-				// if(i<0){
-				// 	go to next page
-				// }
-				if(person1.loco.position.x - person2.loco.position.x < 3){
+				console.log(Point.random());
+				if(person1.loco.position.x - person2.loco.position.x > 3){
 					person1.run(event);		
 					person2.run(event);		
-				} else {
-					$('#pop1').show();
-					$('#timer').show();
-				        timeKeeper--;
-	                    if(timeKeeper < 0 && i>=0){
-	                    	$('#timer').html("<h3>"+i+"</h3>");
-	                    	i--;
-	                		timeKeeper = 5 * 60;
-	                	}
 				}
 			}
 		}
@@ -929,13 +936,6 @@ function intervalComparison(x,lower,upper) {
 		<h4>Scene 1/1</h4>
 	</div>
 	<canvas id="experiment" width="2000" height="400"></canvas>
-	<div class="text-center">
-		<div id="timer">
-			<h2>5</h2>
-		</div>
-	</div>
-
-<div id="pop1">
 	<div class="container text-center">
 			<h4>{{ question }}</h4> <br>
 			<div class="row">
@@ -1009,19 +1009,19 @@ function intervalComparison(x,lower,upper) {
 			<input type="hidden" name="RollNo" value="{{ roll }}" id="roll">
 			<input type="hidden" name="Age" value="{{ age }}" id="age">
 			<input type="hidden" name="Gender" value="{{ gender }}" id="gender">
-		</div>
+			</div>
+	</div>
 	
-	<form action="/expNext/" method="post" class="form-horizontal" id="form1">
+	<form action="/exp2/" method="post" class="form-horizontal" id="form1">
 	{% csrf_token %}
 
 	<div class="form-group text-center">
 				<div>
 					<button type="submit" class="btn btn-default">Submit</button>
-					<input type="hidden" name="expid" value="{{ expid }}">
-
+				<input type="hidden" name="expid" value="{{ expid }}">
+					
 				</div>
 	</div>
 	</form>
-</div>
 </body>
 </html>

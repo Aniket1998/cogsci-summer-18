@@ -866,9 +866,9 @@ function intervalComparison(x,lower,upper) {
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
-					fillColor : 'blue'
+					fillColor : 'black'
 				}),
-				point : view.center.add(new Point(-50,-170))
+				point : view.center.add(new Point(-550,80))
 			});
 
 			var loco2 = new Locomotion({			// Person 2
@@ -881,15 +881,15 @@ function intervalComparison(x,lower,upper) {
 				shape : new Path.Circle({
 					center : view.center,
 					radius : 15,
-					fillColor : 'brown'
+					fillColor : 'green'
 				}),
-				point : view.center.add(new Point(-550,-150))
+				point : view.center.add(new Point(-50,-80))
 			});
 			
 			var longterm_goals1 = new Interaction(behavior2,10);		
 			longterm_goals1.addLayer({
 				behavior : behavior3,
-				target : view.center.add(new Point(-500,-50)), 
+				target : view.center.add(new Point(-100,-110)), 
 				seek_context : 1,
 				avoid_context : 0,
 				wander_context : 0,
@@ -899,7 +899,7 @@ function intervalComparison(x,lower,upper) {
 			var longterm_goals2 = new Interaction(behavior1,10);		
 			longterm_goals2.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(-100,-50)),
+				target : view.center.add(new Point(-550,-80)),
 				seek_context : 1,
 				avoid_context : 0,
 				wander_context : 0,
@@ -940,8 +940,10 @@ function intervalComparison(x,lower,upper) {
 			// });
 			interaction21.addLayer({
 				behavior : behavior4,
-				target : view.center.add(new Point(-550,100)),
-				seek_context : 1,
+				target : person1.loco,
+				moving : true,
+				predictTime : 100000000,
+				flee_context : 1,
 				time : 35 * 60
 			});	
 			// interaction21.addLayer({
@@ -1045,13 +1047,13 @@ function intervalComparison(x,lower,upper) {
 			view.onFrame = function(event) {
 
 				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 150 && scene == 1){
-					activated = true;
+					activated = false;
 		    	$("#scene").html("<h3><u>Paused</u></h3>");					
 					$(document).ready(function(){
 					       $('#pop1').show();
 					});
 				}
-				if(scene==2 && (person2.loco.shape.position.subtract(person1.loco.shape.position).length < 25)){
+				if(scene==2 && (person2.loco.shape.position.x > 1400 && person1.loco.shape.position.x > 1400)){
 					activated = false;
 		    	$("#scene").html("<h3></u>Paused</u></h3>");					
 					$(document).ready(function(){
@@ -1247,104 +1249,11 @@ function intervalComparison(x,lower,upper) {
 		<div class="form-group text-center">
 			<div>
 				<button type="submit" class="btn btn-default" id="button3">Submit</button>
+				<input type="hidden" name="expid" value="{{ expid }}">
+				
 			</div>
 		</div>
 	</form>
 	</div>
-
-	<!-- <div id="pop3">
-	<div class="container text-center">
-			<h3>{{ question }}</h3>
-			<div class="row">
-	  			<div class="col-xs-3"></div>
-	  			<div class="col-xs-1">Not at all</div>
-	  			<div class="col-xs-3"></div>
-	  			<div class="col-xs-1">Maybe</div>
-	  			<div class="col-xs-3"></div>
-	  			<div class="col-xs-1">Dominant emotion</div>
-			</div>
-			<form action="exp/submit/" method="post" class="form-horizontal" id="form3">
-			{% csrf_token %}
-			<div class="form-group text-center">
-				<table class="table table-condensed">
-					<tbody>
-						<tr>
-							<td>Happy</td>
-							<td><input type="radio" name="happy3" value="1"></td>
-							<td><input type="radio" name="happy3" value="2"></td>
-							<td><input type="radio" name="happy3" value="3"></td>
-							<td><input type="radio" name="happy3" value="4"></td>
-							<td><input type="radio" name="happy3" value="5"></td>
-							<td><input type="radio" name="happy3" value="6"></td>
-							<td><input type="radio" name="happy3" value="7"></td>
-							<td><input type="radio" name="happy3" value="8"></td>
-							<td><input type="radio" name="happy3" value="9"></td>
-						</tr>
-						<tr>
-							<td>Sad</td>
-							<td><input type="radio" name="sad3" value="1"></td>
-							<td><input type="radio" name="sad3" value="2"></td>
-							<td><input type="radio" name="sad3" value="3"></td>
-							<td><input type="radio" name="sad3" value="4"></td>
-							<td><input type="radio" name="sad3" value="5"></td>
-							<td><input type="radio" name="sad3" value="6"></td>
-							<td><input type="radio" name="sad3" value="7"></td>
-							<td><input type="radio" name="sad3" value="8"></td>
-							<td><input type="radio" name="sad3" value="9"></td>
-						</tr>
-						<tr>
-							<td>Fearful</td>
-							<td><input type="radio" name="fearful3" value="1"></td>
-							<td><input type="radio" name="fearful3" value="2"></td>
-							<td><input type="radio" name="fearful3" value="3"></td>
-							<td><input type="radio" name="fearful3" value="4"></td>
-							<td><input type="radio" name="fearful3" value="5"></td>
-							<td><input type="radio" name="fearful3" value="6"></td>
-							<td><input type="radio" name="fearful3" value="7"></td>
-							<td><input type="radio" name="fearful3" value="8"></td>
-							<td><input type="radio" name="fearful3" value="9"></td>
-						</tr>
-						<tr>
-							<td>Angry</td>
-							<td><input type="radio" name="angry3" value="1"></td>
-							<td><input type="radio" name="angry3" value="2"></td>
-							<td><input type="radio" name="angry3" value="3"></td>
-							<td><input type="radio" name="angry3" value="4"></td>
-							<td><input type="radio" name="angry3" value="5"></td>
-							<td><input type="radio" name="angry3" value="6"></td>
-							<td><input type="radio" name="angry3" value="7"></td>
-							<td><input type="radio" name="angry3" value="8"></td>
-							<td><input type="radio" name="angry3" value="9"></td>
-						</tr>
-						<tr>
-							<td>Surprised</td>
-							<td><input type="radio" name="surprised3" value="1"></td>
-							<td><input type="radio" name="surprised3" value="2"></td>
-							<td><input type="radio" name="surprised3" value="3"></td>
-							<td><input type="radio" name="surprised3" value="4"></td>
-							<td><input type="radio" name="surprised3" value="5"></td>
-							<td><input type="radio" name="surprised3" value="6"></td>
-							<td><input type="radio" name="surprised3" value="7"></td>
-							<td><input type="radio" name="surprised3" value="8"></td>
-							<td><input type="radio" name="surprised3" value="9"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div> -->
-<!-- 		Uncomment this!
- -->			<!-- <input type="hidden" name="expid" value="{{ expid }}">
-			<input type="hidden" name="Name" value="{{ name }}">
-			<input type="hidden" name="RollNo" value="{{ roll }}">
-			<input type="hidden" name="Age" value="{{ age }}">
-			<input type="hidden" name="Gender" value="{{ gender }}">
-			</div> -->
-	<!-- <div class="form-group text-center">
-				<div>
-					<button type="submit" class="btn btn-default" id="button3">Submit</button>
-				</div>
-	</div> -->
-	<!-- </form>
-	</div> -->
-
 </body>
 </html>

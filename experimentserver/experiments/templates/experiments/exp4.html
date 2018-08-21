@@ -578,7 +578,6 @@ function Interaction(after_behavior,priority) {
 	this.updateLayer = function() {
 		this.currentLayer++;
 		if (this.person.pid == 1) {
-			//console.log("Currentlayer is now " + this.currentLayer);
 		}
 		this.loco.velocity = new Point(0,0);
 		if (this.active()) {
@@ -836,17 +835,17 @@ function intervalComparison(x,lower,upper) {
 			var activated = true;
 			var scene = 1;
 			
-			var behavior1 = new Behavior({			// Person 1/2 normal
+			var behavior1 = new Behavior({			
 				eagerness : 1,
 				arousal : 0,
 				focus : 10
 			});
-			var behavior2 = new Behavior({			// Person 2 bully
+			var behavior2 = new Behavior({			
 				eagerness : 10,
 				arousal : 10,
 				focus : 8
 			});
-			var behavior3 = new Behavior({			// Person 1 sad
+			var behavior3 = new Behavior({			
 				eagerness : -3,
 				arousal : 4,
 				focus : 10
@@ -909,19 +908,17 @@ function intervalComparison(x,lower,upper) {
 				longterm_goal : longterm_goals2
 			});
 
-			var interaction12 = new Interaction(behavior3,100);					// look, pause, hit thrice
+			var interaction12 = new Interaction(behavior3,100);					
 			interaction12.addLayer({
 				behavior : behavior3,
-				target : view.center.add(new Point(-125,100)),
+				target : tar,
 				mindist : 35
 			});	
 					
-			var interaction21 = new Interaction(behavior1,100);					// look, pause, hit thrice
+			var interaction21 = new Interaction(behavior1,100);					
 			interaction21.addLayer({
 				behavior : behavior2,
 				target : view.center.add(new Point(-100,-50)),
-				// moving : true,
-				// predictTime : 100000000,
 				seek_context : 1,
 				mindist : 35
 			});	
@@ -947,12 +944,12 @@ function intervalComparison(x,lower,upper) {
 
             $('#pop1').hide();
             $('#pop2').hide();
-            $('#pop3').hide();
+            $('#timer').hide();
 
         	$('#form1').on('submit', function(e) {
     			e.preventDefault();
 		    	e.stopPropagation();
-		    	$("#scene").html("<h4>Scene 2/2<\h4>");
+		    	$("#scene").html("<h4>Scene 2/2</h4>");
 		    	output['scene1']['expid'] = $('#expid').val();
 	            output['scene1']['name'] = $('#name').val();
 	            output['scene1']['roll'] = $('#roll').val();
@@ -963,35 +960,15 @@ function intervalComparison(x,lower,upper) {
 	            output['scene1']['fearful1'] = $("input[name='fearful1']:checked").val();
 	            output['scene1']['surprised1'] = $("input[name='surprised1']:checked").val();
 	            output['scene1']['angry1'] = $("input[name='angry1']:checked").val();
-	            // $.ajax({
-	            // 	type: 'POST',
-	            // 	url: '/form2_1/',    //alt : http://localhost:8000
-	            // 	data:{
-	            // 		expid: $('#expid').val(),
-	            // 		name: $('#name').val(),
-	            // 		roll: $('#roll').val(),
-	            // 		age: $('#age').val(),
-	            // 		gender: $('#gender').val(),
-	            // 		happy1: $("input[name='happy1']:checked").val(),
-	            // 		sad1: $("input[name='sad1']:checked").val(),
-	            // 		fearful1: $("input[name='fearful1']:checked").val(),
-	            // 		angry1: $("input[name='angry1']:checked").val(),
-	            // 		surprised1: $("input[name='surprised1']:checked").val(),
-	            // 	},
-	            // 	success: function(data){
-	            		scene = 2;
-	         	   		activated = true;
-	            		$('#pop1').hide();
-	            // 	},
-	            // 	error: function(xhr,status,error){
-	            // 		alert(error);
-	            // 	}
-	            // })
-
+	            
+	            i = 5;
+	            $('#timer').hide();	            
+	            scene = 2;
+	         	activated = true;
+	            $('#pop1').hide();
 		    });
 
 		    $('#form2').on('submit', function(e) {
-    		// 	e.preventDefault();
 		    	e.stopPropagation();
 				output['scene2']['expid'] = $('#expid').val();
 	            output['scene2']['name'] = $('#name').val();
@@ -1004,50 +981,49 @@ function intervalComparison(x,lower,upper) {
 	            output['scene2']['surprised2'] = $("input[name='surprised2']:checked").val();
 	            output['scene2']['angry2'] = $("input[name='angry2']:checked").val();
 	            // alert(JSON.stringify(output))
-				
 				$("#form2").append("<input type='hidden' name='data' value='"+JSON.stringify(output)+"'>")
-	     //         $.ajax({
-	     //        	type: 'POST',
-	     //        	url: '/form2_2/',    //alt : http://localhost:8000
-	     //        	data:{
-	     //        		expid: $('#expid').val(),
-	     //        		name: $('#name').val(),
-	     //        		roll: $('#roll').val(),
-	     //        		age: $('#age').val(),
-	     //        		gender: $('#gender').val(),
-	     //        		happy2: $("input[name='happy2']:checked").val(),
-	     //        		sad2: $("input[name='sad2']:checked").val(),
-	     //        		fearful2: $("input[name='fearful2']:checked").val(),
-	     //        		angry2: $("input[name='angry2']:checked").val(),
-	     //        		surprised2: $("input[name='surprised2']:checked").val(),
-	     //        	},
-	     //        	success: function(data){
-	     //        		console.log("E2 done");
-	            		scene = 3;
-	             		activated = true;
-	             		$('#pop2').hide();
-	     //        	},
-	     //        	error: function(xhr,status,error){
-	     //        		alert(error);
-	     //        	}
-	     //        })
+	            
+	            i = 5;
+	            $('#timer').hide();	            
+	            scene = 3;
+	            activated = true;
+	            $('#pop2').hide();
 		    });
 
+		    var timeKeeper = 4 * 60;
+		    i = 4;
+
 			view.onFrame = function(event) {
-				console.log(person2.loco.shape.position.subtract(person1.loco.position).length+"HUL " + scene + "dist " + person1.loco.position)
+				// if(i<0){
+				// 	go to next page
+				// }
 				if(person2.loco.shape.position.subtract(person1.loco.position).length < 55 && scene == 1){
 					console.log("Scene 1 done!!!")
 					activated = false;
-		    	$("#scene").html("<h3><u>Paused</u></h3>");										
+		    		$("#scene").html("<h3><u>Paused</u</h3>");										
 					$(document).ready(function(){
-					       $('#pop1').show();
+					        $('#pop1').show();
+				            $('#timer').show();
+				            timeKeeper--;
+	                       	if(timeKeeper < 0){
+	                       		$('#timer').html("<h3>"+i+"</h3>");
+	                       		i--;
+	                       		timeKeeper = 4 * 60;
+	                       	}
 					});
 				}
 				if(scene==2 && person1.loco.position.x < 550){
 					activated = false;
-		    	$("#scene").html("<h3></u>Paused</u></h3>");					
+		    		$("#scene").html("<h3></u>Paused</u></h3>");					
 					$(document).ready(function(){
 					       $('#pop2').show();
+					       $('#timer').show();
+				            timeKeeper--;
+	                       	if(timeKeeper < 0){
+	                       		$('#timer').html("<h3>"+i+"</h3>");
+	                       		i--;
+	                       		timeKeeper = 4 * 60;
+	                       	}
 					});
 				}
 				
@@ -1064,9 +1040,13 @@ function intervalComparison(x,lower,upper) {
 	<div class="text-center">
 		<h2>{{ title }}</h2>
 	</div>
-	<div class="text-center" id="scene"><h4>Scene 1/2<\h4></div>
+	<div class="text-center" id="scene"><h4>Scene 1/2</h4></div>
 	<canvas id="experiment" width="2000" height="400"></canvas>
-	
+	<div class="text-center">
+		<div id="timer">
+			<h3>5</h3>
+		</div>
+	</div>
 	<div id="pop1">
 	<div class="container text-center">
 			<h3>{{ question }}</h3>
@@ -1227,104 +1207,16 @@ function intervalComparison(x,lower,upper) {
 			<input type="hidden" name="Age" value="{{ age }}">
 			<input type="hidden" name="Gender" value="{{ gender }}">
 			</div>
-	<div class="form-group text-center">
-				<div>
-					<button type="submit" class="btn btn-default" id="button2">Submit</button>
-				</div>
-	</div>
-	<form action="/exp/submit/" method="post" class="form-horizontal" id="form2">
+	<form action="/expNext/" method="post" class="form-horizontal" id="form2">
 	{% csrf_token %}
 
 		<div class="form-group text-center">
 			<div>
 				<button type="submit" class="btn btn-default" id="button3">Submit</button>
+				<input type="hidden" name="expid" value="{{ expid }}">
 			</div>
 		</div>
 	</form>
 	</div>
-
-	<div id="pop3">
-	<div class="container text-center">
-			<h3>{{ question }}</h3>
-			<div class="row">
-	  			<div class="col-xs-3"></div>
-	  			<div class="col-xs-1">Not at all</div>
-	  			<div class="col-xs-3"></div>
-	  			<div class="col-xs-1">Maybe</div>
-	  			<div class="col-xs-3"></div>
-	  			<div class="col-xs-1">Dominant emotion</div>
-			</div>
-			<form action="/exp/submit/" method="post" class="form-horizontal" id="form3">
-			{% csrf_token %}
-			<div class="form-group text-center">
-				<table class="table table-condensed">
-					<tbody>
-						<tr>
-							<td>Happy</td>
-							<td><input type="radio" name="happy3" value="1"></td>
-							<td><input type="radio" name="happy3" value="2"></td>
-							<td><input type="radio" name="happy3" value="3"></td>
-							<td><input type="radio" name="happy3" value="4"></td>
-							<td><input type="radio" name="happy3" value="5"></td>
-							<td><input type="radio" name="happy3" value="6"></td>
-							<td><input type="radio" name="happy3" value="7"></td>
-						</tr>
-						<tr>
-							<td>Sad</td>
-							<td><input type="radio" name="sad3" value="1"></td>
-							<td><input type="radio" name="sad3" value="2"></td>
-							<td><input type="radio" name="sad3" value="3"></td>
-							<td><input type="radio" name="sad3" value="4"></td>
-							<td><input type="radio" name="sad3" value="5"></td>
-							<td><input type="radio" name="sad3" value="6"></td>
-							<td><input type="radio" name="sad3" value="7"></td>
-						</tr>
-						<tr>
-							<td>Fearful</td>
-							<td><input type="radio" name="fearful3" value="1"></td>
-							<td><input type="radio" name="fearful3" value="2"></td>
-							<td><input type="radio" name="fearful3" value="3"></td>
-							<td><input type="radio" name="fearful3" value="4"></td>
-							<td><input type="radio" name="fearful3" value="5"></td>
-							<td><input type="radio" name="fearful3" value="6"></td>
-							<td><input type="radio" name="fearful3" value="7"></td>
-						</tr>
-						<tr>
-							<td>Angry</td>
-							<td><input type="radio" name="angry3" value="1"></td>
-							<td><input type="radio" name="angry3" value="2"></td>
-							<td><input type="radio" name="angry3" value="3"></td>
-							<td><input type="radio" name="angry3" value="4"></td>
-							<td><input type="radio" name="angry3" value="5"></td>
-							<td><input type="radio" name="angry3" value="6"></td>
-							<td><input type="radio" name="angry3" value="7"></td>
-						</tr>
-						<tr>
-							<td>Surprised</td>
-							<td><input type="radio" name="surprised3" value="1"></td>
-							<td><input type="radio" name="surprised3" value="2"></td>
-							<td><input type="radio" name="surprised3" value="3"></td>
-							<td><input type="radio" name="surprised3" value="4"></td>
-							<td><input type="radio" name="surprised3" value="5"></td>
-							<td><input type="radio" name="surprised3" value="6"></td>
-							<td><input type="radio" name="surprised3" value="7"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<input type="hidden" name="expid" value="{{ expid }}">
-			<input type="hidden" name="Name" value="{{ name }}">
-			<input type="hidden" name="RollNo" value="{{ roll }}">
-			<input type="hidden" name="Age" value="{{ age }}">
-			<input type="hidden" name="Gender" value="{{ gender }}">
-			</div>
-	<div class="form-group text-center">
-				<div>
-					<button type="submit" class="btn btn-default" id="button3">Submit</button>
-				</div>
-	</div>
-	</form>
-	</div>
-
 </body>
 </html>

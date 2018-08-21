@@ -46,12 +46,9 @@ def exp1_view(request):
 	}
 	return render(request,'experiments/exp' + str(exp.pk) + '.html',context)
 
-def exp2_view(request):
-	exp = get_object_or_404(Experiment,pk="1")
-# 	exp.response_set.create(name = request.POST['Name'],roll = request.POST['RollNo'],gender = request.POST['Gender'],
-# 		age = request.POST['Age'],happy1 = request.POST['happy'],sad1 = request.POST['sad'],fearful1 = request.POST['fearful'],
-# angry1 = request.POST['angry'],surprised1 = request.POST['surprised'])
-	# print(request.POST['data'])
+def expNext_view(request):
+	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
+
 	data = json.loads(request.POST['data'])
 	exp.response_set.create(name = data['scene1']['name'],roll = int(data['scene1']['roll']),gender = data['scene1']['gender'],
 		age = int(data['scene1']['age']),happy3 = int(data['scene3']['happy3']),sad3 = int(data['scene3']['sad3']),fearful3 = int(data['scene3']['fearful3']),
@@ -59,7 +56,8 @@ def exp2_view(request):
 		angry2 = int(data['scene2']['angry2']),surprised2 = int(data['scene2']['surprised2']),happy1 = int(data['scene1']['happy1']),sad1 = int(data['scene1']['sad1']),fearful1 = int(data['scene1']['fearful1']),
 		angry1 = int(data['scene1']['angry1']),surprised1 = int(data['scene1']['surprised1']))
 
-	exp = get_object_or_404(Experiment,pk="2")
+	Newpk = exp.pk + 1
+	exp = get_object_or_404(Experiment,pk=Newpk)
 
 	context = {
 		'expid' : exp.pk,
@@ -72,54 +70,56 @@ def exp2_view(request):
 	}
 	return render(request,'experiments/exp' + str(exp.pk) + '.html',context)
 
-def exp3_view(request):
-	exp = get_object_or_404(Experiment,pk="2")
-	print(request.POST['data'])
-	data = json.loads(request.POST['data'])
-	exp.response_set.create(name = data['scene1']['name'],roll = int(data['scene1']['roll']),gender = data['scene1']['gender'],
-		age = int(data['scene1']['age']),happy3 = int(data['scene3']['happy3']),sad3 = int(data['scene3']['sad3']),fearful3 = int(data['scene3']['fearful3']),
-		angry3 = int(data['scene3']['angry3']),surprised3 = int(data['scene3']['surprised3']),happy2 = int(data['scene2']['happy2']),sad2 = int(data['scene2']['sad2']),fearful2 = int(data['scene2']['fearful2']),
-		angry2 = int(data['scene2']['angry2']),surprised2 = int(data['scene2']['surprised2']),happy1 = int(data['scene1']['happy1']),sad1 = int(data['scene1']['sad1']),fearful1 = int(data['scene1']['fearful1']),
-		angry1 = int(data['scene1']['angry1']),surprised1 = int(data['scene1']['surprised1']))
+# def exp3_view(request):
+# 	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
+# 	print(request.POST['data'])
+# 	data = json.loads(request.POST['data'])
+# 	exp.response_set.create(name = data['scene1']['name'],roll = int(data['scene1']['roll']),gender = data['scene1']['gender'],
+# 		age = int(data['scene1']['age']),happy3 = int(data['scene3']['happy3']),sad3 = int(data['scene3']['sad3']),fearful3 = int(data['scene3']['fearful3']),
+# 		angry3 = int(data['scene3']['angry3']),surprised3 = int(data['scene3']['surprised3']),happy2 = int(data['scene2']['happy2']),sad2 = int(data['scene2']['sad2']),fearful2 = int(data['scene2']['fearful2']),
+# 		angry2 = int(data['scene2']['angry2']),surprised2 = int(data['scene2']['surprised2']),happy1 = int(data['scene1']['happy1']),sad1 = int(data['scene1']['sad1']),fearful1 = int(data['scene1']['fearful1']),
+# 		angry1 = int(data['scene1']['angry1']),surprised1 = int(data['scene1']['surprised1']))
 
-	exp = get_object_or_404(Experiment,pk="3")
+# 	Newpk = exp.pk + 1
+# 	exp = get_object_or_404(Experiment,pk=Newpk)
 
-	context = {
-		'expid' : exp.pk,
-		'title' : exp.title,
-		'question' : exp.question,
-		'name' : data['scene1']['name'],
-		'roll' : int(data['scene1']['roll']),
-		'age' : int(data['scene1']['age']),
-		'gender' : data['scene1']['gender']
-	}
-	return render(request,'experiments/exp' + str(exp.pk) + '.html',context)
+# 	context = {
+# 		'expid' : exp.pk,
+# 		'title' : exp.title,
+# 		'question' : exp.question,
+# 		'name' : data['scene1']['name'],
+# 		'roll' : int(data['scene1']['roll']),
+# 		'age' : int(data['scene1']['age']),
+# 		'gender' : data['scene1']['gender']
+# 	}
+# 	return render(request,'experiments/exp' + str(exp.pk) + '.html',context)
 
-def exp4_view(request):
-	exp = get_object_or_404(Experiment,pk="3")
-	# print(request.POST['data'])
-	data = json.loads(request.POST['data'])
-	exp.response_set.create(name = data['scene1']['name'],roll = int(data['scene1']['roll']),gender = data['scene1']['gender'],
-		age = int(data['scene1']['age']),happy3 = int(data['scene3']['happy3']),sad3 = int(data['scene3']['sad3']),fearful3 = int(data['scene3']['fearful3']),
-		angry3 = int(data['scene3']['angry3']),surprised3 = int(data['scene3']['surprised3']),happy2 = int(data['scene2']['happy2']),sad2 = int(data['scene2']['sad2']),fearful2 = int(data['scene2']['fearful2']),
-		angry2 = int(data['scene2']['angry2']),surprised2 = int(data['scene2']['surprised2']),happy1 = int(data['scene1']['happy1']),sad1 = int(data['scene1']['sad1']),fearful1 = int(data['scene1']['fearful1']),
-		angry1 = int(data['scene1']['angry1']),surprised1 = int(data['scene1']['surprised1']))
+# def exp4_view(request):
+# 	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
+# 	# print(request.POST['data'])
+# 	data = json.loads(request.POST['data'])
+# 	exp.response_set.create(name = data['scene1']['name'],roll = int(data['scene1']['roll']),gender = data['scene1']['gender'],
+# 		age = int(data['scene1']['age']),happy3 = int(data['scene3']['happy3']),sad3 = int(data['scene3']['sad3']),fearful3 = int(data['scene3']['fearful3']),
+# 		angry3 = int(data['scene3']['angry3']),surprised3 = int(data['scene3']['surprised3']),happy2 = int(data['scene2']['happy2']),sad2 = int(data['scene2']['sad2']),fearful2 = int(data['scene2']['fearful2']),
+# 		angry2 = int(data['scene2']['angry2']),surprised2 = int(data['scene2']['surprised2']),happy1 = int(data['scene1']['happy1']),sad1 = int(data['scene1']['sad1']),fearful1 = int(data['scene1']['fearful1']),
+# 		angry1 = int(data['scene1']['angry1']),surprised1 = int(data['scene1']['surprised1']))
 
-	exp = get_object_or_404(Experiment,pk="4")
+# 	Newpk = exp.pk + 1
+# 	exp = get_object_or_404(Experiment,pk=Newpk)
 
-	context = {
-		'expid' : exp.pk,
-		'title' : exp.title,
-		'question' : exp.question,
-		'name' : data['scene1']['name'],
-		'roll' : int(data['scene1']['roll']),
-		'age' : int(data['scene1']['age']),
-		'gender' : data['scene1']['gender']
-	}
-	return render(request,'experiments/exp' + str(exp.pk) + '.html',context)
+# 	context = {
+# 		'expid' : exp.pk,
+# 		'title' : exp.title,
+# 		'question' : exp.question,
+# 		'name' : data['scene1']['name'],
+# 		'roll' : int(data['scene1']['roll']),
+# 		'age' : int(data['scene1']['age']),
+# 		'gender' : data['scene1']['gender']
+# 	}
+# 	return render(request,'experiments/exp' + str(exp.pk) + '.html',context)
 
 def submit_view(request):
-	exp = get_object_or_404(Experiment,pk='4')
+	exp = get_object_or_404(Experiment,pk=request.POST['expid'])
 	print(request.POST['data'])
 	data = json.loads(request.POST['data'])
 	exp.response_set.create(name = data['scene1']['name'],roll = int(data['scene1']['roll']),gender = data['scene1']['gender'],

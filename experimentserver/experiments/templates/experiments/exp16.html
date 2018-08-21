@@ -1061,7 +1061,7 @@ function intervalComparison(x,lower,upper) {
 
 			view.onFrame = function(event) {
 				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 200 && scene == 1){
-					activated = true;
+					activated = false;
 					console.log("Main yahan1")
 		    		$("#scene").html("<h3><u>Paused</u></h3>");
 					$(document).ready(function(){
@@ -1069,7 +1069,7 @@ function intervalComparison(x,lower,upper) {
 					});
 				}
 				if(scene==2 && time1-- < 0){
-					activated = true;
+					activated = false;
 					console.log("Main yahan2")					
 		    		$("#scene").html("<h3><u>Paused</u></h3>");
 					$(document).ready(function(){
@@ -1346,12 +1346,14 @@ function intervalComparison(x,lower,upper) {
 			<input type="hidden" name="Gender" value="{{ gender }}">
 
 			</div>
-	<form action="/exp3/" method="post" class="form-horizontal" id="form3">
+	<form action="/expNext/" method="post" class="form-horizontal" id="form3">
 	{% csrf_token %}
 		
 		<div class="form-group text-center">
 			<div>
 				<button type="submit" class="btn btn-default" id="button3">Submit</button>
+				<input type="hidden" name="expid" value="{{ expid }}">
+					
 			</div>
 		</div>
 	</form>

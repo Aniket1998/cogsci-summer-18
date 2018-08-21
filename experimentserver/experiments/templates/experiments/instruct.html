@@ -12,11 +12,12 @@
         <h1 style = "color: #777; padding: 0.5cm;" align="left">Cognitive Science Project</h1>
       </div>
       <br>
+      <div class="text-center">
+        <h3>Instructions</h3>
+      </div>
       <div class="jumbotron">
-        <div class="text-center">
-          <h3>Instructions</h3>
-        </div>
         <h4 style="padding-left: 0.5cm; padding-right:0.5cm">
+        <br>
         <ul>
           <li> You will see a series of animations involving dots of different colours.
           <li> After it ends, you will be asked to report which emotion one of the dots on the screen was feeling (if you think it felt any).
@@ -24,36 +25,8 @@
           <li> Most animations have been broken down into scenes. A counter on the top of the screen will notify which scene is being played, please view the scenes as part of one animation.
           <li> Your responses will be entries from 1-7 in the scale which pops up after each scene. It has a set of emotions (happy, sad, etc.) and you need to fill a value for EACH of the emotions with '1' being the lowest and '7' the highest.
           <li> Please note carefully the colour of the dot for which the emotions are being asked for. Let's start!!
-        </ul>	
-        <br>
+        </ul>
         </h4>
-        <form action="/exp1/" method="post" style = "padding: 0.5cm; padding-bottom: 0cm" class="form-signin" align="center">
-        	{% csrf_token %}
-        	
-       <div class="form-group">
-        	<input type="name" name="Name" id="Name" class="form-control" placeholder="Name" autofocus>
-        </div>
-        <div class="form-group">
-        	<input type="name" name="RollNo" id="RollNo" class="form-control" placeholder="Roll Number">
-        </div>
-        <div class="form-group">
-        	<input type="number" name="Age" id="Age" class="form-control" placeholder="Age">
-        </div>
-        <div class="form-group" align="center">
-          <label class="radio-inline">
-          	<input type="radio" name="Gender" value="Female">Female
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="Gender" value="Male">Male
-          </label>
-          <label class="radio-inline">
-          	<input type="radio" name="Gender" value="Other">Other
-          </label>
-        </div>
-        <div class="form-group" align = "center">
-          <input class="btn btn-lg btn-primary btn-block" type="submit" value="Submit" style="max-width: 150px;"></input>
-      	</div>
-        </form>
       </div>
     </div>
 </body>
