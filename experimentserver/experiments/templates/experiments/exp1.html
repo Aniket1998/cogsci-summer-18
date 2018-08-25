@@ -903,7 +903,7 @@ function intervalComparison(x,lower,upper) {
 				// if(i<0){
 				// 	go to next page
 				// }
-				if(person1.loco.position.x - person2.loco.position.x < 3){
+				if(person1.loco.shape.position.subtract(person2.loco.shape.position).length > 30){
 					person1.run(event);		
 					person2.run(event);		
 				} else {

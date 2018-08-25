@@ -833,7 +833,7 @@ function intervalComparison(x,lower,upper) {
 			var activated = true;
 			var scene = 1;
 			var time1;
-			var time2;
+			var time2 = 300;
 			var i;
 
 			var behavior1 = new Behavior({			 
@@ -1021,8 +1021,9 @@ function intervalComparison(x,lower,upper) {
 	                       	}
 					});
 				}
-				if(scene==2 && (person2.loco.shape.position.x > 1400 && person1.loco.shape.position.x > 1400)){
+				if(scene==2 && time2--<0){
 					activated = false;
+					console.log("Ojha is God "+ time2-- < 0)
 		    		$("#scene").html("<h3></u>Paused</u></h3>");					
 					$(document).ready(function(){
 					       $('#pop2').show();
