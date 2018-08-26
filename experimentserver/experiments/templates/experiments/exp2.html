@@ -844,7 +844,7 @@ function intervalComparison(x,lower,upper) {
 			var longterm_goals1 = new Interaction(behavior1,10);		
 			longterm_goals1.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(-500,-100)), 
+				target : view.center.add(new Point(-800,-100)), 
 				seek_context : 1,
 				mindist : 25
 			});
@@ -852,7 +852,7 @@ function intervalComparison(x,lower,upper) {
 			var longterm_goals2 = new Interaction(behavior1,10);		
 			longterm_goals2.addLayer({
 				behavior : behavior1,
-				target : view.center.add(new Point(100,-100)),
+				target : view.center.add(new Point(300,-100)),
 				seek_context : 1,
 				mindist : 25
 			});
@@ -872,7 +872,7 @@ function intervalComparison(x,lower,upper) {
 			var interaction12 = new Interaction(behavior1,100);				
 			interaction12.addLayer({
 				behavior : behavior2,
-				target : tar.add(10,0),
+				target : tar.add(15.5,0),
 				seek_context : 1,
 				time : 7 * 60
 			});	
@@ -880,7 +880,7 @@ function intervalComparison(x,lower,upper) {
 			var interaction21 = new Interaction(behavior1,100);				
 			interaction21.addLayer({
 				behavior : behavior2,
-				target : tar.add(-10,0),
+				target : tar.add(-15.5,0),
 				seek_context : 1,
 				time : 7 * 60
 			});	
@@ -981,7 +981,7 @@ function intervalComparison(x,lower,upper) {
 				// if(i<0){
 				// 	go to next page
 				// }
-				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 105 && scene == 1){
+				if(person2.loco.shape.position.subtract(person1.loco.shape.position).length < 120 && scene == 1){
 					activated = false;
 		    		$("#scene").html("<h3><u>Paused</u><\h3>");
 					$(document).ready(function(){
@@ -995,7 +995,7 @@ function intervalComparison(x,lower,upper) {
 	                       	}
 					});
 				}
-				if(scene==2 && time1-- < 0){
+				if(scene==2 && time1-- < 50){
 					activated = false;
 		    		$("#scene").html("<h3><u>Paused</u><\h3>");
 					$(document).ready(function(){
@@ -1010,7 +1010,7 @@ function intervalComparison(x,lower,upper) {
 					});
 				}
 
-				if(scene==3 && time2-- < 0){
+				if(scene==3 && person2.loco.shape.position.subtract(person1.loco.shape.position).length > 300){
 					activated = false;
 		    		$("#scene").html("<h3><u>Paused</u><\h3>");
 					$(document).ready(function(){
