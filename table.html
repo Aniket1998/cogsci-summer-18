@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+</style>
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+<script type="text/javascript">
+  var txt1, txt2, txt3, txt4;
+    $(function(){
+        $.getJSON('prevar_response.geojson',function(data){
+            console.log('success');
+            $.each(data.features,function(i, ft){
+              if(ft.properties.exp_id == 1){
+                txt1 += "<tr><th>" + ft.properties.exp_id + "</th>"
+                txt1 += "<th>" + ft.properties.roll + "</th>"                
+                txt1 += "<th>" + ft.properties.happy + "</th>"
+                txt1 += "<th>" + ft.properties.sad + "</th>"
+                txt1 += "<th>" + ft.properties.angry + "</th>"
+                txt1 += "<th>" + ft.properties.fearful + "</th>"
+                txt1 += "<th>" + ft.properties.surprised + "</th>"
+                txt1 += "<th>" + ft.properties.happy2 + "</th>"
+                txt1 += "<th>" + ft.properties.sad2 + "</th>"
+                txt1 += "<th>" + ft.properties.angry2 + "</th>"
+                txt1 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt1 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt1 += "<th>" + ft.properties.happy3 + "</th>"
+                txt1 += "<th>" + ft.properties.sad3 + "</th>"
+                txt1 += "<th>" + ft.properties.angry3 + "</th>"
+                txt1 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt1 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 2){
+                txt2 += "<tr><th>" + ft.properties.exp_id + "</th>"
+                txt2 += "<th>" + ft.properties.roll + "</th>"                
+                txt2 += "<th>" + ft.properties.happy + "</th>"
+                txt2 += "<th>" + ft.properties.sad + "</th>"
+                txt2 += "<th>" + ft.properties.angry + "</th>"
+                txt2 += "<th>" + ft.properties.fearful + "</th>"
+                txt2 += "<th>" + ft.properties.surprised + "</th>"
+                txt2 += "<th>" + ft.properties.happy2 + "</th>"
+                txt2 += "<th>" + ft.properties.sad2 + "</th>"
+                txt2 += "<th>" + ft.properties.angry2 + "</th>"
+                txt2 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt2 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt2 += "<th>" + ft.properties.happy3 + "</th>"
+                txt2 += "<th>" + ft.properties.sad3 + "</th>"
+                txt2 += "<th>" + ft.properties.angry3 + "</th>"
+                txt2 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt2 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 3){
+                txt3 += "<tr><th>" + ft.properties.exp_id + "</th>"
+                txt3 += "<th>" + ft.properties.roll + "</th>"                
+                txt3 += "<th>" + ft.properties.happy + "</th>"
+                txt3 += "<th>" + ft.properties.sad + "</th>"
+                txt3 += "<th>" + ft.properties.angry + "</th>"
+                txt3 += "<th>" + ft.properties.fearful + "</th>"
+                txt3 += "<th>" + ft.properties.surprised + "</th>"
+                txt3 += "<th>" + ft.properties.happy2 + "</th>"
+                txt3 += "<th>" + ft.properties.sad2 + "</th>"
+                txt3 += "<th>" + ft.properties.angry2 + "</th>"
+                txt3 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt3 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt3 += "<th>" + ft.properties.happy3 + "</th>"
+                txt3 += "<th>" + ft.properties.sad3 + "</th>"
+                txt3 += "<th>" + ft.properties.angry3 + "</th>"
+                txt3 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt3 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 4){
+                txt4 += "<tr><th>" + ft.properties.exp_id + "</th>"
+                txt4 += "<th>" + ft.properties.roll + "</th>"                
+                txt4 += "<th>" + ft.properties.happy + "</th>"
+                txt4 += "<th>" + ft.properties.sad + "</th>"
+                txt4 += "<th>" + ft.properties.angry + "</th>"
+                txt4 += "<th>" + ft.properties.fearful + "</th>"
+                txt4 += "<th>" + ft.properties.surprised + "</th>"
+                txt4 += "<th>" + ft.properties.happy2 + "</th>"
+                txt4 += "<th>" + ft.properties.sad2 + "</th>"
+                txt4 += "<th>" + ft.properties.angry2 + "</th>"
+                txt4 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt4 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt4 += "<th>" + ft.properties.happy3 + "</th>"
+                txt4 += "<th>" + ft.properties.sad3 + "</th>"
+                txt4 += "<th>" + ft.properties.angry3 + "</th>"
+                txt4 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt4 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+            });
+            $("#Responses").append(txt1);
+            $("#Responses").append(txt2);
+            $("#Responses").append(txt3);
+            $("#Responses").append(txt4);
+        }).error(function(){
+            console.log('error');
+        });
+    });
+</script>
+</head>
+<body>
+
+ <table id="Responses" style="width:100%">
+  <tr>
+    <th>Experiment</th>
+    <th>Roll No</th>
+    <th>Happy1</th>
+    <th>Sad1</th>
+    <th>Angry1</th>
+    <th>Fearful1</th>
+    <th>Surprised1</th>
+    <th>Happy2</th>
+    <th>Sad2</th>
+    <th>Angry2</th>
+    <th>Fearful2</th>
+    <th>Surprised2</th>
+    <th>Happy3</th>
+    <th>Sad3</th>
+    <th>Angry3</th>
+    <th>Fearful3</th>
+    <th>Surprised3</th>
+  </tr>
+
+</table> 
+
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+</style>
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+<script type="text/javascript">
+var txt1, txt2, txt3, txt4, txt5, txt6, txt7, txt8, txt9, txt10, txt11, txt12;
+var prevName;
+    $(function(){
+        $.getJSON('postvar_response.geojson',function(data){
+            console.log('success');
+            $.each(data.features,function(i, ft){
+                if(ft.properties.exp_id == 1 && i==0){
+                    prevName = ft.properties.name;
+                }
+                if(ft.properties.name != prevName){
+                console.log("prevName is "+prevName);
+                $("#Responses").append(txt1);
+                $("#Responses").append(txt5);
+                $("#Responses").append(txt10);
+                $("#Responses").append(txt2);
+                $("#Responses").append(txt8);
+                $("#Responses").append(txt11);
+                $("#Responses").append(txt3);
+                $("#Responses").append(txt7);
+                $("#Responses").append(txt12);
+                $("#Responses").append(txt4);
+                $("#Responses").append(txt6);
+                $("#Responses").append(txt9);
+                txt1 = " ";
+                txt2 = " ";
+                txt3 = " ";
+                txt4 = " ";
+                txt5 = " ";
+                txt6 = " ";
+                txt7 = " ";
+                txt8 = " ";
+                txt9 = " ";
+                txt10 = " ";
+                txt11 = " ";
+                txt12 = " ";  
+                prevName = ft.properties.name;          
+              }
+              if(ft.properties.exp_id == 1){
+                txt1 += "<tr><th>" + ft.properties.name + "</th>"
+                txt1 += "<th>" + "1" + "</th>" 
+                txt1 += "<th>" + "Var 1" + "</th>"                                               
+                txt1 += "<th>" + ft.properties.happy + "</th>"
+                txt1 += "<th>" + ft.properties.sad + "</th>"
+                txt1 += "<th>" + ft.properties.angry + "</th>"
+                txt1 += "<th>" + ft.properties.fearful + "</th>"
+                txt1 += "<th>" + ft.properties.surprised + "</th>"
+                txt1 += "<th>" + ft.properties.happy2 + "</th>"
+                txt1 += "<th>" + ft.properties.sad2 + "</th>"
+                txt1 += "<th>" + ft.properties.angry2 + "</th>"
+                txt1 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt1 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt1 += "<th>" + ft.properties.happy3 + "</th>"
+                txt1 += "<th>" + ft.properties.sad3 + "</th>"
+                txt1 += "<th>" + ft.properties.angry3 + "</th>"
+                txt1 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt1 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 5){
+                txt5 += "<tr><th>" + ft.properties.name + "</th>"
+                txt5 += "<th>" + "1" + "</th>" 
+                txt5 += "<th>" + "Var 2" + "</th>"                                               
+                txt5 += "<th>" + ft.properties.happy + "</th>"
+                txt5 += "<th>" + ft.properties.sad + "</th>"
+                txt5 += "<th>" + ft.properties.angry + "</th>"
+                txt5 += "<th>" + ft.properties.fearful + "</th>"
+                txt5 += "<th>" + ft.properties.surprised + "</th>"
+                txt5 += "<th>" + ft.properties.happy2 + "</th>"
+                txt5 += "<th>" + ft.properties.sad2 + "</th>"
+                txt5 += "<th>" + ft.properties.angry2 + "</th>"
+                txt5 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt5 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt5 += "<th>" + ft.properties.happy3 + "</th>"
+                txt5 += "<th>" + ft.properties.sad3 + "</th>"
+                txt5 += "<th>" + ft.properties.angry3 + "</th>"
+                txt5 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt5 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 10){
+                txt10 += "<tr><th>" + ft.properties.name + "</th>"
+                txt10 += "<th>" + "1" + "</th>" 
+                txt10 += "<th>" + "Var 3" + "</th>"                                               
+                txt10 += "<th>" + ft.properties.happy + "</th>"
+                txt10 += "<th>" + ft.properties.sad + "</th>"
+                txt10 += "<th>" + ft.properties.angry + "</th>"
+                txt10 += "<th>" + ft.properties.fearful + "</th>"
+                txt10 += "<th>" + ft.properties.surprised + "</th>"
+                txt10 += "<th>" + ft.properties.happy2 + "</th>"
+                txt10 += "<th>" + ft.properties.sad2 + "</th>"
+                txt10 += "<th>" + ft.properties.angry2 + "</th>"
+                txt10 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt10 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt10 += "<th>" + ft.properties.happy3 + "</th>"
+                txt10 += "<th>" + ft.properties.sad3 + "</th>"
+                txt10 += "<th>" + ft.properties.angry3 + "</th>"
+                txt10 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt10 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 2){
+                txt2 += "<tr><th>" + ft.properties.name + "</th>"
+                txt2 += "<th>" + "2" + "</th>" 
+                txt2 += "<th>" + "Var 1" + "</th>"                                               
+                txt2 += "<th>" + ft.properties.happy + "</th>"
+                txt2 += "<th>" + ft.properties.sad + "</th>"
+                txt2 += "<th>" + ft.properties.angry + "</th>"
+                txt2 += "<th>" + ft.properties.fearful + "</th>"
+                txt2 += "<th>" + ft.properties.surprised + "</th>"
+                txt2 += "<th>" + ft.properties.happy2 + "</th>"
+                txt2 += "<th>" + ft.properties.sad2 + "</th>"
+                txt2 += "<th>" + ft.properties.angry2 + "</th>"
+                txt2 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt2 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt2 += "<th>" + ft.properties.happy3 + "</th>"
+                txt2 += "<th>" + ft.properties.sad3 + "</th>"
+                txt2 += "<th>" + ft.properties.angry3 + "</th>"
+                txt2 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt2 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 8){
+                txt8 += "<tr><th>" + ft.properties.name + "</th>"
+                txt8 += "<th>" + "2" + "</th>" 
+                txt8 += "<th>" + "Var 2" + "</th>"                                               
+                txt8 += "<th>" + ft.properties.happy + "</th>"
+                txt8 += "<th>" + ft.properties.sad + "</th>"
+                txt8 += "<th>" + ft.properties.angry + "</th>"
+                txt8 += "<th>" + ft.properties.fearful + "</th>"
+                txt8 += "<th>" + ft.properties.surprised + "</th>"
+                txt8 += "<th>" + ft.properties.happy2 + "</th>"
+                txt8 += "<th>" + ft.properties.sad2 + "</th>"
+                txt8 += "<th>" + ft.properties.angry2 + "</th>"
+                txt8 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt8 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt8 += "<th>" + ft.properties.happy3 + "</th>"
+                txt8 += "<th>" + ft.properties.sad3 + "</th>"
+                txt8 += "<th>" + ft.properties.angry3 + "</th>"
+                txt8 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt8 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 11){
+                txt11 += "<tr><th>" + ft.properties.name + "</th>"
+                txt11 += "<th>" + "2" + "</th>" 
+                txt11 += "<th>" + "Var 3" + "</th>"                                               
+                txt11 += "<th>" + ft.properties.happy + "</th>"
+                txt11 += "<th>" + ft.properties.sad + "</th>"
+                txt11 += "<th>" + ft.properties.angry + "</th>"
+                txt11 += "<th>" + ft.properties.fearful + "</th>"
+                txt11 += "<th>" + ft.properties.surprised + "</th>"
+                txt11 += "<th>" + ft.properties.happy2 + "</th>"
+                txt11 += "<th>" + ft.properties.sad2 + "</th>"
+                txt11 += "<th>" + ft.properties.angry2 + "</th>"
+                txt11 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt11 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt11 += "<th>" + ft.properties.happy3 + "</th>"
+                txt11 += "<th>" + ft.properties.sad3 + "</th>"
+                txt11 += "<th>" + ft.properties.angry3 + "</th>"
+                txt11 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt11 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 3){
+                txt3 += "<tr><th>" + ft.properties.name + "</th>"
+                txt3 += "<th>" + "3" + "</th>" 
+                txt3 += "<th>" + "Var 1" + "</th>"                                               
+                txt3 += "<th>" + ft.properties.happy + "</th>"
+                txt3 += "<th>" + ft.properties.sad + "</th>"
+                txt3 += "<th>" + ft.properties.angry + "</th>"
+                txt3 += "<th>" + ft.properties.fearful + "</th>"
+                txt3 += "<th>" + ft.properties.surprised + "</th>"
+                txt3 += "<th>" + ft.properties.happy2 + "</th>"
+                txt3 += "<th>" + ft.properties.sad2 + "</th>"
+                txt3 += "<th>" + ft.properties.angry2 + "</th>"
+                txt3 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt3 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt3 += "<th>" + ft.properties.happy3 + "</th>"
+                txt3 += "<th>" + ft.properties.sad3 + "</th>"
+                txt3 += "<th>" + ft.properties.angry3 + "</th>"
+                txt3 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt3 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 7){
+                txt7 += "<tr><th>" + ft.properties.name + "</th>"
+                txt7 += "<th>" + "3" + "</th>" 
+                txt7 += "<th>" + "Var 2" + "</th>"                                               
+                txt7 += "<th>" + ft.properties.happy + "</th>"
+                txt7 += "<th>" + ft.properties.sad + "</th>"
+                txt7 += "<th>" + ft.properties.angry + "</th>"
+                txt7 += "<th>" + ft.properties.fearful + "</th>"
+                txt7 += "<th>" + ft.properties.surprised + "</th>"
+                txt7 += "<th>" + ft.properties.happy2 + "</th>"
+                txt7 += "<th>" + ft.properties.sad2 + "</th>"
+                txt7 += "<th>" + ft.properties.angry2 + "</th>"
+                txt7 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt7 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt7 += "<th>" + ft.properties.happy3 + "</th>"
+                txt7 += "<th>" + ft.properties.sad3 + "</th>"
+                txt7 += "<th>" + ft.properties.angry3 + "</th>"
+                txt7 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt7 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 12){
+                txt12 += "<tr><th>" + ft.properties.name + "</th>"
+                txt12 += "<th>" + "3" + "</th>" 
+                txt12 += "<th>" + "Var 3" + "</th>"                                               
+                txt12 += "<th>" + ft.properties.happy + "</th>"
+                txt12 += "<th>" + ft.properties.sad + "</th>"
+                txt12 += "<th>" + ft.properties.angry + "</th>"
+                txt12 += "<th>" + ft.properties.fearful + "</th>"
+                txt12 += "<th>" + ft.properties.surprised + "</th>"
+                txt12 += "<th>" + ft.properties.happy2 + "</th>"
+                txt12 += "<th>" + ft.properties.sad2 + "</th>"
+                txt12 += "<th>" + ft.properties.angry2 + "</th>"
+                txt12 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt12 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt12 += "<th>" + ft.properties.happy3 + "</th>"
+                txt12 += "<th>" + ft.properties.sad3 + "</th>"
+                txt12 += "<th>" + ft.properties.angry3 + "</th>"
+                txt12 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt12 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 4){
+                txt4 += "<tr><th>" + ft.properties.name + "</th>"
+                txt4 += "<th>" + "4" + "</th>" 
+                txt4 += "<th>" + "Var 1" + "</th>"                                               
+                txt4 += "<th>" + ft.properties.happy + "</th>"
+                txt4 += "<th>" + ft.properties.sad + "</th>"
+                txt4 += "<th>" + ft.properties.angry + "</th>"
+                txt4 += "<th>" + ft.properties.fearful + "</th>"
+                txt4 += "<th>" + ft.properties.surprised + "</th>"
+                txt4 += "<th>" + ft.properties.happy2 + "</th>"
+                txt4 += "<th>" + ft.properties.sad2 + "</th>"
+                txt4 += "<th>" + ft.properties.angry2 + "</th>"
+                txt4 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt4 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt4 += "<th>" + ft.properties.happy3 + "</th>"
+                txt4 += "<th>" + ft.properties.sad3 + "</th>"
+                txt4 += "<th>" + ft.properties.angry3 + "</th>"
+                txt4 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt4 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 6){
+                txt6 += "<tr><th>" + ft.properties.name + "</th>"
+                txt6 += "<th>" + "4" + "</th>" 
+                txt6 += "<th>" + "Var 2" + "</th>"                                               
+                txt6 += "<th>" + ft.properties.happy + "</th>"
+                txt6 += "<th>" + ft.properties.sad + "</th>"
+                txt6 += "<th>" + ft.properties.angry + "</th>"
+                txt6 += "<th>" + ft.properties.fearful + "</th>"
+                txt6 += "<th>" + ft.properties.surprised + "</th>"
+                txt6 += "<th>" + ft.properties.happy2 + "</th>"
+                txt6 += "<th>" + ft.properties.sad2 + "</th>"
+                txt6 += "<th>" + ft.properties.angry2 + "</th>"
+                txt6 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt6 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt6 += "<th>" + ft.properties.happy3 + "</th>"
+                txt6 += "<th>" + ft.properties.sad3 + "</th>"
+                txt6 += "<th>" + ft.properties.angry3 + "</th>"
+                txt6 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt6 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+              if(ft.properties.exp_id == 9){
+                txt9 += "<tr><th>" + ft.properties.name + "</th>"
+                txt9 += "<th>" + "4" + "</th>" 
+                txt9 += "<th>" + "Var 3" + "</th>"                                               
+                txt9 += "<th>" + ft.properties.happy + "</th>"
+                txt9 += "<th>" + ft.properties.sad + "</th>"
+                txt9 += "<th>" + ft.properties.angry + "</th>"
+                txt9 += "<th>" + ft.properties.fearful + "</th>"
+                txt9 += "<th>" + ft.properties.surprised + "</th>"
+                txt9 += "<th>" + ft.properties.happy2 + "</th>"
+                txt9 += "<th>" + ft.properties.sad2 + "</th>"
+                txt9 += "<th>" + ft.properties.angry2 + "</th>"
+                txt9 += "<th>" + ft.properties.fearful2 + "</th>"
+                txt9 += "<th>" + ft.properties.surprised2 + "</th>"
+                txt9 += "<th>" + ft.properties.happy3 + "</th>"
+                txt9 += "<th>" + ft.properties.sad3 + "</th>"
+                txt9 += "<th>" + ft.properties.angry3 + "</th>"
+                txt9 += "<th>" + ft.properties.fearful3 + "</th>"
+                txt9 += "<th>" + ft.properties.surprised3 + "</th></tr>"
+              }
+            });
+        }).error(function(){
+            console.log('error');
+        });
+    });
+</script>
+</head>
+<body>
+
+ <table id="Responses" style="width:100%">
+  <tr>
+    <th>Name</th>
+    <th>Exp</th> 
+    <th>Var</th>        
+    <th>Happy1</th>
+    <th>Sad1</th>
+    <th>Angry1</th>
+    <th>Fearful1</th>
+    <th>Surprised1</th>
+    <th>Happy2</th>
+    <th>Sad2</th>
+    <th>Angry2</th>
+    <th>Fearful2</th>
+    <th>Surprised2</th>
+    <th>Happy3</th>
+    <th>Sad3</th>
+    <th>Angry3</th>
+    <th>Fearful3</th>
+    <th>Surprised3</th>
+  </tr>
+
+</table> 
+
+</body>
+</html>
