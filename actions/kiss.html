@@ -5,8 +5,10 @@
 	<title>Kiss</title>
 	<script type="text/javascript" src="paper.js"></script>
 	<script type="text/javascript" src="final_engine_layers.js"></script>
+    <script type="text/javascript" src="filesaver.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
+
 		window.onload = function() {
 			paper.setup('canvas');
 
@@ -53,6 +55,7 @@
 			});
 
 			var tar = view.center.add(new Point(0,-100));
+
 			
 			var longterm_goals1 = new Interaction(behavior1,10);
 			longterm_goals1.addLayer({
@@ -92,7 +95,16 @@
 				}
 			}
 
+           frame=0;
 			view.onFrame = function(event) {
+                frame += 1;
+                var canvas = document.getElementById('canvas');
+                    var blob = canvas.toBlob(function(blob) {
+                            if(frame % 10 == 0) {
+                                    saveAs(blob, frame + ".png");
+                                    console.log(frame);
+                            }
+                    });
 				person1.run(event);
 				person2.run(event);		
 			}
