@@ -11,13 +11,13 @@
 			paper.setup('canvas');
 
 			var behavior1 = new Behavior({			// Person 1 
-				eagerness : 10,
-				arousal : 5,
+				eagerness : 8,
+				arousal : 1.5,
 				focus : 1
 			});
 			var behavior2 = new Behavior({			// Person 2 
-				eagerness : 10,
-				arousal : 6,
+				eagerness : 8,
+				arousal : 1.5,
 				focus : 1
 			});
 			
@@ -33,7 +33,8 @@
 					radius : 15,
 					fillColor : 'red'
 				}),
-				point : view.center.add(new Point(35,-100))
+				point : (view.center.add(new Point(60,-100))).add(Point.random().multiply(200))
+
 			});
 
 			var loco2 = new Locomotion({			// Person 2
@@ -48,15 +49,15 @@
 					radius : 15,
 					fillColor : 'blue'
 				}),
-				point : view.center.add(new Point(-35,-100))
+				point : (view.center.add(new Point(-60,-100))).add(Point.random().multiply(200))
 			});
 
 			var tar = view.center.add(new Point(0,-100));
 			
-			var longterm_goals1 = new Interaction(behavior1,10);		
+			var longterm_goals1 = new Interaction(behavior1,10);
 			longterm_goals1.addLayer({
 				behavior : behavior1,
-				target : tar.add(new Point(20,0)), 
+				target : tar.add(new Point(20,0)),
 				seek_context : 1,
 				avoid_context : 1,
 				time : 15 * 60
