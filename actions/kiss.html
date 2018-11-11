@@ -8,6 +8,7 @@
     <script type="text/javascript" src="filesaver.js"></script>
 	<script type="text/javascript">
 		paper.install(window);
+		var n = 0;
 
 		window.onload = function() {
 			paper.setup('canvas');
@@ -99,12 +100,20 @@
 			view.onFrame = function(event) {
                 frame += 1;
                 var canvas = document.getElementById('canvas');
+                if(n < 100){
                     var blob = canvas.toBlob(function(blob) {
-                            if(frame % 10 == 0) {
-                                    saveAs(blob, frame + ".png");
+                            if(frame % 100 == 0) {
+                                    saveAs(blob, n.toString()+ frame/100 + ".png");
                                     console.log(frame);
                             }
                     });
+                }
+                if((frame==801) && (n < 100)){
+                	n+=1
+                	window.onload.call();
+                	frame = 0;
+                }
+
 				person1.run(event);
 				person2.run(event);		
 			}
