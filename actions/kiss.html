@@ -9,6 +9,7 @@
 	<script type="text/javascript">
 		paper.install(window);
 		var n = 0;
+        var offset = 0;
 
 		window.onload = function() {
 			paper.setup('canvas');
@@ -96,10 +97,9 @@
 				}
 			}
 
-           frame=0;
 			view.onFrame = function(event) {
-                frame += 1;
                 var canvas = document.getElementById('canvas');
+                var frame = event.count - offset;
                 if(n < 100){
                     var blob = canvas.toBlob(function(blob) {
                             if(frame % 100 == 0) {
@@ -111,7 +111,7 @@
                 if((frame==801) && (n < 100)){
                 	n+=1
                 	window.onload.call();
-                	frame = 0;
+                    offset = event.count;
                 }
 
 				person1.run(event);
