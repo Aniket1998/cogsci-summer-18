@@ -99,16 +99,16 @@
 
 			view.onFrame = function(event) {
                 var canvas = document.getElementById('canvas');
-                var frame = event.count - offset;
-                if(n < 100){
+                var frame = event.count
+                if(n < 4000){
                     var blob = canvas.toBlob(function(blob) {
-                            if(frame % 100 == 0) {
-                                    saveAs(blob, n.toString()+ frame/100 + ".png");
+                            if(frame % 25 == 0) {
+                                    saveAs(blob, n.toString() + frame/25 + ".png");
                                     console.log(frame);
                             }
                     });
                 }
-                if((frame==801) && (n < 100)){
+                if((frame==201) && (n < 4000)){
                 	n+=1
                 	window.onload.call();
                     offset = event.count;
